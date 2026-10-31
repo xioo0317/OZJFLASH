@@ -1,0 +1,651 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  MoFlash Loader 资源索引（自动生成，请勿手改）。
+  重新生成：python3 scripts/gen_loader_index.py
+
+  Brand/Model/Sub 的 Name 与 loader_src/Loader/<Brand>/<Model>/[<Sub>/] 目录名一致。
+  File 属性：
+    Name / Size / Md5  文件名、字节数、内容校验值（Size 用于按需释放时判断是否已就位）
+    Kinds              角色，逗号分隔：programmer,vip,sign,digest,xml,aux
+  运行期只读本文件，不扫描目录、不按文件名猜角色。
+-->
+<MoFlashLoaderPacket Version="1.0" Type="QC" Models="164" Subs="6" Files="280">
+  <Brand Name="LG">
+    <Model Name="MSM8998_835">
+      <File Name="DevprgProgrammer.elf" Size="597248" Md5="af250524fa213e509f4245ee519bcca5" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SDM765">
+      <File Name="DevprgProgrammer.elf" Size="682940" Md5="9984d30ae8861efe2efcddf714d63a3f" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SDM845">
+      <File Name="DevprgProgrammer.elf" Size="666737" Md5="34ce02b7a41ca7ad431c79bef3974f63" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer_硬解机用.elf" Size="680321" Md5="898be9c9e9a9d0739284ded90317356f" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SM8150_855">
+      <File Name="DevprgProgrammer_ddr.elf" Size="713136" Md5="e689382bda63dcb062f394aabdc00f8f" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer_lge.elf" Size="709808" Md5="02ba9b105510f765522b9e95e475aeb7" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SM8250_865_870">
+      <File Name="DevprgProgrammer1.elf" Size="705856" Md5="f034ee315951854a6d171959e31adb76" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer2.elf" Size="729168" Md5="aaaca240b162d923b3b5ed5d9e19e065" Kinds="programmer,vip" />
+    </Model>
+  </Brand>
+  <Brand Name="oplus">
+    <Model Name="SM6375_695_6sGen3">
+      <File Name="DevprgProgrammer.elf" Size="720972" Md5="445d5c94e08a316e25d37c2b90f967b2" Kinds="programmer,vip" />
+      <File Name="Digest.elf" Size="26248" Md5="2baa9be6d0edd0f474d26438ab4d4043" Kinds="digest" />
+      <File Name="Sign.bin" Size="4096" Md5="c27bd84fe1acf0d77216496c979e8476" Kinds="sign" />
+    </Model>
+    <Model Name="SM7675_7+Gen3">
+      <File Name="DevprgProgrammer.melf" Size="1545892" Md5="d7e2fa06094f55f35161076bb45fe222" Kinds="programmer,vip" />
+      <File Name="Digest.elf" Size="29048" Md5="d203c707fcee2aaa36b516e228e17b01" Kinds="digest" />
+      <File Name="Sign.bin" Size="4096" Md5="7b8bb145fcd1da433e07f4105ba88714" Kinds="sign" />
+    </Model>
+    <Model Name="SM8350_888_888+">
+      <File Name="DevprgProgrammer.elf" Size="947952" Md5="bd1aab3a4934332afcecb60dfbed154c" Kinds="programmer,vip" />
+      <File Name="Digest.elf" Size="27700" Md5="e2e16c9cde5e17337754591c0c1c95aa" Kinds="digest" />
+      <File Name="Sign.bin" Size="4096" Md5="bff391bd71582da4940ad8c0d57adc18" Kinds="sign" />
+    </Model>
+    <Model Name="SM8475_8+Gen1">
+      <File Name="DevprgProgrammer.melf" Size="1546052" Md5="69013c7e4efc7303fcce8488cedb2a37" Kinds="programmer,vip" />
+      <File Name="Digest.elf" Size="27992" Md5="b51819dd2764a6e6558999f37361a623" Kinds="digest" />
+      <File Name="Sign.bin" Size="4096" Md5="632d07b75e75817b5df543bbd617b3d3" Kinds="sign" />
+    </Model>
+    <Model Name="SM8550_8Gen2_8+Gen2">
+      <File Name="DevprgProgrammer1.melf" Size="1633124" Md5="4d2f867fe0fd29af944286d80882b06c" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer2.melf" Size="1633124" Md5="4c79c7663013ff1439f8a61905a22f42" Kinds="programmer,vip" />
+      <File Name="Digest.elf" Size="28472" Md5="e25033671f6f0943e58f05c011d121f8" Kinds="digest" />
+      <File Name="Sign.bin" Size="4096" Md5="7967ff467e3eb1e19a0d1df74c165719" Kinds="sign" />
+    </Model>
+    <Model Name="SM8650_8Gen3">
+      <File Name="DevprgProgrammer.melf" Size="1549988" Md5="65aa1d015782b16e39d47bd1f4d58e11" Kinds="programmer,vip" />
+      <File Name="Digest.elf" Size="33144" Md5="05b9eb4448ba68271c169004def8f50c" Kinds="digest" />
+      <File Name="Sign.bin" Size="4096" Md5="99ef55f68236bc3f336764f901f67c15" Kinds="sign" />
+    </Model>
+    <Model Name="SM8650_8Gen3-熔断">
+      <File Name="DevprgProgrammer.melf" Size="1653576" Md5="3c94df0f5618a9bfa1c166726b19fa9c" Kinds="programmer,vip" />
+      <File Name="Digest.elf" Size="33144" Md5="05b9eb4448ba68271c169004def8f50c" Kinds="digest" />
+      <File Name="Sign.bin" Size="4096" Md5="99ef55f68236bc3f336764f901f67c15" Kinds="sign" />
+    </Model>
+    <Model Name="SM8735_8sGen4">
+      <File Name="DevprgProgrammer.elf" Size="1610496" Md5="df9b17c3fa5f72a1c8c0361f33daffec" Kinds="programmer,vip" />
+      <File Name="Digest.mbn" Size="29648" Md5="b99725d35e8c5bad2e09fdbd8151de43" Kinds="digest" />
+      <File Name="Sign.bin" Size="4096" Md5="0a7f3cde4845ccfb54fb8e6f2b9cc25d" Kinds="sign" />
+    </Model>
+    <Model Name="SM8750_8E">
+      <File Name="DevprgProgrammer.melf" Size="1657624" Md5="a5ebe11870dab04ef233b7bee544c347" Kinds="programmer,vip" />
+      <File Name="Digest.elf" Size="33244" Md5="b845d62428896c14d992f52ec50e23f6" Kinds="digest" />
+      <File Name="Sign.bin" Size="4096" Md5="0a7f3cde4845ccfb54fb8e6f2b9cc25d" Kinds="sign" />
+    </Model>
+    <Model Name="SM8750_8E-熔断">
+      <File Name="DevprgProgrammer.elf" Size="1682200" Md5="7bb87ab2e7d515be0c8cf4c6667e35d7" Kinds="programmer,vip" />
+      <File Name="Digest.elf" Size="33244" Md5="b845d62428896c14d992f52ec50e23f6" Kinds="digest" />
+      <File Name="Sign.bin" Size="4096" Md5="0a7f3cde4845ccfb54fb8e6f2b9cc25d" Kinds="sign" />
+    </Model>
+  </Brand>
+  <Brand Name="努比亚">
+    <Model Name="NP01J">
+      <File Name="DevprgProgrammer.elf" Size="1491364" Md5="8d15c8d5053c43f1ac630aaf03613964" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="NP02J">
+      <File Name="DevprgProgrammer.elf" Size="1633124" Md5="2a2a3b61c2482bae8b7e5cf4c61c8248" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="NP03J">
+      <File Name="DevprgProgrammer.melf" Size="1553396" Md5="74ac0057f4f6ca67f1f575e794f0954f" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="NP05J">
+      <File Name="DevprgProgrammer.melf" Size="1659300" Md5="4bb0f0796479b208611fa1d4bfbf4939" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="NX563J">
+      <File Name="DevprgProgrammer" Size="598320" Md5="18c6f9250b7b61c6e279a08de503666e" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="NX606J">
+      <File Name="DevprgProgrammer" Size="680417" Md5="18558a9e39bd1ae438a51f041077c286" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="NX609J">
+      <File Name="DevprgProgrammer.elf" Size="595424" Md5="8b93773da686d69fe6d88b56fb8febcd" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="NX616J">
+      <File Name="DevprgProgrammer" Size="680417" Md5="18558a9e39bd1ae438a51f041077c286" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="NX619J">
+      <File Name="DevprgProgrammer" Size="680425" Md5="35125aade656ccc9a962a82409c81866" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="NX629J">
+      <File Name="DevprgProgrammer" Size="716216" Md5="326cdcd34a427dc2ad33380872631db9" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="NX651J">
+      <File Name="DevprgProgrammer" Size="677496" Md5="7dd5dcff6081ea3ac46d0b2836ad4cd2" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="NX659J">
+      <File Name="DevprgProgrammer" Size="700624" Md5="5622400a90ad1fce46e1f9c1546a6d9a" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="NX666J">
+      <File Name="DevprgProgrammer.elf" Size="956040" Md5="016775b2863ae419cfe1fe533407fac3" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="NX669J">
+      <File Name="DevprgProgrammer" Size="964232" Md5="84c1bd9e1ccf321b0352d8e35557f0a4" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="NX669S">
+      <File Name="DevprgProgrammer.elf" Size="964232" Md5="84c1bd9e1ccf321b0352d8e35557f0a4" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="NX679J">
+      <File Name="DevprgProgrammer.elf" Size="1580132" Md5="163e19f530ac70332afa5eb7e789f818" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="NX679S">
+      <File Name="DevprgProgrammer.elf" Size="1567540" Md5="ce9dbf45087e6e4acde70d50e42f3d7b" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="NX701J">
+      <File Name="DevprgProgrammer" Size="1539124" Md5="aee901a18570a41108b93d1040f820fd" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="NX709J">
+      <File Name="DevprgProgrammer.elf" Size="1580132" Md5="163e19f530ac70332afa5eb7e789f818" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="NX709S">
+      <File Name="DevprgProgrammer.elf" Size="1567540" Md5="bb835f8de004798004dbf1ca76961da3" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="NX729J">
+      <File Name="DevprgProgrammer.elf" Size="1768340" Md5="7737ce106fc4f1c197ea72c249081de6" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="NX769J">
+      <File Name="DevprgProgrammer.elf" Size="1553396" Md5="327f6fc938335978de77805026115606" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="NX789J">
+      <File Name="DevprgProgrammer.melf" Size="1679780" Md5="2fadf36d48f8e040f16a8e91f7311006" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="P725A12">
+      <File Name="DevprgProgrammer" Size="679612" Md5="3489b5bd1c372379e12006bc3046630b" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="P768A02">
+      <File Name="DevprgProgrammer" Size="679612" Md5="3489b5bd1c372379e12006bc3046630b" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="P845A02">
+      <File Name="DevprgProgrammer" Size="683905" Md5="32ea873458e649bdfdc3510501a4199b" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="P855A01">
+      <File Name="DevprgProgrammer" Size="721000" Md5="f27f7ae8c42d4c37d21330de17ff1dcf" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="P855A23">
+      <File Name="DevprgProgrammer" Size="721000" Md5="f27f7ae8c42d4c37d21330de17ff1dcf" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="P865A02">
+      <File Name="DevprgProgrammer" Size="703296" Md5="63ad03e3d64e97501922c746824b1f6a" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="P870A01">
+      <File Name="DevprgProgrammer" Size="685520" Md5="3a30a45fb3e8e9b0d00e310c96a3e0c4" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="P875A02">
+      <File Name="DevprgProgrammer" Size="956040" Md5="016775b2863ae419cfe1fe533407fac3" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="PQ83A01">
+      <File Name="DevprgProgrammer" Size="1553396" Md5="327f6fc938335978de77805026115606" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="TP1803">
+      <File Name="DevprgProgrammer" Size="724720" Md5="e27edd0d4744ed86f54da714366dcd7d" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="ailsa_ii-ZTE_A2017">
+      <File Name="DevprgProgrammer" Size="442516" Md5="c80832806258547828159e98de863b78" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="努比亚A0_查询入网型号机型">
+      <File Name="中兴机型入网型号.md" Size="4686" Md5="ae1d901ffc82a1c889131224df10a882" Kinds="aux" />
+      <File Name="努比亚机型入网型号.md" Size="5883" Md5="6b3f5b2ed0b9055fb85abfc27d6fce21" Kinds="aux" />
+      <File Name="原版-努比亚机型入网型号对照表.csv" Size="2810" Md5="365e8a6db648d757460d29ce659d246e" Kinds="aux" />
+      <File Name="整理-努比亚机型入网型号对照表.csv" Size="1743" Md5="1aba06ae27a1e37c07d3b02d1b2424cb" Kinds="aux" />
+    </Model>
+  </Brand>
+  <Brand Name="华硕">
+    <Model Name="ROG1">
+      <File Name="DevprgProgrammer.elf" Size="680625" Md5="4f65068e139f9b6f80590542cb14a3b5" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="ROG2">
+      <File Name="DevprgProgrammer.elf" Size="716392" Md5="9522926d82599b9b7f76cbbb396c6c6b" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="ROG5_5S_5Pro_5SPro_5至尊版">
+      <File Name="DevprgProgrammer.elf" Size="943712" Md5="a509ea36d33de942f748ae596a3c7943" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="ZenFone7_ZS670KS">
+      <File Name="DevprgProgrammer.elf" Size="701888" Md5="74a0b48805600bb12d3799e6dabcafc5" Kinds="programmer,vip" />
+      <File Name="prog_firehose_ddr_lp4.elf" Size="678896" Md5="9512dedc02a4c8825810792b6c1608b4" Kinds="programmer,vip" />
+      <File Name="prog_firehose_ddr_lp5.elf" Size="702464" Md5="159af91737f3dbd158068cbe22b3dad0" Kinds="programmer,vip" />
+      <File Name="prog_firehose_lite_lp4.elf" Size="678800" Md5="73b7d3219454532caedb953444d47a5f" Kinds="programmer,vip" />
+      <File Name="prog_firehose_lite_lp5.elf" Size="702304" Md5="618d81a2bc9bcfdf7dd9692c696c9959" Kinds="programmer,vip" />
+    </Model>
+  </Brand>
+  <Brand Name="小米">
+    <Model Name="MSM8953_625">
+      <File Name="DevprgProgrammer1.mbn" Size="366320" Md5="e01c2925dbaf617d94e4eb839dd40986" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer2.elf" Size="399552" Md5="28274abe2210f13d9af799dc2a3331ea" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="MSM8976Plus_660">
+      <File Name="DevprgProgrammer.elf" Size="631072" Md5="3610f84cc5925032cac1630ab18295d1" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SDM439">
+      <File Name="DevprgProgrammer.elf" Size="459552" Md5="8881ad872f79fb36135b2b4709b0c220" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SDM632">
+      <File Name="DevprgProgrammer.elf" Size="445300" Md5="22cefbbe943c2d7ea2a94576f3eb70de" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SDM636">
+      <File Name="DevprgProgrammer.elf" Size="668912" Md5="3752e05553a9541ad2fc922151bfaca2" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SDM675">
+      <File Name="DevprgProgrammer.elf" Size="625180" Md5="8f9993f3981b13de49527bd0cae18593" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SDM680">
+      <File Name="DevprgProgrammer.elf" Size="681008" Md5="1e225942be0e23845338f28cbe1039ec" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SDM710">
+      <File Name="DevprgProgrammer_emmc.elf" Size="717884" Md5="ecd73a96cf3e27ca186a0a8d15bacee0" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer_ufs.elf" Size="722160" Md5="808f1bce2b8b4f45cb390b84b4a4bd6f" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SDM712">
+      <File Name="DevprgProgrammer.elf" Size="721384" Md5="9b1f58d244c000168b0c3a6ccd93b580" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SDM730">
+      <File Name="DevprgProgrammer.elf" Size="668108" Md5="bf5ac45e99fe9d9ed669825cc70d10b9" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SDM845">
+      <File Name="DevprgProgrammer.elf" Size="716369" Md5="3955ac8647f77621384cd64ef0b205da" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer1.elf" Size="717617" Md5="42819c773ef667db0d67affbdfc3b93b" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SM6125_665">
+      <File Name="DevprgProgrammer.elf" Size="629820" Md5="7396221b0d48ab45bee2f35ad3eb2505" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SM7325_778G">
+      <File Name="DevprgProgrammer.elf" Size="950464" Md5="860998f4b0fc68993ed75fcb25a97e78" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SM8150_855">
+      <File Name="DevprgProgrammer1.elf" Size="712928" Md5="0f1601b10ea3c49cd5d43d36e85ea75f" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer2.elf" Size="723840" Md5="edb780a5650e778eb19369284c00cb9a" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SM8250_865_870">
+      <File Name="DevprgProgrammer.elf" Size="695344" Md5="c950be4c42d1a80d6d5d540bd2ed3857" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SM8350_888_888Plus">
+      <File Name="DevprgProgrammer_ddr.elf" Size="906888" Md5="6d530825bcb4fb6d8b51db9bb318e6a3" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer_lite.elf" Size="910984" Md5="59c58cd0acc629d196add9f47b7b0d94" Kinds="programmer,vip" />
+    </Model>
+  </Brand>
+  <Brand Name="欧加">
+    <Model Name="SDM450">
+      <File Name="DevprgProgrammer.elf" Size="1048576" Md5="35e2729be7b8671878269b18edc13046" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SDM670_710_712">
+      <File Name="DevprgProgrammer1.elf" Size="693304" Md5="2c7452441dbc8f97ba6b7816a9db9f44" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer2.elf" Size="713324" Md5="2105cca48edba4d83e9ad37b2ec55b93" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SDM675_678_730_730G_732_765_765G_768G">
+      <File Name="DevprgProgrammer1.elf" Size="674440" Md5="a7ba4e75a819e12dbb0badccb608b6c2" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer2.elf" Size="695676" Md5="b77a9d4be29b313cd158f25aacf97960" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SDM845">
+      <File Name="DevprgProgrammer.elf" Size="717329" Md5="e9056dfb90a45eca62d2923dc275c799" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SM4250_460">
+      <File Name="DevprgProgrammer1.elf" Size="709612" Md5="5112b1997745f6a62bad94de487166ac" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer2.elf" Size="644316" Md5="7b5a77d200acd394de28111adee5c695" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer3.elf" Size="739184" Md5="b5cf64abe89f9986488ecd8006696f93" Kinds="programmer,vip" />
+      <File Name="Digest.elf" Size="25476" Md5="9db9a40b17b8c5bbfc8894ef4af47eed" Kinds="digest" />
+      <File Name="Sign.bin" Size="4096" Md5="749114ee5a543818b5294d024f48bd44" Kinds="sign" />
+    </Model>
+    <Model Name="SM4350_480">
+      <File Name="DevprgProgrammer.elf" Size="669296" Md5="fd8cb0ed358fe43fe4af791c260b85c5" Kinds="programmer,vip" />
+      <File Name="Digest.elf" Size="8144" Md5="73f8d54a8395840b8f2b658bc35bc627" Kinds="digest" />
+      <File Name="Sign.bin" Size="4096" Md5="6f75f33dba9027304bcba74b0d085258" Kinds="sign" />
+    </Model>
+    <Model Name="SM6115_662_6sGen1">
+      <File Name="DevprgProgrammer1.elf" Size="709612" Md5="5112b1997745f6a62bad94de487166ac" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer2.elf" Size="739184" Md5="b5cf64abe89f9986488ecd8006696f93" Kinds="programmer,vip" />
+      <File Name="Digest.elf" Size="25476" Md5="9db9a40b17b8c5bbfc8894ef4af47eed" Kinds="digest" />
+      <File Name="Sign.bin" Size="4096" Md5="749114ee5a543818b5294d024f48bd44" Kinds="sign" />
+    </Model>
+    <Model Name="SM6125_665">
+      <File Name="DevprgProgrammer.elf" Size="644316" Md5="7b5a77d200acd394de28111adee5c695" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SM6375_695_6sGen3">
+      <File Name="DevprgProgrammer1.elf" Size="720972" Md5="445d5c94e08a316e25d37c2b90f967b2" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer2.elf" Size="751316" Md5="57531914db31328a4b2306b3e277d2a0" Kinds="programmer,vip" />
+      <File Name="Digest.elf" Size="26248" Md5="2baa9be6d0edd0f474d26438ab4d4043" Kinds="digest" />
+      <File Name="Sign.bin" Size="4096" Md5="c27bd84fe1acf0d77216496c979e8476" Kinds="sign" />
+    </Model>
+    <Model Name="SM6450_6Gen1">
+      <File Name="DevprgProgrammer.melf" Size="1731476" Md5="76dab434df48f6263b662bea2fc93205" Kinds="programmer,vip" />
+      <File Name="Digest.elf" Size="28472" Md5="057ae52cf2fb9cd679f30680392a89e9" Kinds="digest" />
+      <File Name="Sign.bin" Size="4096" Md5="199a2da965a30c9a36e02a94c9bbbabe" Kinds="sign" />
+    </Model>
+    <Model Name="SM7225_750G">
+      <File Name="DevprgProgrammer.elf" Size="674440" Md5="a7ba4e75a819e12dbb0badccb608b6c2" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SM7325_778G">
+      <File Name="DevprgProgrammer.elf" Size="974192" Md5="38e9f6193c86ed71aa3187f7bffff074" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SM7435_7sGen2">
+      <File Name="DevprgProgrammer.melf" Size="1731476" Md5="76dab434df48f6263b662bea2fc93205" Kinds="programmer,vip" />
+      <File Name="Digest.elf" Size="28472" Md5="057ae52cf2fb9cd679f30680392a89e9" Kinds="digest" />
+      <File Name="Sign.bin" Size="4096" Md5="199a2da965a30c9a36e02a94c9bbbabe" Kinds="sign" />
+    </Model>
+    <Model Name="SM7475_7+Gen2">
+      <File Name="DevprgProgrammer.melf" Size="1547012" Md5="60e63e619e49b7eb8665e440319ad714" Kinds="programmer,vip" />
+      <File Name="Digest.elf" Size="28472" Md5="103d07fa629a7a4c9079806e44f44500" Kinds="digest" />
+      <File Name="Sign.bin" Size="4096" Md5="1bdbfe5c0b0a85caf9f5cd7774ab1054" Kinds="sign" />
+    </Model>
+    <Model Name="SM7550_7Gen3">
+      <File Name="DevprgProgrammer.melf" Size="1579036" Md5="c1089cd41ffac1d837fd916f514d9fac" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SM7675_7+Gen3">
+      <File Name="DevprgProgrammer.melf" Size="1545892" Md5="d7e2fa06094f55f35161076bb45fe222" Kinds="programmer,vip" />
+      <File Name="Digest.elf" Size="29048" Md5="d203c707fcee2aaa36b516e228e17b01" Kinds="digest" />
+      <File Name="Sign.bin" Size="4096" Md5="7b8bb145fcd1da433e07f4105ba88714" Kinds="sign" />
+    </Model>
+    <Model Name="SM8150_855">
+      <File Name="DevprgProgrammer1.elf" Size="771792" Md5="8cb50315545e989c49030ec1f2651461" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer2.elf" Size="719832" Md5="c4f0b7fecd519199d6145c0d18b5c0b5" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SM8250_865_870">
+      <File Name="DevprgProgrammer1.elf" Size="720672" Md5="0136270520f165d0284e5e06ce9087dc" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer2.elf" Size="697280" Md5="6a8ef0f358baeee1a66aeeae5d173c32" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer3.elf" Size="746400" Md5="a280262e906aaca5b03334dfc3b3c980" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="SM8350_888_888Plus">
+      <File Name="DevprgProgrammer1.elf" Size="947952" Md5="bd1aab3a4934332afcecb60dfbed154c" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer2.elf" Size="976512" Md5="9af070ec9a173b06ee5273327ef53721" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer3.elf" Size="979748" Md5="982c5261e239350d1fcbb0046391e92c" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer4.elf" Size="976504" Md5="8ab0edb5396e5786c7add2423df0a534" Kinds="programmer,vip" />
+      <File Name="Digest.elf" Size="27700" Md5="e2e16c9cde5e17337754591c0c1c95aa" Kinds="digest" />
+      <File Name="Sign.bin" Size="4096" Md5="bff391bd71582da4940ad8c0d57adc18" Kinds="sign" />
+    </Model>
+    <Model Name="SM8450_8Gen1">
+      <File Name="DevprgProgrammer1.melf" Size="1586760" Md5="a365bd54f838fe0c41c988b19911f612" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer2.melf" Size="1578140" Md5="a815a397d5aec664b2d124d1cda6b0ee" Kinds="programmer,vip" />
+      <File Name="Digest.elf" Size="27992" Md5="f7fefedb62fa06e24c44eff73f472f34" Kinds="digest" />
+      <File Name="Sign.bin" Size="4096" Md5="32d9d68e8f416a0707aa4d850dc3ef47" Kinds="sign" />
+    </Model>
+    <Model Name="SM8475_8+Gen1Plus">
+      <File Name="DevprgProgrammer.melf" Size="1546052" Md5="69013c7e4efc7303fcce8488cedb2a37" Kinds="programmer,vip" />
+      <File Name="Digest.elf" Size="27992" Md5="b51819dd2764a6e6558999f37361a623" Kinds="digest" />
+      <File Name="Sign.bin" Size="4096" Md5="632d07b75e75817b5df543bbd617b3d3" Kinds="sign" />
+    </Model>
+    <Model Name="SM8550_8Gen2_8+Gen2">
+      <File Name="DevprgProgrammer1.melf" Size="1633124" Md5="4c79c7663013ff1439f8a61905a22f42" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer2.melf" Size="1633124" Md5="4d2f867fe0fd29af944286d80882b06c" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer3.melf" Size="1665692" Md5="01bfc32d34b3a63895a731f6cd331b82" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer4.melf" Size="1719140" Md5="29e9f461797b360bb3389b4cb3597ed8" Kinds="programmer,vip" />
+      <File Name="Digest.elf" Size="28472" Md5="e25033671f6f0943e58f05c011d121f8" Kinds="digest" />
+      <File Name="Digest2_DevprgProgrammer4.elf" Size="28472" Md5="06b4f5cd51e0b5871a035ef623cf411e" Kinds="digest" />
+      <File Name="Sign.bin" Size="4096" Md5="7967ff467e3eb1e19a0d1df74c165719" Kinds="sign" />
+      <File Name="Sign2_DevprgProgrammer4.bin" Size="4096" Md5="aa1bad20b013ed8a63ae5e238330337d" Kinds="sign" />
+    </Model>
+    <Model Name="SM8650_8Gen3">
+      <File Name="DevprgProgrammer1.melf" Size="1549988" Md5="65aa1d015782b16e39d47bd1f4d58e11" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer2.melf" Size="1587228" Md5="582d5ce3dd8d76d6c64b3a75c814f326" Kinds="programmer,vip" />
+      <File Name="Digest.elf" Size="33144" Md5="05b9eb4448ba68271c169004def8f50c" Kinds="digest" />
+      <File Name="Sign.bin" Size="4096" Md5="99ef55f68236bc3f336764f901f67c15" Kinds="sign" />
+    </Model>
+    <Model Name="SM8735_8sGen4">
+      <File Name="8sGen4引导发送失败时尝试更换8Elite的Digest.txt" Size="60" Md5="4fdc8ccad76c92cc7d60bd8dbe553435" Kinds="aux" />
+      <File Name="DevprgProgrammer1.elf" Size="1610496" Md5="df9b17c3fa5f72a1c8c0361f33daffec" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer2.melf" Size="1644240" Md5="daeae549c78b2740d2f5e26840187a38" Kinds="programmer,vip" />
+      <File Name="Digest.elf" Size="29648" Md5="b99725d35e8c5bad2e09fdbd8151de43" Kinds="digest" />
+      <File Name="Digest_SM8750_8Elite.elf" Size="33244" Md5="b845d62428896c14d992f52ec50e23f6" Kinds="digest" />
+      <File Name="Sign.bin" Size="4096" Md5="0a7f3cde4845ccfb54fb8e6f2b9cc25d" Kinds="sign" />
+    </Model>
+    <Model Name="SM8750_8Elite">
+      <File Name="DevprgProgrammer1.melf" Size="1657624" Md5="a5ebe11870dab04ef233b7bee544c347" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer2.melf" Size="1694964" Md5="a26676d3cc46908f2d5821397b733fbe" Kinds="programmer,vip" />
+      <File Name="Digest.elf" Size="33244" Md5="b845d62428896c14d992f52ec50e23f6" Kinds="digest" />
+      <File Name="Sign.bin" Size="4096" Md5="0a7f3cde4845ccfb54fb8e6f2b9cc25d" Kinds="sign" />
+    </Model>
+  </Brand>
+  <Brand Name="联想">
+    <Model Name="K30-T">
+      <File Name="DevprgProgrammer.mbn" Size="93148" Md5="0f5231076c329f1c32394c178d04e4fd" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="L38012">
+      <File Name="DevprgProgrammer.mbn" Size="376764" Md5="84528299e5857741f662a5d4af153290" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="L38111">
+      <File Name="DevprgProgrammer.elf" Size="713324" Md5="149a7fe1ed2fe0a892bf852b75fe3f55" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="L70081">
+      <File Name="DevprgProgrammer.elf" Size="910984" Md5="f724cb64bcce99ec2ef8db94b82583bf" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="L71061">
+      <File Name="DevprgProgrammer1.melf" Size="1538524" Md5="7266809bf727b7185b4c2912bb07f9c0" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer2.melf" Size="1539964" Md5="c5096fa4d39244f638afd9d0824d6e14" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="L71091">
+      <File Name="DevprgProgrammer.melf" Size="1525572" Md5="1b4d5a89e543aee0b57c7b436ec93e33" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="L79031">
+      <File Name="DevprgProgrammer.elf" Size="703296" Md5="8ca7e43dda30dd4a73b84352d3f3ab1d" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="TB-9707F">
+      <File Name="DevprgProgrammer.elf" Size="712320" Md5="e511f69252fd0e1841c1fb43663bd1a8" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="TB-J606F">
+      <File Name="DevprgProgrammer.elf" Size="637020" Md5="600188c576e43e824aca4f1fef9d3b37" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="TB-J607F">
+      <File Name="DevprgProgrammer.elf" Size="763632" Md5="c1eaa19fc9edea43992939f5ff82a48a" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="TB-J607Z">
+      <File Name="DevprgProgrammer.elf" Size="763632" Md5="d6e3a15bfb486b30852a846add30be3b" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="TB-J706F">
+      <File Name="DevprgProgrammer.elf" Size="680044" Md5="6cfa40a629bfbcbc7bcf3127c52b75e5" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="TB-J716F">
+      <File Name="DevprgProgrammer1.elf" Size="711648" Md5="2b8ace56f9a604030a12356086e6e44f" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer2.elf" Size="711648" Md5="a03e3d5d77f94befe8eb524e7f437afa" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="TB-Q706F">
+      <File Name="DevprgProgrammer1.elf" Size="707520" Md5="3c9d6cee3ca879ff094cc129c60b661d" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer2.elf" Size="709504" Md5="da600b3a190f4ee87a09cfe332e3f6df" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="TB-X605F">
+      <File Name="DevprgProgrammer.mbn" Size="375132" Md5="89651efc36a6e37721634b6c1c7faa69" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="TB-X605M">
+      <File Name="DevprgProgrammer.mbn" Size="376784" Md5="749b03492895701722600e7a123ef258" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="TB128FU">
+      <File Name="DevprgProgrammer1.elf" Size="660736" Md5="12ef23c3e4de56a82346be7e912a72d6" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer2.elf" Size="659136" Md5="2451ffdc7e67c383e01d46e5f70ec867" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="TB138FC">
+      <File Name="DevprgProgrammer.elf" Size="709656" Md5="c274e3c3fdc18ca4a46c6279fd7c52e9" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="TB320FC">
+      <File Name="DevprgProgrammer.melf" Size="1538820" Md5="8afa8df099b0c087d058fdc4e5315653" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="TB321FC_TB321FU">
+      <File Name="DevprgProgrammer.melf" Size="1564932" Md5="e1506f23cae81b6e1fa07b69faa87825" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="TB322FC_TB322FU">
+      <File Name="DevprgProgrammer.melf" Size="1697740" Md5="f7cf7aa55b2486febb2beb62e282a348" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="TB331FC">
+      <File Name="DevprgProgrammer.elf" Size="670608" Md5="0bfba38d8102558f0e71fb3679a44683" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer2.elf" Size="669872" Md5="61754a0a5e0ec9ba83f74e9fef77b790" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="TB352FC_TB352FU">
+      <File Name="DevprgProgrammer1.elf" Size="672432" Md5="62dfd02971b363f9e6f66f2be4c1eace" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer2.elf" Size="672944" Md5="b1812888e597a5fc2a259fdff66799f5" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="TB352XC_TB352XU">
+      <File Name="DevprgProgrammer1.elf" Size="672048" Md5="24ad7d4e183f27f602274781e22c26bb" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer2.elf" Size="673136" Md5="c032886c44185611184dd5b4348d13a8" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="TB371FC">
+      <File Name="DevprgProgrammer.elf" Size="709576" Md5="c7a9db2a5c764ab0cefe709fe12ca428" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="TB520FU">
+      <File Name="DevprgProgrammer1.melf" Size="1564932" Md5="708881618c5542f539ed235b79d19c68" Kinds="programmer,vip" />
+      <File Name="DevprgProgrammer2.melf" Size="1564932" Md5="7c39d528064a99cdc66c3c092e7bea69" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="TB710FU">
+      <File Name="DevprgProgrammer.melf" Size="1573224" Md5="28fc04cb66068b38912f3a3a628e7c78" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="Z2121">
+      <File Name="DevprgProgrammer.elf" Size="481308" Md5="e0c3bb4c194eefd80c5b441898566598" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="Z2131">
+      <File Name="DevprgProgrammer.elf" Size="481372" Md5="d1708615f82e9fd06401e08bd0caa832" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="Z2151">
+      <File Name="DevprgProgrammer.elf" Size="456340" Md5="f06f1e73500c01c17ced1281f16cf3b0" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="y700五代">
+      <Sub Name="V1">
+        <File Name="multi_image.mbn" Size="12088" Md5="33ae27a654b21b777879341734c2716a" Kinds="programmer" />
+        <File Name="multi_image_qti.mbn" Size="12088" Md5="8341ef53bc7a246c98d79145a1e7ca69" Kinds="programmer" />
+        <File Name="prog_firehose_ddr.elf" Size="315384" Md5="da92c82d9c758b8ba3e813e1d62ad039" Kinds="programmer,vip" />
+        <File Name="qsahara_device_programmer.xml" Size="564" Md5="8952702d7c2119e715f700eab265fb13" Kinds="xml" />
+        <File Name="sequencer_ram.elf" Size="4864" Md5="3b8db6d2ee9e9af082ecfcfe9c8f130d" Kinds="programmer" />
+        <File Name="signed_firmware_soc_view.elf" Size="203840" Md5="d6968fe03e4b79eeac98d7ea45b80f3a" Kinds="sign" />
+        <File Name="tme_config.elf" Size="43760" Md5="aa98a37a43fafff98182572ab9716292" Kinds="programmer" />
+        <File Name="xbl_config_devprg.elf" Size="180928" Md5="1e737903b0fe61594852e481bc1f9556" Kinds="programmer,vip" />
+        <File Name="xbl_sc.elf" Size="1174496" Md5="b1f7671a94cf8077f63395e007e2863a" Kinds="programmer,vip" />
+      </Sub>
+      <Sub Name="V2">
+        <File Name="multi_image.mbn" Size="12088" Md5="05dca047b61597c859f4df41ae4bdaf2" Kinds="programmer" />
+        <File Name="multi_image_qti.mbn" Size="12088" Md5="8341ef53bc7a246c98d79145a1e7ca69" Kinds="programmer" />
+        <File Name="prog_firehose_ddr.elf" Size="315384" Md5="2e43201ba65bdffca47146792441035d" Kinds="programmer,vip" />
+        <File Name="qsahara_device_programmer.xml" Size="564" Md5="8952702d7c2119e715f700eab265fb13" Kinds="xml" />
+        <File Name="sequencer_ram.elf" Size="4864" Md5="3b8db6d2ee9e9af082ecfcfe9c8f130d" Kinds="programmer" />
+        <File Name="signed_firmware_soc_view.elf" Size="203840" Md5="d6f9d0ce4bcfed84dd1e4cc62896c48f" Kinds="sign" />
+        <File Name="tme_config.elf" Size="43760" Md5="ac97116caf310d2abee2546a352926a5" Kinds="programmer" />
+        <File Name="xbl_config_devprg.elf" Size="180928" Md5="fa6ff70fca69d5f1935b34244c968760" Kinds="programmer,vip" />
+        <File Name="xbl_sc.elf" Size="1174496" Md5="86c219cac3163a961d9b57cb2a8f261b" Kinds="programmer,vip" />
+      </Sub>
+    </Model>
+  </Brand>
+  <Brand Name="魅族">
+    <Model Name="魅族15">
+      <File Name="DevprgProgrammer.elf" Size="633280" Md5="b2e0627faa67d84d4f91509f937651c2" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="魅族16T">
+      <File Name="DevprgProgrammer.elf" Size="723344" Md5="2a1ef9dfd7e08b0d2497d5d0dc3c598b" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="魅族16X">
+      <File Name="DevprgProgrammer.elf" Size="718500" Md5="31f7fef4839e0a16ddf86d8bdd12065c" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="魅族16XS">
+      <File Name="DevprgProgrammer.elf" Size="651108" Md5="f2cff473970d236273183970242a1c45" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="魅族16s">
+      <File Name="DevprgProgrammer.elf" Size="723904" Md5="404db322030acb36ccfafe831c81f998" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="魅族16sPro">
+      <File Name="DevprgProgrammer.elf" Size="723904" Md5="404db322030acb36ccfafe831c81f998" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="魅族16th">
+      <File Name="DevprgProgrammer.elf" Size="684001" Md5="5d5068995ffa1388fa775a1c85600625" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="魅族16thPlus">
+      <File Name="DevprgProgrammer.elf" Size="684001" Md5="5d5068995ffa1388fa775a1c85600625" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="魅族17">
+      <File Name="DevprgProgrammer.elf" Size="684528" Md5="e9a35ccdebbd4bd8194da8123d8aa0f5" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="魅族17Pro">
+      <File Name="DevprgProgrammer.elf" Size="708288" Md5="4e9372fc9079833859e57e38ea0a910f" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="魅族18">
+      <File Name="DevprgProgrammer.elf" Size="960120" Md5="a7bbfb945435b58e64988a3ae26c06d0" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="魅族18Pro">
+      <File Name="DevprgProgrammer.elf" Size="960120" Md5="1625b393304f25ef80e2136f69670bb5" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="魅族18S">
+      <File Name="DevprgProgrammer.elf" Size="910984" Md5="34b231913dfbb81e68fa6fa5c9f144e9" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="魅族18SPro">
+      <File Name="DevprgProgrammer.elf" Size="915080" Md5="dad1ccac49c6f0ee27fdce89a264d1bb" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="魅族18X">
+      <File Name="DevprgProgrammer.elf" Size="681400" Md5="d18600c032595a5e868cdbc6446fa545" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="魅族20Pro">
+      <File Name="DevprgProgrammer.melf" Size="1710948" Md5="0be901bf6f357e1e0f0df2d17e8865a0" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="魅族20_20Classic">
+      <File Name="DevprgProgrammer.melf" Size="1710948" Md5="0be901bf6f357e1e0f0df2d17e8865a0" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="魅族21">
+      <File Name="DevprgProgrammer.melf" Size="1545204" Md5="b9e3789a400276c5708038b3dadfe718" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="魅族21Note">
+      <File Name="DevprgProgrammer.melf" Size="1629028" Md5="317c97ba77f59debfc135bf2545e7289" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="魅族21Pro">
+      <File Name="DevprgProgrammer.melf" Size="1549300" Md5="efc54aab228071e83a9120cd05bec27e" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="魅族Lucky08">
+      <File Name="DevprgProgrammer.melf" Size="1727380" Md5="b6626e10ff82bce8dfab034873b6f945" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="魅族M15">
+      <File Name="DevprgProgrammer.elf" Size="388564" Md5="a0e1d969acfaa4c75a9b9d767ee135c0" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="魅族Note16Pro">
+      <File Name="DevprgProgrammer.melf" Size="1760208" Md5="f3295bb283233a396b04acf3f25baa2a" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="魅族Note8">
+      <File Name="DevprgProgrammer.mbn" Size="441188" Md5="ad88363e0856e8ea049ec6272ea71cbb" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="魅族Note9">
+      <File Name="DevprgProgrammer.elf" Size="631220" Md5="e750a4419927236b5835a14e75eb95c9" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="魅族X8">
+      <File Name="DevprgProgrammer.elf" Size="712484" Md5="930f02a9570eb9b67b6f35a84ee63b8c" Kinds="programmer,vip" />
+    </Model>
+  </Brand>
+  <Brand Name="黑鲨">
+    <Model Name="黑鲨1">
+      <File Name="DevprgProgrammer.elf" Size="682193" Md5="e36db1bb802c8fd811f2e4f8360a684a" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="黑鲨2">
+      <File Name="DevprgProgrammer.elf" Size="711840" Md5="b2fa25e428b3a7f6d8688b943813d93a" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="黑鲨2Pro">
+      <File Name="DevprgProgrammer.elf" Size="722224" Md5="36f80499b9d3ae85f42d452a035ad735" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="黑鲨3">
+      <Sub Name="12G运存">
+        <File Name="DevprgProgrammer.elf" Size="706160" Md5="56d217b5b268d64e48db9c2ee5a069a8" Kinds="programmer,vip" />
+      </Sub>
+      <Sub Name="8G运存">
+        <File Name="DevprgProgrammer.elf" Size="682800" Md5="dc9d917846fc1e08604fce3df00f75c5" Kinds="programmer,vip" />
+      </Sub>
+    </Model>
+    <Model Name="黑鲨3Pro">
+      <Sub Name="12G运存">
+        <File Name="DevprgProgrammer.elf" Size="706096" Md5="2d239ececfe49b709cafe522a9d40416" Kinds="programmer,vip" />
+      </Sub>
+      <Sub Name="8G运存">
+        <File Name="DevprgProgrammer.elf" Size="682800" Md5="dc9d917846fc1e08604fce3df00f75c5" Kinds="programmer,vip" />
+      </Sub>
+    </Model>
+    <Model Name="黑鲨3S">
+      <File Name="DevprgProgrammer.elf" Size="706096" Md5="2d239ececfe49b709cafe522a9d40416" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="黑鲨4Pro_SPro">
+      <File Name="DevprgProgrammer.elf" Size="964232" Md5="c4c45da98e73b0f686659d8cdbd92070" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="黑鲨4_4S">
+      <File Name="DevprgProgrammer.elf" Size="741712" Md5="eb3168a7dfca0f123e41dc395a88034a" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="黑鲨5">
+      <File Name="DevprgProgrammer.elf" Size="711504" Md5="98c479fb22b8ab020fb155bdfd4cdc07" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="黑鲨5Pro">
+      <File Name="DevprgProgrammer.melf" Size="1583628" Md5="dfb929448f9eca4a49947c3de3f7c7d8" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="黑鲨5RS">
+      <File Name="DevprgProgrammer.elf" Size="964232" Md5="605b04ef8dfb721944fbefffac3fadf6" Kinds="programmer,vip" />
+    </Model>
+    <Model Name="黑鲨Helo">
+      <File Name="DevprgProgrammer.elf" Size="682705" Md5="af9dae9f3b9a671c82ed3bec1a7b5e56" Kinds="programmer,vip" />
+    </Model>
+  </Brand>
+</MoFlashLoaderPacket>
