@@ -17,9 +17,12 @@ jobs:
   build:
     name: Build Debug APK
     runs-on: ubuntu-latest
-    # 关键权限：读写 contents 以便后续可自动打 tag / 上传 release（按需）
     permissions:
       contents: read
+
+    env:
+      # 所有步骤共享的 Android SDK 路径（手动安装到工作区）
+      ANDROID_HOME: ${{ github.workspace }}/android-sdk
 
     steps:
       - name: Checkout
@@ -32,18 +35,26 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # 2) 安装 Android SDK 命令行工具（自动接受 license 由下一步处理）
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      # 3) 接受 license 并安装所需 SDK 包
-      #    - platform-tools      : adb/设备工具
-      #    - platforms;android-37: compileSdk 37 所需平台
-      #    - build-tools;37.0.0  : AGP 打包依赖
-      - name: Install Android SDK packages
+      # 2) 手动安装 Android SDK 命令行工具（规避旧版 setup-android 会执行
+      #    已废弃的 `sdkmanager tools` 导致失败的问题）
+      - name: Setup Android SDK (manual)
         run: |
-          yes | sdkmanager --licenses
+          SDK="$ANDROID_HOME"
+          mkdir -p "$SDK/cmdline-tools"
+          echo "Downloading command-line tools..."
+          curl -fsSL -o /tmp/cmdtools.zip \
+            https://dl.google.com/android/repository/commandlinetools-linux-16111833_latest.zip
+          unzip -q /tmp/cmdtools.zip -d "$SDK/cmdline-tools"
+          mv "$SDK/cmdline-tools/cmdline-tools" "$SDK/cmdline-tools/latest"
+          export PATH="$PATH:$SDK/cmdline-tools/latest/bin"
+          echo "Accepting SDK licenses..."
+          yes | sdkmanager --licenses >/dev/null
+          echo "Installing SDK packages..."
           sdkmanager "platform-tools" "platforms;android-37" "build-tools;37.0.0"
+
+      # 3) 让 Gradle 能定位 SDK（双重保险：env + local.properties）
+      - name: Configure local.properties
+        run: echo "sdk.dir=$ANDROID_HOME" > local.properties
 
       # 4) gradlew 可执行权限（Windows 上行尾可能导致丢失）
       - name: Grant execute permission for gradlew
