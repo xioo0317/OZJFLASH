@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">OZJFLASH</string>
+
+    <string name="terminal">终端</string>
+    <string name="flash">刷写</string>
+    <string name="tools">工具箱</string>
+    <string name="settings">设置</string>
+    <string name="about">关于</string>
+    <string name="cancel">取消</string>
+    <string name="confirm">确定</string>
+    <string name="ok">好</string>
+    <string name="processing">处理中…</string>
+    <string name="nav_rail_expand">展开侧边导航</string>
+    <string name="nav_rail_collapse">收起侧边导航</string>
+
+    <string name="terminal_running">shell 运行中</string>
+    <string name="terminal_stopped">shell 已退出</string>
+
+    <string name="flash_hint">所有 fastboot / adb 命令都在内置终端里执行，PATH 已注入随包释放的工具，无需 root；但设备必须处于 bootloader / fastbootd 模式并用 USB 连接。</string>
+    <string name="flash_partition_label">分区</string>
+    <string name="flash_image_label">镜像路径</string>
+    <string name="flash_image_hint">内置 shell 可见的路径，例如 /sdcard/boot.img</string>
+    <string name="flash_terminal_ready">终端已就绪，命令将在其中执行</string>
+    <string name="flash_terminal_stopped">终端未运行</string>
+
+    <string name="tools_ready">内置工具齐备</string>
+    <string name="tools_missing">部分工具缺失</string>
+    <string name="tools_present">个工具已释放</string>
+    <string name="tools_run_check">运行自检脚本</string>
+
+    <string name="settings_ui_mode">界面主体</string>
+    <string name="settings_ui_mode_miuix">Miuix</string>
+    <string name="settings_ui_mode_material">Material Expressive</string>
+    <string name="settings_theme">主题</string>
+    <string name="settings_theme_system">跟随系统</string>
+    <string name="settings_theme_light">浅色</string>
+    <string name="settings_theme_dark">深色</string>
+    <string name="settings_theme_monet_system">动态色（跟随系统）</string>
+    <string name="settings_theme_monet_light">动态色浅色</string>
+    <string name="settings_theme_monet_dark">动态色深色</string>
+    <string name="settings_theme_amoled">纯黑深色</string>
+    <string name="settings_miuix_monet">Miuix 动态取色</string>
+    <string name="settings_miuix_monet_summary">让 Miuix 主题跟随系统壁纸生成配色</string>
+    <string name="settings_color">主题色</string>
+    <string name="settings_color_dynamic">系统</string>
+    <string name="settings_color_green">绿</string>
+    <string name="settings_color_blue">蓝</string>
+    <string name="settings_color_purple">紫</string>
+    <string name="settings_color_red">红</string>
+    <string name="settings_color_orange">橙</string>
+    <string name="settings_color_custom">自定义</string>
+    <string name="settings_page_scale">界面缩放</string>
+    <string name="settings_others">其它</string>
+    <string name="settings_enable_blur">背景模糊</string>
+    <string name="settings_enable_blur_summary">为顶栏、底栏与弹窗启用渲染模糊</string>
+    <string name="settings_enable_floating_bottom_bar">悬浮底栏</string>
+    <string name="settings_enable_floating_bottom_bar_summary">用悬浮胶囊条替代贴底导航栏</string>
+    <string name="settings_enable_floating_bottom_bar_blur">悬浮底栏模糊</string>
+    <string name="settings_enable_floating_bottom_bar_blur_summary">对悬浮底栏背景做模糊处理</string>
+    <string name="settings_terminal_pty">真 PTY 终端</string>
+    <string name="settings_terminal_pty_summary">改用随包的 libtermux.so 伪终端，而非管道 shell</string>
+
+    <string name="about_app_name_title">OZJFLASH</string>
+    <string name="about_app_name_value">基于 Compose 的工具集合：内置终端 + 免 root 刷写流程。随包的 adb、fastboot、bash、mke2fs、make_f2fs、payload-dumper-go 等可执行文件会在首次启动时释放到私有目录，并注入终端 PATH。</string>
+    <string name="about_ui_title">双 UI 主体</string>
+    <string name="about_ui_value">同时内置 Miuix（小米风格）与 Material 3 Expressive 两套界面主体，可在「设置 → 界面主体」中随时切换；页面、导航栏与弹窗都会以当前主体的原生组件渲染。</string>
+    <string name="about_tools_title">来源说明</string>
+    <string name="about_tools_value">界面框架移植自 KernelSU Manager（已移除 root / 模块 / HTTP / JNI 相关代码），刷写可执行文件来自公开的平台工具构建。本应用不申请也不使用 root 权限。</string>
+    <string name="about_disclaimer_title">免责声明</string>
+    <string name="about_disclaimer_value">刷写、解锁 bootloader 与改写分区可能导致设备变砖、保修失效。请仅用于自有设备的合法维修、学习与研究，因使用本工具造成的一切后果由使用者自行承担。</string>
+</resources>

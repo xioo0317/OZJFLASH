@@ -1,3 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">OZJFLASH</string>
+
+    <!-- 底栏与通用 -->
+    <string name="terminal">Terminal</string>
+    <string name="flash">Flash</string>
+    <string name="tools">Toolbox</string>
+    <string name="settings">Settings</string>
+    <string name="about">About</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="ok">OK</string>
+    <string name="processing">Processing…</string>
+    <string name="nav_rail_expand">Expand navigation rail</string>
+    <string name="nav_rail_collapse">Collapse navigation rail</string>
+
+    <!-- 终端 -->
+    <string name="terminal_running">shell running</string>
+    <string name="terminal_stopped">shell exited</string>
+
+    <!-- 刷写 -->
+    <string name="flash_hint">Fastboot commands run through the built-in terminal with bundled adb / fastboot injected into PATH. No root required, but the device must be in bootloader / fastbootd mode and attached over USB.</string>
+    <string name="flash_partition_label">Partition</string>
+    <string name="flash_image_label">Image path</string>
+    <string name="flash_image_hint">Path visible to the built-in shell, e.g. /sdcard/boot.img</string>
+    <string name="flash_terminal_ready">Terminal ready — commands execute there</string>
+    <string name="flash_terminal_stopped">Terminal not running</string>
+
+    <!-- 工具箱 -->
+    <string name="tools_ready">All built-in tools present</string>
+    <string name="tools_missing">Some tools are missing</string>
+    <string name="tools_present">tools extracted</string>
+    <string name="tools_run_check">Run check script</string>
+
+    <!-- 设置 -->
+    <string name="settings_ui_mode">Interface style</string>
+    <string name="settings_ui_mode_miuix">Miuix</string>
+    <string name="settings_ui_mode_material">Material Expressive</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_system">Follow system</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_theme_monet_system">Monet (system)</string>
+    <string name="settings_theme_monet_light">Monet light</string>
+    <string name="settings_theme_monet_dark">Monet dark</string>
+    <string name="settings_theme_amoled">AMOLED dark</string>
+    <string name="settings_miuix_monet">Miuix dynamic color</string>
+    <string name="settings_miuix_monet_summary">Let Miuix follow the system wallpaper palette</string>
+    <string name="settings_color">Accent color</string>
+    <string name="settings_color_dynamic">System</string>
+    <string name="settings_color_green">Green</string>
+    <string name="settings_color_blue">Blue</string>
+    <string name="settings_color_purple">Purple</string>
+    <string name="settings_color_red">Red</string>
+    <string name="settings_color_orange">Orange</string>
+    <string name="settings_color_custom">Custom</string>
+    <string name="settings_page_scale">Page scale</string>
+    <string name="settings_others">Other</string>
+    <string name="settings_enable_blur">Blur background</string>
+    <string name="settings_enable_blur_summary">Render effect based blur behind bars and dialogs</string>
+    <string name="settings_enable_floating_bottom_bar">Floating bottom bar</string>
+    <string name="settings_enable_floating_bottom_bar_summary">Replace the dock with a floating pill bar</string>
+    <string name="settings_enable_floating_bottom_bar_blur">Blur floating bar</string>
+    <string name="settings_enable_floating_bottom_bar_blur_summary">Blur the backdrop behind the floating bar</string>
+    <string name="settings_terminal_pty">True PTY terminal</string>
+    <string name="settings_terminal_pty_summary">Use the bundled libtermux.so pseudo terminal instead of a piped shell</string>
+
+    <!-- 关于 -->
+    <string name="about_app_name_title">OZJFLASH</string>
+    <string name="about_app_name_value">A Compose based tool set with a built-in terminal and a rootless flashing workflow. Bundled binaries (adb, fastboot, bash, mke2fs, make_f2fs, payload-dumper-go and more) are unpacked into private storage and injected into the terminal PATH.</string>
+    <string name="about_ui_title">Dual UI hosts</string>
+    <string name="about_ui_value">Both interface hosts ship together: Miuix (MIUI style) and Material 3 Expressive. Switch between them in Settings → Interface style; all pages, bars and dialogs render natively in whichever host is active.</string>
+    <string name="about_tools_title">Sources</string>
+    <string name="about_tools_value">UI shell derived from KernelSU Manager (root / module / HTTP / JNI code removed); flashing binaries come from public platform tool builds. This app never requests or uses root.</string>
+    <string name="about_disclaimer_title">Disclaimer</string>
+    <string name="about_disclaimer_value">Flashing, unlocking bootloaders and modifying partitions can brick a device and void its warranty. Only use it on your own hardware for lawful repair, study and research. You take full responsibility for everything you do with this tool.</string>
 </resources>
