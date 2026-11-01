@@ -87,7 +87,7 @@ fun FlashMiuix(
                         text = action.label,
                         onClick = { console.submit(action.command) },
                         modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.textButtonPrimaryColors()
+                        colors = ButtonDefaults.textButtonColorsPrimary()
                     )
                 }
             }

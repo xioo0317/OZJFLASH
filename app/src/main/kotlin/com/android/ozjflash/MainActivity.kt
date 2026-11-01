@@ -39,6 +39,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.ozjflash.flash.NativeLibs
 import com.android.ozjflash.terminal.TerminalEngine
+import com.android.ozjflash.ui.LocalMainPagerState
 import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.component.bottombar.BottomBar
@@ -77,10 +78,6 @@ import top.yukonga.miuix.kmp.utils.PagerNavigationSpringSpec
 
 /** 主界面分页数量：终端 / 刷写 / 工具箱 / 设置 */
 private const val MAIN_PAGE_COUNT = 4
-
-val LocalMainPagerState = staticCompositionLocalOf<MainPagerState> {
-    error("LocalMainPagerState not provided")
-}
 
 class MainActivity : ComponentActivity() {
 

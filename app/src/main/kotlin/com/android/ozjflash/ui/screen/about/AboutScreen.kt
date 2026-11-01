@@ -1,5 +1,7 @@
 package com.android.ozjflash.ui.screen.about
 
+import top.yukonga.miuix.kmp.icon.extended.Back
+import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

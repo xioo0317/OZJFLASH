@@ -78,12 +78,8 @@ fun TerminalPager(
     bottomInnerPadding: Dp,
     isCurrentPage: Boolean,
 ) {
-    Column(
-        modifier = androidx.compose.ui.Modifier.fillMaxSize()
-    ) {
-        when (LocalUiMode.current) {
-            UiMode.Miuix -> TerminalMiuix(console, bottomInnerPadding, isCurrentPage)
-            UiMode.Material -> TerminalMaterial(console, bottomInnerPadding, isCurrentPage)
-        }
+    when (LocalUiMode.current) {
+        UiMode.Miuix -> TerminalMiuix(console, bottomInnerPadding, isCurrentPage)
+        UiMode.Material -> TerminalMaterial(console, bottomInnerPadding, isCurrentPage)
     }
 }

@@ -67,7 +67,7 @@ fun ToolsMiuix(
                     TextButton(
                         text = stringResource(R.string.tools_run_check),
                         onClick = console::runCheckScript,
-                        colors = ButtonDefaults.textButtonPrimaryColors()
+                        colors = ButtonDefaults.textButtonColorsPrimary()
                     )
                 }
             }

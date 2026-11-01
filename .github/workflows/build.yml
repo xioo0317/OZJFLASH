@@ -28,12 +28,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 1) JDK 17 —— Gradle 9 / AGP 9 / Kotlin 2.4 都要求 Java 17
-      - name: Set up JDK 17
+      # 1) JDK 21 —— miuix / navigationevent 等依赖以 JVM 21 字节码发布，
+      #    内联到 17 会报 INLINE_FROM_HIGHER_PLATFORM
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
 
       # 2) 手动安装 Android SDK 命令行工具（规避旧版 setup-android 会执行
       #    已废弃的 `sdkmanager tools` 导致失败的问题）
