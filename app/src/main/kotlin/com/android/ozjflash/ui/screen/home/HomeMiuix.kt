@@ -248,45 +248,38 @@ private fun InfoCard(
         }
     }
 
-    Column(modifier = modifier) {
-        Card(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                InfoText(
-                    icon = Icons.Filled.Android,
-                    title = stringResource(R.string.home_android_version),
-                    content = "${state.androidVersion} (API ${state.sdk})",
-                )
-                InfoText(
-                    icon = Icons.Filled.Smartphone,
-                    title = stringResource(R.string.home_device_model),
-                    content = state.deviceModel,
-                )
-                InfoText(
-                    icon = Icons.Filled.Tag,
-                    title = stringResource(R.string.home_abi),
-                    content = state.abi,
-                    // last item in this card
-                )
-            }
-        }
-        Card(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                InfoText(
-                    icon = Icons.Filled.Fingerprint,
-                    title = stringResource(R.string.home_fingerprint),
-                    content = state.fingerprint,
-                )
-                InfoText(
-                    icon = Icons.Filled.Security,
-                    title = stringResource(R.string.home_selinux_status),
-                    content = state.selinuxStatus,
-                )
-                InfoText(
-                    icon = Icons.Filled.Memory,
-                    title = stringResource(R.string.home_seccomp_status),
-                    content = "Unknown",
-                )
-            }
+    Card(modifier = modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            InfoText(
+                icon = Icons.Filled.Android,
+                title = stringResource(R.string.home_android_version),
+                content = "${state.androidVersion} (API ${state.sdk})",
+            )
+            InfoText(
+                icon = Icons.Filled.Smartphone,
+                title = stringResource(R.string.home_device_model),
+                content = state.deviceModel,
+            )
+            InfoText(
+                icon = Icons.Filled.Tag,
+                title = stringResource(R.string.home_abi),
+                content = state.abi,
+            )
+            InfoText(
+                icon = Icons.Filled.Fingerprint,
+                title = stringResource(R.string.home_fingerprint),
+                content = state.fingerprint,
+            )
+            InfoText(
+                icon = Icons.Filled.Security,
+                title = stringResource(R.string.home_selinux_status),
+                content = state.selinuxStatus,
+            )
+            InfoText(
+                icon = Icons.Filled.Memory,
+                title = stringResource(R.string.home_seccomp_status),
+                content = "Unknown",
+            )
         }
     }
 }

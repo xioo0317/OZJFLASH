@@ -39,7 +39,6 @@ import androidx.compose.material.icons.rounded.BlurOn
 import androidx.compose.material.icons.rounded.CallToAction
 import androidx.compose.material.icons.rounded.Colorize
 import androidx.compose.material.icons.rounded.DesignServices
-import androidx.compose.material.icons.rounded.Pin
 import androidx.compose.material.icons.rounded.Style
 import androidx.compose.material.icons.rounded.Wallpaper
 import androidx.compose.material.icons.rounded.WaterDrop
@@ -170,7 +169,6 @@ fun ColorPaletteScreenMiuix(
                         stringResource(id = R.string.settings_theme_mode_system),
                         stringResource(id = R.string.settings_theme_mode_light),
                         stringResource(id = R.string.settings_theme_mode_dark),
-                        stringResource(id = R.string.settings_theme_mode_amoled),
                     )
                     TabRow(
                         tabs = themeItems,
@@ -198,65 +196,70 @@ fun ColorPaletteScreenMiuix(
                             onCheckedChange = actions::setMiuixMonet,
                         )
 
-                        val colorItems = paletteColorEntries.map { stringResource(it.second) }
-                        val colorValues = paletteColorEntries.map { it.first }
-                        OverlayDropdownPreference(
-                            title = stringResource(id = R.string.settings_key_color),
-                            items = colorItems,
-                            startAction = {
-                                Icon(
-                                    Icons.Rounded.Colorize,
-                                    modifier = Modifier.padding(end = 6.dp),
-                                    contentDescription = stringResource(id = R.string.settings_key_color),
-                                    tint = colorScheme.onBackground,
-                                )
-                            },
-                            selectedIndex = colorValues.indexOf(uiState.appSettings.keyColor)
-                                .takeIf { it >= 0 } ?: 0,
-                            onSelectedIndexChange = { index ->
-                                actions.setKeyColor(colorValues[index])
-                            },
-                        )
-
-                        AnimatedVisibility(visible = uiState.appSettings.keyColor != 0) {
+                        // 与 KSU 一致：主题色 / 风格 / 规范只在开启 Monet 后才展开
+                        AnimatedVisibility(visible = uiState.miuixMonet) {
                             Column {
-                                val styles = PaletteStyle.entries
+                                val colorItems = paletteColorEntries.map { stringResource(it.second) }
+                                val colorValues = paletteColorEntries.map { it.first }
                                 OverlayDropdownPreference(
-                                    title = stringResource(R.string.settings_color_style),
+                                    title = stringResource(id = R.string.settings_key_color),
+                                    items = colorItems,
                                     startAction = {
                                         Icon(
-                                            Icons.Rounded.Style,
+                                            Icons.Rounded.Colorize,
                                             modifier = Modifier.padding(end = 6.dp),
-                                            contentDescription = stringResource(id = R.string.settings_color_style),
+                                            contentDescription = stringResource(id = R.string.settings_key_color),
                                             tint = colorScheme.onBackground,
                                         )
                                     },
-                                    items = styles.map { it.name },
-                                    selectedIndex = styles.indexOfFirst { it.name == uiState.appSettings.paletteStyle.name }
-                                        .coerceAtLeast(0),
+                                    selectedIndex = colorValues.indexOf(uiState.appSettings.keyColor)
+                                        .takeIf { it >= 0 } ?: 0,
                                     onSelectedIndexChange = { index ->
-                                        actions.setPaletteStyle(styles[index].name)
+                                        actions.setKeyColor(colorValues[index])
                                     },
                                 )
 
-                                val specs = ColorSpec.SpecVersion.entries
-                                OverlayDropdownPreference(
-                                    title = stringResource(R.string.settings_color_spec),
-                                    startAction = {
-                                        Icon(
-                                            Icons.Rounded.DesignServices,
-                                            modifier = Modifier.padding(end = 6.dp),
-                                            contentDescription = stringResource(id = R.string.settings_color_spec),
-                                            tint = colorScheme.onBackground,
+                                AnimatedVisibility(visible = uiState.appSettings.keyColor != 0) {
+                                    Column {
+                                        val styles = PaletteStyle.entries
+                                        OverlayDropdownPreference(
+                                            title = stringResource(R.string.settings_color_style),
+                                            startAction = {
+                                                Icon(
+                                                    Icons.Rounded.Style,
+                                                    modifier = Modifier.padding(end = 6.dp),
+                                                    contentDescription = stringResource(id = R.string.settings_color_style),
+                                                    tint = colorScheme.onBackground,
+                                                )
+                                            },
+                                            items = styles.map { it.name },
+                                            selectedIndex = styles.indexOfFirst { it.name == uiState.appSettings.paletteStyle.name }
+                                                .coerceAtLeast(0),
+                                            onSelectedIndexChange = { index ->
+                                                actions.setPaletteStyle(styles[index].name)
+                                            },
                                         )
-                                    },
-                                    items = specs.map { it.name },
-                                    selectedIndex = specs.indexOfFirst { it.name == uiState.appSettings.colorSpec.name }
-                                        .coerceAtLeast(0),
-                                    onSelectedIndexChange = { index ->
-                                        actions.setColorSpec(specs[index].name)
-                                    },
-                                )
+
+                                        val specs = ColorSpec.SpecVersion.entries
+                                        OverlayDropdownPreference(
+                                            title = stringResource(R.string.settings_color_spec),
+                                            startAction = {
+                                                Icon(
+                                                    Icons.Rounded.DesignServices,
+                                                    modifier = Modifier.padding(end = 6.dp),
+                                                    contentDescription = stringResource(id = R.string.settings_color_spec),
+                                                    tint = colorScheme.onBackground,
+                                                )
+                                            },
+                                            items = specs.map { it.name },
+                                            selectedIndex = specs.indexOfFirst { it.name == uiState.appSettings.colorSpec.name }
+                                                .coerceAtLeast(0),
+                                            onSelectedIndexChange = { index ->
+                                                actions.setColorSpec(specs[index].name)
+                                            },
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -315,20 +318,6 @@ fun ColorPaletteScreenMiuix(
                                 onCheckedChange = actions::setFloatingBottomBarBlur,
                             )
                         }
-                        SwitchPreference(
-                            title = stringResource(id = R.string.settings_navigation_badge),
-                            summary = stringResource(id = R.string.settings_navigation_badge_summary),
-                            startAction = {
-                                Icon(
-                                    Icons.Rounded.Pin,
-                                    modifier = Modifier.padding(end = 6.dp),
-                                    contentDescription = stringResource(id = R.string.settings_navigation_badge),
-                                    tint = colorScheme.onBackground,
-                                )
-                            },
-                            checked = uiState.enableNavigationBadge,
-                            onCheckedChange = actions::setNavigationBadge,
-                        )
                     }
 
                     Card(
@@ -546,9 +535,9 @@ private fun ThemePreviewCardMiuix(
                             .height(28.dp)
                             .clip(RoundedCornerShape(14.dp))
                             .background(
-                                // 与 KSU 一致：液态玻璃开启时底栏半透明，否则恒为黑色
-                                if (enableFloatingBottomBarBlur) Color.Black.copy(alpha = 0.55f)
-                                else Color.Black
+                                // 与 KSU 一致：液态玻璃开启时 40% 透明，否则用 surfaceContainer
+                                if (enableFloatingBottomBarBlur) navBarColor.copy(alpha = 0.4f)
+                                else navBarColor
                             )
                             .border(0.5.dp, textColor.copy(alpha = 0.1f), RoundedCornerShape(14.dp))
                             .padding(horizontal = 12.dp),
@@ -560,7 +549,7 @@ private fun ThemePreviewCardMiuix(
                                 modifier = Modifier
                                     .size(13.dp)
                                     .clip(RoundedCornerShape(2.dp))
-                                    .background(if (it == 0) iconColor else Color.White),
+                                    .background(if (it == 0) iconColor else textColor),
                             )
                         }
                     }

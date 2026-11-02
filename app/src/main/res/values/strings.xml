@@ -36,11 +36,11 @@
 
     <!-- 设置 -->
     <string name="settings_ui_mode">Interface style</string>
-    <string name="settings_ui_mode_summary">Choose the overall interface host</string>
+    <string name="settings_ui_mode_summary">Choose the interface style of the app</string>
     <string name="settings_ui_mode_miuix">Miuix</string>
     <string name="settings_ui_mode_material">Material Expressive</string>
-    <string name="settings_theme">Theme</string>
-    <string name="settings_theme_summary">Light, dark, dynamic (monet) or AMOLED</string>
+    <string name="settings_theme">Theme settings</string>
+    <string name="settings_theme_summary">Choose the app theme mode</string>
     <string name="settings_theme_system">Follow system</string>
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_dark">Dark</string>
@@ -122,7 +122,7 @@
     <string name="settings_theme_mode_light">Light</string>
     <string name="settings_theme_mode_dark">Dark</string>
     <string name="settings_theme_mode_amoled">AMOLED</string>
-    <string name="settings_monet">Dynamic color</string>
+    <string name="settings_monet">Enable Monet</string>
     <string name="settings_monet_summary">Generate the palette from the system wallpaper</string>
     <string name="settings_key_color">Accent color</string>
     <string name="settings_key_color_default">Default</string>

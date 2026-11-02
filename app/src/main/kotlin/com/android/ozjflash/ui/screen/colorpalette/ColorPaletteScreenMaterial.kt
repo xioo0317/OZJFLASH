@@ -46,11 +46,12 @@ import androidx.compose.material.icons.filled.Brightness3
 import androidx.compose.material.icons.filled.Brightness4
 import androidx.compose.material.icons.filled.Brightness7
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.rounded.CallToAction
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Colorize
 import androidx.compose.material.icons.rounded.DesignServices
-import androidx.compose.material.icons.rounded.Pin
 import androidx.compose.material.icons.rounded.Style
+import androidx.compose.material.icons.rounded.WaterDrop
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -185,7 +186,6 @@ fun ColorPaletteScreenMaterial(
                     ColorMode.SYSTEM to stringResource(R.string.settings_theme_mode_system),
                     ColorMode.LIGHT to stringResource(R.string.settings_theme_mode_light),
                     ColorMode.DARK to stringResource(R.string.settings_theme_mode_dark),
-                    ColorMode.DARK_AMOLED to stringResource(R.string.settings_theme_mode_amoled),
                 )
                 Column(
                     modifier = Modifier
@@ -272,25 +272,10 @@ fun ColorPaletteScreenMaterial(
             item {
                 SegmentedColumn(
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    content = listOf {
-                        SegmentedSwitchItem(
-                            icon = Icons.Rounded.Pin,
-                            title = stringResource(R.string.settings_navigation_badge),
-                            summary = stringResource(R.string.settings_navigation_badge_summary),
-                            checked = uiState.enableNavigationBadge,
-                            onCheckedChange = actions::setNavigationBadge,
-                        )
-                    },
-                )
-            }
-
-            item {
-                SegmentedColumn(
-                    modifier = Modifier.padding(horizontal = 16.dp),
                     content = listOf(
                         {
                             SegmentedSwitchItem(
-                                icon = Icons.Rounded.Pin,
+                                icon = Icons.Rounded.CallToAction,
                                 title = stringResource(R.string.settings_floating_bottom_bar),
                                 summary = stringResource(R.string.settings_floating_bottom_bar_summary),
                                 checked = uiState.enableFloatingBottomBar,
@@ -299,7 +284,7 @@ fun ColorPaletteScreenMaterial(
                         },
                         {
                             SegmentedSwitchItem(
-                                icon = Icons.Rounded.Pin,
+                                icon = Icons.Rounded.WaterDrop,
                                 title = stringResource(R.string.settings_enable_glass),
                                 summary = stringResource(R.string.settings_enable_glass_summary),
                                 enabled = uiState.enableFloatingBottomBar,
@@ -489,8 +474,9 @@ private fun ThemePreviewCardMaterial(
                                         .height(28.dp)
                                         .clip(RoundedCornerShape(14.dp))
                                         .background(
-                                            if (enableFloatingBottomBarBlur) Color.Black.copy(alpha = 0.55f)
-                                            else Color.Black
+                                            if (enableFloatingBottomBarBlur)
+                                                previewScheme.surfaceContainer.copy(alpha = 0.4f)
+                                            else previewScheme.surfaceContainer
                                         )
                                         .padding(horizontal = 12.dp),
                                     horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -502,7 +488,8 @@ private fun ThemePreviewCardMaterial(
                                                 .size(13.dp)
                                                 .clip(RoundedCornerShape(2.dp))
                                                 .background(
-                                                    if (it == 0) previewScheme.primary else Color.White
+                                                    if (it == 0) previewScheme.primary
+                                                    else previewScheme.onSurface
                                                 ),
                                         )
                                     }

@@ -21,13 +21,12 @@ class ColorPaletteActions internal constructor(
 ) {
     fun back() = navigator.pop()
 
-    /** 主题模式 Tab：0 跟随系统 / 1 浅色 / 2 深色 / 3 纯黑（保持当前的动态取色开关） */
+    /** 主题模式 Tab：0 跟随系统 / 1 浅色 / 2 深色（保持当前的动态取色开关） */
     fun setColorModeIndex(index: Int) {
         val monet = viewModel.uiState.value.appSettings.colorMode.isMonet
         val mode = when (index) {
             0 -> if (monet) ColorMode.MONET_SYSTEM else ColorMode.SYSTEM
             1 -> if (monet) ColorMode.MONET_LIGHT else ColorMode.LIGHT
-            3 -> ColorMode.DARK_AMOLED
             else -> if (monet) ColorMode.MONET_DARK else ColorMode.DARK
         }
         viewModel.setColorMode(mode)
@@ -44,11 +43,10 @@ class ColorPaletteActions internal constructor(
     fun setPageScale(value: Float) = viewModel.setPageScale(value)
 }
 
-/** 当前主题模式在 TabRow / 分段按钮中的下标 */
+/** 当前主题模式在 TabRow / 分段按钮中的下标（纯黑已移除，归入深色） */
 internal fun ColorMode.toPaletteIndex(): Int = when (this) {
     ColorMode.SYSTEM, ColorMode.MONET_SYSTEM -> 0
     ColorMode.LIGHT, ColorMode.MONET_LIGHT -> 1
-    ColorMode.DARK_AMOLED -> 3
     else -> 2
 }
 

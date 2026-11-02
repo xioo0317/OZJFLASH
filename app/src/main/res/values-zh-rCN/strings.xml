@@ -31,9 +31,11 @@
     <string name="tools_run_check">运行自检脚本</string>
 
     <string name="settings_ui_mode">界面主体</string>
+    <string name="settings_ui_mode_summary">选择应用的界面风格</string>
     <string name="settings_ui_mode_miuix">Miuix</string>
     <string name="settings_ui_mode_material">Material Expressive</string>
-    <string name="settings_theme">主题</string>
+    <string name="settings_theme">主题设置</string>
+    <string name="settings_theme_summary">选择应用的主题模式</string>
     <string name="settings_theme_system">跟随系统</string>
     <string name="settings_theme_light">浅色</string>
     <string name="settings_theme_dark">深色</string>
@@ -110,9 +112,9 @@
     <string name="settings_theme_mode_light">浅色</string>
     <string name="settings_theme_mode_dark">深色</string>
     <string name="settings_theme_mode_amoled">纯黑</string>
-    <string name="settings_monet">动态取色</string>
+    <string name="settings_monet">启用 Monet 颜色</string>
     <string name="settings_monet_summary">根据系统壁纸生成整套配色</string>
-    <string name="settings_key_color">主题色</string>
+    <string name="settings_key_color">强调色</string>
     <string name="settings_key_color_default">默认</string>
     <string name="settings_color_style">配色风格</string>
     <string name="settings_color_spec">配色规范</string>

@@ -28,9 +28,11 @@
 
     <!-- 設定 -->
     <string name="settings_ui_mode">Interfaz</string>
+    <string name="settings_ui_mode_summary">Elige el estilo de la interfaz</string>
     <string name="settings_ui_mode_miuix">Miuix</string>
     <string name="settings_ui_mode_material">Material Expressive</string>
-    <string name="settings_theme">Tema</string>
+    <string name="settings_theme">Ajustes del tema</string>
+    <string name="settings_theme_summary">Elige el modo de tema de la app</string>
     <string name="settings_theme_system">Seguir al sistema</string>
     <string name="settings_theme_light">Claro</string>
     <string name="settings_theme_dark">Oscuro</string>
@@ -110,7 +112,7 @@
     <string name="settings_theme_mode_light">Claro</string>
     <string name="settings_theme_mode_dark">Oscuro</string>
     <string name="settings_theme_mode_amoled">AMOLED</string>
-    <string name="settings_monet">Color dinámico</string>
+    <string name="settings_monet">Activar Monet</string>
     <string name="settings_monet_summary">Genera la paleta desde el fondo de pantalla</string>
     <string name="settings_key_color">Color de acento</string>
     <string name="settings_key_color_default">Predeterminado</string>

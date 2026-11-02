@@ -28,9 +28,11 @@
 
     <!-- 設定 -->
     <string name="settings_ui_mode">介面主體</string>
+    <string name="settings_ui_mode_summary">選擇應用的介面風格</string>
     <string name="settings_ui_mode_miuix">Miuix</string>
     <string name="settings_ui_mode_material">Material Expressive</string>
-    <string name="settings_theme">主題</string>
+    <string name="settings_theme">主題設定</string>
+    <string name="settings_theme_summary">選擇應用的主題模式</string>
     <string name="settings_theme_system">跟隨系統</string>
     <string name="settings_theme_light">淺色</string>
     <string name="settings_theme_dark">深色</string>
@@ -110,9 +112,9 @@
     <string name="settings_theme_mode_light">淺色</string>
     <string name="settings_theme_mode_dark">深色</string>
     <string name="settings_theme_mode_amoled">純黑</string>
-    <string name="settings_monet">動態取色</string>
+    <string name="settings_monet">啟用 Monet 顏色</string>
     <string name="settings_monet_summary">根據系統桌布產生整套配色</string>
-    <string name="settings_key_color">主題色</string>
+    <string name="settings_key_color">強調色</string>
     <string name="settings_key_color_default">預設</string>
     <string name="settings_color_style">配色風格</string>
     <string name="settings_color_spec">配色規範</string>

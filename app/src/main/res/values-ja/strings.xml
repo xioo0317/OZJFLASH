@@ -28,9 +28,11 @@
 
     <!-- 設定 -->
     <string name="settings_ui_mode">インターフェース</string>
+    <string name="settings_ui_mode_summary">アプリのインターフェーススタイルを選択します</string>
     <string name="settings_ui_mode_miuix">Miuix</string>
     <string name="settings_ui_mode_material">Material Expressive</string>
-    <string name="settings_theme">テーマ</string>
+    <string name="settings_theme">テーマ設定</string>
+    <string name="settings_theme_summary">アプリのテーマモードを選択します</string>
     <string name="settings_theme_system">システムに合わせる</string>
     <string name="settings_theme_light">ライト</string>
     <string name="settings_theme_dark">ダーク</string>
@@ -110,9 +112,9 @@
     <string name="settings_theme_mode_light">ライト</string>
     <string name="settings_theme_mode_dark">ダーク</string>
     <string name="settings_theme_mode_amoled">AMOLED</string>
-    <string name="settings_monet">ダイナミックカラー</string>
+    <string name="settings_monet">Monet を有効にする</string>
     <string name="settings_monet_summary">壁紙から配色を生成します</string>
-    <string name="settings_key_color">アクセントカラー</string>
+    <string name="settings_key_color">キーカラー</string>
     <string name="settings_key_color_default">既定</string>
     <string name="settings_color_style">カラースタイル</string>
     <string name="settings_color_spec">カラースペック</string>

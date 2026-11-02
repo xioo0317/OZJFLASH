@@ -1,5 +1,6 @@
 package com.android.ozjflash
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -87,6 +88,14 @@ import top.yukonga.miuix.kmp.utils.PagerNavigationSpringSpec
 private const val MAIN_PAGE_COUNT = 4
 
 class MainActivity : ComponentActivity() {
+
+    override fun attachBaseContext(newBase: Context) {
+        // Activity 必须单独包一层 locale：Application 层的 createConfigurationContext
+        // 不会传导到 Activity 的 Resources，导致切换语言后页面仍是系统语言
+        val prefs = newBase.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val lang = prefs.getString("language", "system") ?: "system"
+        super.attachBaseContext(newBase.wrapWithLanguage(lang))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
