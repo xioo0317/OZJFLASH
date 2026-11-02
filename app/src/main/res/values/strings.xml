@@ -95,8 +95,8 @@
     <string name="home_support_content">Star the project or open an issue</string>
     <string name="home_learn_title">Learn more</string>
     <string name="home_learn_content">Project source and usage guide</string>
-    <string name="home_github_url" translatable="false">https://github.com/xioo0317/OZJFLASH-builtin</string>
-    <string name="home_learn_url" translatable="false">https://github.com/xioo0317/OZJFLASH-builtin#readme</string>
+    <string name="home_github_url" translatable="false">https://github.com/xioo0317/OZJFLASH</string>
+    <string name="home_learn_url" translatable="false">https://github.com/xioo0317/OZJFLASH#readme</string>
 
     <!-- 多语言 -->
     <string name="settings_language">Language</string>
