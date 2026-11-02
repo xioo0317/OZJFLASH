@@ -23,6 +23,14 @@ android {
         }
     }
 
+    // 必须解压原生库：工具本体以 lib*.so 形式分发，运行时要 exec 它们，
+    // 若留在 APK 内（页对齐、不解压）就没有可执行的路径了
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+
     buildFeatures {
         compose true
     }
