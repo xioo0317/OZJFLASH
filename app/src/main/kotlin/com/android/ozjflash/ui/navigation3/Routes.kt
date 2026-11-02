@@ -2,6 +2,7 @@ package com.android.ozjflash.ui.navigation3
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import top.yukonga.miuix.kmp.nav.core.NavKey
 
 /**
@@ -10,27 +11,39 @@ import top.yukonga.miuix.kmp.nav.core.NavKey
  * OZJFLASH 只有主框架（底栏分页）加两个二级页面：
  * 关于页与主题配色页。其余 KernelSU 的 root 相关页面（模块 / 超级用户 /
  * Sulog / 脚本执行…）全部移除。
+ *
+ * 注意：miuix-nav 的 rememberNavBackStack 用 navBackStackSaver
+ * （kotlinx.serialization 多态序列化）保存路由栈，进程重建时恢复。
+ * Route 及其子类必须保持 @Serializable，否则保存状态即抛 SerializationException。
  */
+@Serializable
 sealed interface Route : NavKey, Parcelable {
 
+    @Serializable
     @Parcelize
     data object Main : Route
 
+    @Serializable
     @Parcelize
     data object Terminal : Route
 
+    @Serializable
     @Parcelize
     data object Flash : Route
 
+    @Serializable
     @Parcelize
     data object Tools : Route
 
+    @Serializable
     @Parcelize
     data object Settings : Route
 
+    @Serializable
     @Parcelize
     data object About : Route
 
+    @Serializable
     @Parcelize
     data object ColorPalette : Route
 }

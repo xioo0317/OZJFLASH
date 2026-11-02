@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    // miuix-nav 的 navBackStackSaver 依赖 kotlinx.serialization 保存路由栈，
+    // Route 及子类的 @Serializable 由该编译器插件生成 serializer
+    alias(libs.plugins.kotlin.serialization)
     // Parcelize 由 AGP 内置的 Kotlin 插件提供，按 KernelSU 的写法不带版本号声明
     id 'kotlin-parcelize'
 }
@@ -13,8 +16,8 @@ android {
         applicationId 'com.android.ozjflash'
         minSdk 26
         targetSdk 34
-        versionCode 2
-        versionName '1.1'
+        versionCode 3
+        versionName '1.2'
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         ndk {
@@ -68,6 +71,9 @@ dependencies {
     implementation libs.androidx.material3
     implementation libs.androidx.material.icons.extended
     implementation libs.material.kolor
+
+    // miuix-nav 的 navBackStackSaver 用 JSON 序列化路由栈
+    implementation libs.kotlinx.serialization.json
 
     // Miuix 主体：另一套完整 UI 皮肤，运行时可在设置里与 Material 主体切换
     implementation libs.miuix.ui
