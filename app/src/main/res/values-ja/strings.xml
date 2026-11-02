@@ -26,6 +26,19 @@
     <string name="tools_present">個のツールを展開</string>
     <string name="tools_run_check">診断スクリプトを実行</string>
 
+    <!-- USB Host 授权 -->
+    <string name="usb_devices">USB デバイス</string>
+    <string name="usb_none">USB デバイスが検出されません</string>
+    <string name="usb_granted">許可済み</string>
+    <string name="usb_not_granted">未許可</string>
+    <string name="usb_request">アクセスを許可</string>
+    <string name="usb_hint">許可後、fastboot / adb が USB 経由でデバイスにアクセスできます</string>
+    <string name="usb_grant_title">この USB デバイスへのアクセスを許可しますか？</string>
+    <string name="usb_grant_message">fastboot / EDL 操作を実行するには、OZJFLASH が %1$s にアクセスする必要があります。</string>
+    <string name="usb_allow">許可</string>
+    <string name="usb_denied">アクセスが拒否されたため、ツールはこのデバイスを開けません</string>
+    <string name="usb_grant_toast">USB アクセス権限を要求しています…</string>
+
     <!-- 設定 -->
     <string name="settings_ui_mode">インターフェース</string>
     <string name="settings_ui_mode_summary">アプリのインターフェーススタイルを選択します</string>

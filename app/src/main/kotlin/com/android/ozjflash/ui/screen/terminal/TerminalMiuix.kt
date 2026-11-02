@@ -2,7 +2,6 @@ package com.android.ozjflash.ui.screen.terminal
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,14 +26,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.ozjflash.terminal.RealTerminal
 import com.android.ozjflash.terminal.RealTerminalView
-import top.yukonga.miuix.kmp.basic.SmallTitle
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
-private val TERMINAL_CORNER = 14.dp
+/** 终端页背景：与 Termux 上游一致，恒为纯黑，不跟随主题 */
+internal val TerminalBackground = Color(0xFF000000)
 
-/** Miuix 主体的真终端页：Termux 上游 TerminalView（PTY + ANSI） */
+/** 键帽底色：Termux 上游 extra-keys 的深色键帽 */
+private val TerminalKeyBackground = Color(0xFF222222)
+private val TerminalKeyContent = Color(0xFFDCDCDC)
+
+/** Miuix 主体的真终端页：全屏纯黑，照 Termux 上游布局（终端视图 + 快捷键行） */
 @Composable
 fun TerminalMiuix(
     terminal: RealTerminal,
@@ -43,49 +44,32 @@ fun TerminalMiuix(
     bottomInnerPadding: Dp,
     isCurrentPage: Boolean,
 ) {
-    val colorScheme = MiuixTheme.colorScheme
-
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(TerminalBackground)
             .imePadding()
-            .padding(horizontal = 12.dp)
             .then(
                 if (bottomInnerPadding > 0.dp) Modifier.padding(bottom = bottomInnerPadding)
                 else Modifier.windowInsetsPadding(WindowInsets.navigationBars)
-            ),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+            )
     ) {
-        SmallTitle(
-            text = if (terminal.isRunning) "终端已就绪" else "会话已结束",
-            modifier = Modifier.padding(top = 6.dp)
-        )
-
         Box(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(TERMINAL_CORNER))
+                .background(TerminalBackground)
         ) {
             RealTerminalView(terminal = terminal, binPath = binPath, modifier = Modifier.fillMaxSize())
         }
 
         TerminalExtraKeysRow(
             terminal = terminal,
-            keyBackground = colorScheme.surfaceVariant,
-            keyContent = colorScheme.onSurface,
-            activeBackground = colorScheme.primary,
-            activeContent = colorScheme.onPrimary,
+            keyBackground = TerminalKeyBackground,
+            keyContent = TerminalKeyContent,
+            activeBackground = MiuixTheme.colorScheme.primary,
+            activeContent = Color.White,
         )
-
-        Row(
-            modifier = Modifier.horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
-        ) {
-            rememberTerminalCommands(terminal, binPath).forEach { cmd ->
-                TextButton(text = cmd.label, onClick = cmd.run)
-            }
-        }
     }
 }
 

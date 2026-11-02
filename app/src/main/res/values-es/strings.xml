@@ -26,6 +26,19 @@
     <string name="tools_present">herramientas extraídas</string>
     <string name="tools_run_check">Ejecutar script de autocomprobación</string>
 
+    <!-- USB Host 授权 -->
+    <string name="usb_devices">Dispositivos USB</string>
+    <string name="usb_none">No se detecta ningún dispositivo USB</string>
+    <string name="usb_granted">Autorizado</string>
+    <string name="usb_not_granted">Sin autorizar</string>
+    <string name="usb_request">Solicitar acceso</string>
+    <string name="usb_hint">fastboot / adb solo podrá acceder al dispositivo por USB tras conceder el acceso</string>
+    <string name="usb_grant_title">¿Permitir el acceso a este dispositivo USB?</string>
+    <string name="usb_grant_message">OZJFLASH necesita acceder a %1$s para ejecutar operaciones fastboot / EDL.</string>
+    <string name="usb_allow">Permitir</string>
+    <string name="usb_denied">Acceso denegado: las herramientas no pueden abrir este dispositivo</string>
+    <string name="usb_grant_toast">Solicitando acceso USB…</string>
+
     <!-- 設定 -->
     <string name="settings_ui_mode">Interfaz</string>
     <string name="settings_ui_mode_summary">Elige el estilo de la interfaz</string>

@@ -30,6 +30,19 @@
     <string name="tools_present">个工具已释放</string>
     <string name="tools_run_check">运行自检脚本</string>
 
+    <!-- USB Host 授权 -->
+    <string name="usb_devices">USB 设备</string>
+    <string name="usb_none">未检测到 USB 设备</string>
+    <string name="usb_granted">已授权</string>
+    <string name="usb_not_granted">未授权</string>
+    <string name="usb_request">请求权限</string>
+    <string name="usb_hint">授权后 fastboot / adb 才能通过 USB 访问设备</string>
+    <string name="usb_grant_title">允许访问此 USB 设备？</string>
+    <string name="usb_grant_message">OZJFLASH 需要访问 %1$s 才能执行 fastboot / EDL 操作。</string>
+    <string name="usb_allow">允许</string>
+    <string name="usb_denied">已拒绝授权，工具无法打开该设备</string>
+    <string name="usb_grant_toast">正在请求 USB 访问权限…</string>
+
     <string name="settings_ui_mode">界面主体</string>
     <string name="settings_ui_mode_summary">选择应用的界面风格</string>
     <string name="settings_ui_mode_miuix">Miuix</string>

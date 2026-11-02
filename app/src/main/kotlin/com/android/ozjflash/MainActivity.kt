@@ -1,6 +1,7 @@
 package com.android.ozjflash
 
 import android.content.Context
+import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -43,6 +44,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import com.android.ozjflash.CrashLogger
 import com.android.ozjflash.flash.NativeLibs
+import com.android.ozjflash.flash.UsbHost
 import com.android.ozjflash.terminal.TerminalEngine
 import com.android.ozjflash.terminal.rememberRealTerminal
 import com.android.ozjflash.ui.LocalMainPagerState
@@ -76,6 +78,7 @@ import com.android.ozjflash.ui.theme.OzjFlashTheme
 import com.android.ozjflash.ui.util.rememberBlurBackdrop
 import com.android.ozjflash.ui.viewmodel.AppViewModel
 import top.yukonga.miuix.kmp.blur.Backdrop
+import top.yukonga.miuix.kmp.blur.LayerBackdrop
 import top.yukonga.miuix.kmp.blur.layerBackdrop
 import top.yukonga.miuix.kmp.blur.rememberLayerBackdrop
 import top.yukonga.miuix.kmp.nav.core.NavDisplay
@@ -89,6 +92,21 @@ private const val MAIN_PAGE_COUNT = 4
 
 class MainActivity : ComponentActivity() {
 
+    private fun registerUsbReceiver() {
+        val filter = UsbHost.intentFilter()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(UsbHost.receiver, filter, Context.RECEIVER_NOT_EXPORTED)
+        } else {
+            registerReceiver(UsbHost.receiver, filter)
+        }
+        UsbHost.refresh(this)
+    }
+
+    override fun onDestroy() {
+        runCatching { unregisterReceiver(UsbHost.receiver) }
+        super.onDestroy()
+    }
+
     override fun attachBaseContext(newBase: Context) {
         // Activity 必须单独包一层 locale：Application 层的 createConfigurationContext
         // 不会传导到 Activity 的 Resources，导致切换语言后页面仍是系统语言
@@ -100,6 +118,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // USB 授权是异步广播回调：注册后 UsbManager.requestPermission() 的系统弹框
+        // 结果才能回到应用，工具页据此更新「已授权 / 未授权」
+        registerUsbReceiver()
 
         // 建立内置刷写工具（adb / fastboot / bash...）的可执行链接并加载 JNI 桥接库
         // nativeLibraryDir 里的 lib*.so 才是真正可执行的本体（Android 10+ 禁止 exec 应用私有目录）
@@ -221,7 +243,7 @@ private fun MainScreen(
                 appendLine("[OZJFLASH] 原生库目录 : ${ozjApp.applicationInfo.nativeLibraryDir}")
                 appendLine("[OZJFLASH] fastboot   : $probe")
                 if (missing.isEmpty()) {
-                    appendLine("[OZJFLASH] 工具链接就绪，可直接 fastboot / adb；sh check_env.sh 可自检")
+                    appendLine("[OZJFLASH] 工具链接就绪，可直接执行 fastboot / adb")
                 } else {
                     appendLine("[OZJFLASH] 缺失工具   : ${missing.joinToString()}")
                 }
@@ -251,7 +273,7 @@ private fun MainScreen(
     // 低版本上一旦触碰就会 NoClassDefFoundError 直接闪退，因此整条链路按版本降级
     val blurSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
     val blurBackdrop = if (blurSupported) rememberBlurBackdrop(enableBlur) else null
-    val backdrop: Backdrop? = if (blurSupported) {
+    val backdrop: LayerBackdrop? = if (blurSupported) {
         rememberLayerBackdrop {
             drawRect(surfaceColor)
             drawContent()
@@ -262,6 +284,12 @@ private fun MainScreen(
         val pagerContent = @Composable { bottomInnerPadding: Dp ->
             Box(modifier = if (blurBackdrop != null) Modifier.layerBackdrop(blurBackdrop) else Modifier) {
                 HorizontalPager(
+                    // 悬浮底栏的液态玻璃以页面内容为模糊源：与 KernelSU 一致，
+                    // 只有同时开启「悬浮底栏」+「液态玻璃」时才把 pager 注册成 backdrop，
+                    // 否则 backdrop 抓到空层，底栏会糊成一片黑
+                    modifier = if (backdrop != null && enableFloatingBottomBar && LocalEnableFloatingBottomBarBlur.current) {
+                        Modifier.layerBackdrop(backdrop)
+                    } else Modifier,
                     state = mainPagerState.pagerState,
                     beyondViewportPageCount = 1,
                     overscrollEffect = null,

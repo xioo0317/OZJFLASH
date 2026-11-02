@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.ozjflash.R
+import com.android.ozjflash.ui.component.usb.UsbHostCard
 import com.android.ozjflash.ui.screen.terminal.TerminalConsole
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.Card
@@ -72,6 +73,9 @@ fun ToolsMiuix(
                 }
             }
         }
+
+        // USB 授权：点「请求权限」→ 应用内确认 → 系统「允许访问 USB 设备」弹框
+        UsbHostCard()
 
         LazyColumn(modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp)) {
             items(state.tools.size) { index ->

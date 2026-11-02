@@ -34,6 +34,19 @@
     <string name="tools_present">tools extracted</string>
     <string name="tools_run_check">Run check script</string>
 
+    <!-- USB Host 授权 -->
+    <string name="usb_devices">USB devices</string>
+    <string name="usb_none">No USB device detected</string>
+    <string name="usb_granted">Authorized</string>
+    <string name="usb_not_granted">Not authorized</string>
+    <string name="usb_request">Request access</string>
+    <string name="usb_hint">fastboot / adb can only reach the device over USB after access is granted</string>
+    <string name="usb_grant_title">Allow access to this USB device?</string>
+    <string name="usb_grant_message">OZJFLASH needs access to %1$s to run fastboot / EDL operations.</string>
+    <string name="usb_allow">Allow</string>
+    <string name="usb_denied">Access denied — the tools cannot open this device</string>
+    <string name="usb_grant_toast">Requesting USB access…</string>
+
     <!-- 设置 -->
     <string name="settings_ui_mode">Interface style</string>
     <string name="settings_ui_mode_summary">Choose the interface style of the app</string>

@@ -77,18 +77,3 @@ fun TerminalPager(
         UiMode.Material -> TerminalMaterial(terminal, binPath, bottomInnerPadding, isCurrentPage)
     }
 }
-
-/** 真终端快捷命令表，两套主体共用 */
-internal data class TerminalCommand(val label: String, val run: () -> Unit)
-
-@Composable
-internal fun rememberTerminalCommands(terminal: RealTerminal, binPath: String): List<TerminalCommand> =
-    remember(terminal, binPath) {
-        listOf(
-            TerminalCommand("check_env.sh") { terminal.sendLine("sh '$binPath/check_env.sh'") },
-            TerminalCommand("fastboot devices") { terminal.sendLine("fastboot devices") },
-            TerminalCommand("fastboot getvar all") { terminal.sendLine("fastboot getvar all") },
-            TerminalCommand("adb devices") { terminal.sendLine("adb devices") },
-            TerminalCommand("clear") { terminal.sendLine("clear") },
-        )
-    }

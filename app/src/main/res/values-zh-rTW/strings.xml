@@ -26,6 +26,19 @@
     <string name="tools_present">個工具已釋放</string>
     <string name="tools_run_check">執行自我檢測腳本</string>
 
+    <!-- USB Host 授权 -->
+    <string name="usb_devices">USB 裝置</string>
+    <string name="usb_none">未偵測到 USB 裝置</string>
+    <string name="usb_granted">已授權</string>
+    <string name="usb_not_granted">未授權</string>
+    <string name="usb_request">請求權限</string>
+    <string name="usb_hint">授權後 fastboot / adb 才能透過 USB 存取裝置</string>
+    <string name="usb_grant_title">允許存取此 USB 裝置？</string>
+    <string name="usb_grant_message">OZJFLASH 需要存取 %1$s 才能執行 fastboot / EDL 操作。</string>
+    <string name="usb_allow">允許</string>
+    <string name="usb_denied">已拒絕授權，工具無法開啟該裝置</string>
+    <string name="usb_grant_toast">正在請求 USB 存取權限…</string>
+
     <!-- 設定 -->
     <string name="settings_ui_mode">介面主體</string>
     <string name="settings_ui_mode_summary">選擇應用的介面風格</string>
