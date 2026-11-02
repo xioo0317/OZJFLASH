@@ -42,7 +42,7 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
 @Composable
 fun BottomBarMiuix(
     blurBackdrop: LayerBackdrop?,
-    backdrop: Backdrop,
+    backdrop: Backdrop?,
     navigationBadge: NavigationBadgeState,
     modifier: Modifier,
 ) {
@@ -56,7 +56,8 @@ fun BottomBarMiuix(
             icon = destination.icon,
         )
     }
-    if (!enableFloatingBottomBar) {
+    // backdrop 为 null 表示当前系统不支持 blur（< Android 13），退回普通底栏
+    if (!enableFloatingBottomBar || backdrop == null) {
         BlurredBar(blurBackdrop) {
             NavigationBar(
                 modifier = modifier,

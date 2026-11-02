@@ -13,6 +13,8 @@ class OzjFlashApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         appContext = this
+        // 崩溃栈写入 files/crash.log，便于事后定位（设置 → 运行诊断 可查看）
+        CrashLogger.install(this)
     }
 
     companion object {

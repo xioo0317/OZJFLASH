@@ -1,27 +1,34 @@
 package com.android.ozjflash.flash
 
 import android.content.Context
-import android.content.pm.PackageInfo
-import android.content.pm.PackageManager
 import android.os.Build
 import android.system.Os
 import java.io.File
+import java.nio.file.Files
 
 /**
- * 内置终端工具包装载与管理。
+ * 内置刷写工具的装载与管理。
  *
- * 工具来源：assets/bin/（AOSP 平台工具 / f2fs-tools / e2fsprogs / libsparse /
- * liblp / magiskboot / ksud / payload-dumper-go 等，AArch64 静态可执行文件），
- * 外加 jniLibs 里少量改名可执行文件（bash / 7z / grep / qdl）。
+ * 关键约束：Android 10（API 29）起，targetSdk >= 29 的应用**不能** exec 位于
+ * 应用私有目录（/data/data/<pkg>/...）的文件，内核直接返回 EACCES。
+ * 之前把 30MB 二进制复制到 filesDir 的做法在 Android 10+ 上全部不可执行，
+ * 表现为「脚本一执行就退出 / 工具 Permission denied」。现在改为：
  *
- * - prepare() : 释放资产到 files/bin 并 chmod 755，返回 bin 目录路径
- * - pathEnv() : 组装 PATH（自带 bin 优先，同时保留系统路径以便使用 toybox 的 tar/gzip）
- * - shellEnv(): 终端进程环境变量（PATH / HOME / TMPDIR / TERM）
- * - resolveScriptRunner(): 按 shebang 决定解释器，用于执行 .sh 脚本
+ *   1. 打包时把每个工具改名成 lib*.so 放进 jniLibs，由系统安装到
+ *      nativeLibraryDir（/data/app/.../lib/arm64），该目录允许执行；
+ *   2. 运行时在 filesDir/bin 为每个工具创建**符号链接**，链接名即工具名
+ *      （adb / fastboot ...）。execve 解析链接后按目标路径做权限检查，
+ *      目标在 nativeLibraryDir，因此可以正常执行；
+ *   3. PATH 同时纳入 filesDir/bin 与 nativeLibraryDir：万一某个 ROM 上
+ *      符号链接被拒，仍可用 libozj_xxx.so 全名调用。
+ *
+ * 另外 prepare() 只建链接、不再复制几十 MB 资产，启动不再卡主线程；
+ * probeExec() 做一次真实执行探测，结果写入 files/env.log，便于在设备上
+ * 直接判断工具链是否真的可用。
  */
 object NativeLibs {
 
-    /** assets/bin 下提供的工具名（对齐检测脚本的 command -v 检查项） */
+    /** 内置工具名（与自检脚本 command -v 的检验项一致） */
     val TOOLS = listOf(
         "adb", "fastboot", "tadb",
         "lpmake", "lpunpack", "simg2img", "img2simg",
@@ -31,7 +38,10 @@ object NativeLibs {
         "sqlite3", "etc1tool", "hprof-conv"
     )
 
-    /** jniLibs 中仍需释放到 PATH 的辅助可执行二进制 */
+    /** 个别工具名与真实二进制不同：adb 本体就是 tadb（原包里的 adb 只是调用 tadb 的脚本） */
+    private val ALIAS = mapOf("adb" to "tadb")
+
+    /** jniLibs 里以 .so 形式分发的辅助可执行（bash / 7z / grep / qdl） */
     private val EXEC_FROM_LIBS = mapOf(
         "libbash.so" to "bash",
         "lib7zz.so" to "7z",
@@ -45,78 +55,82 @@ object NativeLibs {
         "cmdgen", "secrets", "antumbra", "patch_sn", "opscrypto"
     )
 
-    /** 释放全部内置工具到 files/bin，返回 bin 目录绝对路径 */
+    /** 工具名 -> jniLibs 中的文件名 */
+    fun libName(tool: String): String = "libozj_${tool.replace('-', '_')}.so"
+
+    /** 建立工具链接，返回 bin 目录绝对路径 */
     fun prepare(context: Context): String {
         val binDir = File(context.filesDir, "bin").apply { mkdirs() }
-        val stamp = File(binDir, ".stamp")
-        val stampValue = "${TOOLS.size}-${appVersion(context)}"
+        val nativeDir = context.applicationInfo.nativeLibraryDir?.let { File(it) }
 
-        // 资产近 30MB，版本未变化时跳过重复释放
-        if (!stamp.exists() || stamp.readText().trim() != stampValue) {
-            copyAssetDir(context, "bin", binDir)
-            stamp.writeText(stampValue)
+        val report = StringBuilder()
+        report.appendLine("nativeLibraryDir = ${nativeDir?.absolutePath}")
+        report.appendLine("filesDir/bin     = ${binDir.absolutePath}")
+        report.appendLine("SDK_INT          = ${Build.VERSION.SDK_INT}")
+
+        for (name in TOOLS) link(report, name, nativeDir, binDir)
+        if (nativeDir != null) {
+            for ((src, dst) in EXEC_FROM_LIBS) link(report, dst, nativeDir, binDir, src)
         }
-        copyExecFromLibs(context, binDir)
         extractScript(context, binDir)
 
-        // 每次启动都兜底 chmod（部分 ROM/备份恢复后可执行位会丢失）
-        binDir.listFiles()?.forEach { f ->
-            if (f.isFile && !f.name.startsWith(".")) chmodExec(f.absolutePath)
-        }
+        val probe = probeExec(binDir.absolutePath)
+        report.appendLine()
+        report.appendLine("probe fastboot --version : $probe")
+        runCatching { File(context.filesDir, "env.log").writeText(report.toString()) }
+
         return binDir.absolutePath
     }
 
-    private fun appVersion(context: Context): Long {
-        val pi: PackageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            context.packageManager.getPackageInfo(context.packageName, PackageManager.PackageInfoFlags.of(0))
-        } else {
-            @Suppress("DEPRECATION")
-            context.packageManager.getPackageInfo(context.packageName, 0)
+    private fun link(
+        report: StringBuilder,
+        name: String,
+        nativeDir: File?,
+        binDir: File,
+        libFile: String? = null,
+    ) {
+        if (nativeDir == null) {
+            report.appendLine("[×] $name : 无 nativeLibraryDir")
+            return
         }
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) pi.longVersionCode else pi.versionCode.toLong()
+        val fileName = libFile ?: libName(ALIAS[name] ?: name)
+        val target = File(nativeDir, fileName)
+        if (!target.exists()) {
+            report.appendLine("[×] $name : 缺少 $fileName")
+            return
+        }
+        val ok = replaceLink(File(binDir, name), target)
+        runCatching { Os.chmod(target.absolutePath, 0b111101101) }
+        report.appendLine(
+            if (ok) "[√] $name -> ${target.absolutePath}"
+            else "[!] $name : 链接失败，已回退复制（可能不可执行）"
+        )
     }
 
-    private fun copyAssetDir(context: Context, assetPath: String, outDir: File) {
-        val names = context.assets.list(assetPath) ?: return
-        outDir.mkdirs()
-        for (name in names) {
-            val sub = "$assetPath/$name"
-            val children = context.assets.list(sub)
-            if (!children.isNullOrEmpty()) {
-                copyAssetDir(context, sub, File(outDir, name))
-            } else {
-                context.assets.open(sub).use { input ->
-                    val out = File(outDir, name)
-                    out.outputStream().use { input.copyTo(it) }
-                    chmodExec(out.absolutePath)
-                }
-            }
-        }
+    /** 用符号链接指向真实二进制；ROM 不支持时回退为复制 */
+    private fun replaceLink(link: File, target: File): Boolean {
+        try {
+            if (link.exists() || Files.isSymbolicLink(link.toPath())) link.delete()
+        } catch (_: Throwable) { }
+        try {
+            Os.symlink(target.absolutePath, link.absolutePath)
+            return true
+        } catch (_: Throwable) { }
+        return try {
+            target.copyTo(link, overwrite = true)
+            chmodExec(link.absolutePath)
+            false
+        } catch (_: Throwable) { false }
     }
 
-    private fun copyExecFromLibs(context: Context, binDir: File) {
-        context.applicationInfo.nativeLibraryDir ?: return
-        val libDir = File(context.applicationInfo.nativeLibraryDir)
-        for ((src, dst) in EXEC_FROM_LIBS) {
-            val f = File(libDir, src)
-            if (f.exists()) {
-                val out = File(binDir, dst)
-                f.copyTo(out, overwrite = true)
-                chmodExec(out.absolutePath)
-            }
-        }
-    }
-
-    /** 把内置的检测脚本也释放出来，方便终端里 sh 直接执行 */
+    /** 释放内置脚本（脚本由 sh 解释执行，不依赖 exec 位） */
     private fun extractScript(context: Context, binDir: File) {
-        listOf("check_env.sh").forEach { name ->
-            try {
+        for (name in listOf("check_env.sh")) {
+            runCatching {
                 context.assets.open("scripts/$name").use { input ->
-                    val out = File(binDir, name)
-                    out.outputStream().use { input.copyTo(it) }
-                    chmodExec(out.absolutePath)
+                    File(binDir, name).outputStream().use { input.copyTo(it) }
                 }
-            } catch (_: Throwable) { }
+            }
         }
     }
 
@@ -128,34 +142,31 @@ object NativeLibs {
         }
     }
 
-    /** 组装 PATH：自带 bin 优先，随后是系统路径（保证 sh/toybox/tar/gzip 可用） */
-    fun pathEnv(binPath: String): String {
+    /** PATH：filesDir/bin（干净工具名）→ nativeLibraryDir（libozj_*.so）→ 系统路径 */
+    fun pathEnv(binPath: String, nativeDir: String? = null): String {
         val sys = System.getenv("PATH")
         val sysPath = if (sys.isNullOrEmpty())
             "/product/bin:/apex/com.android.runtime/bin:/apex/com.android.art/bin:/system_ext/bin:/system/bin:/system/xbin:/odm/bin:/vendor/bin:/vendor/xbin:/sbin"
         else sys
-        return "$binPath:$sysPath"
+        return listOf(binPath, nativeDir, sysPath).filter { !it.isNullOrEmpty() }.joinToString(":")
     }
 
     /** 终端进程环境变量 */
-    fun shellEnv(context: Context, binPath: String): Map<String, String> = mapOf(
-        "PATH" to pathEnv(binPath),
+    fun shellEnv(context: Context, binPath: String, nativeDir: String? = null): Map<String, String> = mapOf(
+        "PATH" to pathEnv(binPath, nativeDir),
         "HOME" to context.filesDir.absolutePath,
         "TMPDIR" to context.cacheDir.absolutePath,
         "TERM" to "xterm-256color",
         "LANG" to "en_US.UTF-8"
     )
 
-    /** 选择终端 shell：优先内置 bash，否则回退 /system/bin/sh */
+    /** 选择终端 shell：优先自带 bash，否则回退 /system/bin/sh */
     fun shellPath(binPath: String): String {
         val bash = File(binPath, "bash")
         return if (bash.canExecute()) bash.absolutePath else "/system/bin/sh"
     }
 
-    /**
-     * 依据 shebang 生成执行脚本的命令；没有 shebang 则用系统 sh 兜底。
-     * 注意这里返回的是「给人看的命令行」（写进终端），实际由 shell 解释执行。
-     */
+    /** 依据 shebang 生成执行脚本的命令（保留给需要交互解释的场景） */
     fun scriptCommand(script: File): String {
         val shebang = readShebang(script)
         val interpreter = when {
@@ -165,6 +176,9 @@ object NativeLibs {
         return "'%s' '%s'".format(interpreter, script.absolutePath)
     }
 
+    /** 脚本不一定有 exec 位，统一用 sh 显式调用最稳 */
+    fun runScriptCommand(script: File): String = "'/system/bin/sh' '%s'".format(script.absolutePath)
+
     private fun readShebang(script: File): String? = try {
         script.bufferedReader().useLines { lines ->
             val first = lines.firstOrNull() ?: return@useLines null
@@ -173,9 +187,21 @@ object NativeLibs {
         }
     } catch (_: Throwable) { null }
 
-    /** 当前缺失的工具列表（用于 UI 自检展示） */
+    /** 缺失的工具（filesDir/bin 下没有链接或链接已断裂） */
     fun missingTools(binPath: String): List<String> =
         TOOLS.filter { !File(binPath, it).exists() }
+
+    /** 真实执行一次工具，确认「能不能 exec」，返回给 UI/日志看的结论 */
+    fun probeExec(binPath: String, tool: String = "fastboot"): String = try {
+        val p = ProcessBuilder(File(binPath, tool).absolutePath, "--version")
+            .redirectErrorStream(true)
+            .start()
+        val out = p.inputStream.bufferedReader().readText().trim().lineSequence().firstOrNull().orEmpty()
+        val code = p.waitFor()
+        "exit=$code $out"
+    } catch (t: Throwable) {
+        "FAIL ${t.javaClass.simpleName}: ${t.message}"
+    }
 
     /** 按需加载 JNI 原生库（单个缺失不致命，静默跳过） */
     fun loadJni() {

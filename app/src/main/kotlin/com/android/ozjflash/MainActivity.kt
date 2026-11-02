@@ -1,6 +1,7 @@
 package com.android.ozjflash
 
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -37,6 +38,9 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import com.android.ozjflash.CrashLogger
 import com.android.ozjflash.flash.NativeLibs
 import com.android.ozjflash.terminal.TerminalEngine
 import com.android.ozjflash.ui.LocalMainPagerState
@@ -68,6 +72,7 @@ import com.android.ozjflash.ui.theme.LocalEnableNavigationBadge
 import com.android.ozjflash.ui.theme.OzjFlashTheme
 import com.android.ozjflash.ui.util.rememberBlurBackdrop
 import com.android.ozjflash.ui.viewmodel.AppViewModel
+import top.yukonga.miuix.kmp.blur.Backdrop
 import top.yukonga.miuix.kmp.blur.layerBackdrop
 import top.yukonga.miuix.kmp.blur.rememberLayerBackdrop
 import top.yukonga.miuix.kmp.nav.core.NavDisplay
@@ -85,7 +90,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // 释放内置刷写工具（adb / fastboot / bash...）到 files/bin 并加载 JNI 桥接库
+        // 建立内置刷写工具（adb / fastboot / bash...）的可执行链接并加载 JNI 桥接库
+        // nativeLibraryDir 里的 lib*.so 才是真正可执行的本体（Android 10+ 禁止 exec 应用私有目录）
+        val nativeDir = applicationInfo.nativeLibraryDir
         val binPath = NativeLibs.prepare(this)
         NativeLibs.loadJni()
 
@@ -102,7 +109,10 @@ class MainActivity : ComponentActivity() {
                     statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT) { darkMode },
                     navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT) { darkMode },
                 )
-                window.isNavigationBarContrastEnforced = false
+                // 该属性自 API 29 起才有，低版本直接访问会 NoSuchMethodError
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    window.isNavigationBarContrastEnforced = false
+                }
                 onDispose { }
             }
 
@@ -127,6 +137,7 @@ class MainActivity : ComponentActivity() {
                         MainScreen(
                             viewModel = viewModel,
                             binPath = binPath,
+                            nativeDir = nativeDir,
                             initialPage = uiState.selectedMainPage,
                             onPageChanged = viewModel::setSelectedMainPage,
                         )
@@ -162,6 +173,7 @@ class MainActivity : ComponentActivity() {
 private fun MainScreen(
     viewModel: AppViewModel,
     binPath: String,
+    nativeDir: String?,
     initialPage: Int,
     onPageChanged: (Int) -> Unit,
 ) {
@@ -180,8 +192,34 @@ private fun MainScreen(
     val shellPath = remember(binPath) { NativeLibs.shellPath(binPath) }
     val console = remember {
         TerminalEngine.USE_TERMUX_PTY = uiState.terminalPty
-        TerminalEngine(scope, shellPath, NativeLibs.pathEnv(binPath))
+        TerminalEngine(scope, shellPath, NativeLibs.pathEnv(binPath, nativeDir))
     }.let { rememberTerminalConsole(it, binPath) }
+
+    // 启动横幅：把工具链探测结果与上次崩溃摘要直接打进终端，
+    // 用户不用翻 logcat 就能看出是工具没链接上、不可执行，还是别的问题
+    LaunchedEffect(console) {
+        withContext(Dispatchers.IO) {
+            val missing = NativeLibs.missingTools(binPath)
+            val probe = NativeLibs.probeExec(binPath)
+            val crash = CrashLogger.read(ozjApp)
+            val banner = buildString {
+                appendLine("\r\n[OZJFLASH] 工具目录   : $binPath")
+                appendLine("[OZJFLASH] 原生库目录 : ${ozjApp.applicationInfo.nativeLibraryDir}")
+                appendLine("[OZJFLASH] fastboot   : $probe")
+                if (missing.isEmpty()) {
+                    appendLine("[OZJFLASH] 工具链接就绪，可直接 fastboot / adb；sh check_env.sh 可自检")
+                } else {
+                    appendLine("[OZJFLASH] 缺失工具   : ${missing.joinToString()}")
+                }
+                if (crash != null) {
+                    appendLine("\r\n[OZJFLASH] 上次崩溃记录（已读取并清空，完整内容见 files/crash.log）：")
+                    crash.lineSequence().take(24).forEach { appendLine(it) }
+                }
+            }
+            console.append(banner)
+            if (crash != null) CrashLogger.clear(ozjApp)
+        }
+    }
 
     val toolsState = rememberToolsState(binPath)
     val navigationBadge = NavigationBadgeState(toolsMissingCount = toolsState.missingCount)
@@ -195,11 +233,16 @@ private fun MainScreen(
         UiMode.Material -> MaterialTheme.colorScheme.surface
         UiMode.Miuix -> MiuixTheme.colorScheme.surface
     }
-    val blurBackdrop = rememberBlurBackdrop(enableBlur)
-    val backdrop = rememberLayerBackdrop {
-        drawRect(surfaceColor)
-        drawContent()
-    }
+    // miuix-blur 依赖 android.graphics.RuntimeShader（API 33 才有），
+    // 低版本上一旦触碰就会 NoClassDefFoundError 直接闪退，因此整条链路按版本降级
+    val blurSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+    val blurBackdrop = if (blurSupported) rememberBlurBackdrop(enableBlur) else null
+    val backdrop: Backdrop? = if (blurSupported) {
+        rememberLayerBackdrop {
+            drawRect(surfaceColor)
+            drawContent()
+        }
+    } else null
 
     CompositionLocalProvider(LocalMainPagerState provides mainPagerState) {
         val pagerContent = @Composable { bottomInnerPadding: Dp ->
