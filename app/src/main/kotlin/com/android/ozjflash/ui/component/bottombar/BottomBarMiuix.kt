@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Bolt
 import androidx.compose.material.icons.rounded.Handyman
+import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Terminal
 import androidx.compose.runtime.Composable
@@ -133,9 +133,9 @@ enum class BottomBarDestination(
     @get:StringRes val label: Int,
     val icon: ImageVector,
 ) {
-    Terminal(R.string.terminal, Icons.Rounded.Terminal),
-    Flash(R.string.flash, Icons.Rounded.Bolt),
+    Home(R.string.home, Icons.Rounded.Home),
     Tools(R.string.tools, Icons.Rounded.Handyman),
+    Terminal(R.string.terminal, Icons.Rounded.Terminal),
     Settings(R.string.settings, Icons.Rounded.Settings)
 }
 

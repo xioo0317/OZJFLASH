@@ -1,6 +1,7 @@
 package com.android.ozjflash
 
 import android.app.Application
+import android.content.Context
 
 /**
  * OZJFLASH 应用入口。
@@ -10,10 +11,18 @@ import android.app.Application
  */
 class OzjFlashApplication : Application() {
 
+    override fun attachBaseContext(base: Context) {
+        // 在首屏渲染前就把应用内语言应用到 Context（此时 ozjApp 尚未初始化，
+        // 所以直接读 settings 这个 SharedPreferences，而不是走 SettingsRepository）。
+        val prefs = base.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val lang = prefs.getString("language", "system") ?: "system"
+        super.attachBaseContext(base.wrapWithLanguage(lang))
+    }
+
     override fun onCreate() {
         super.onCreate()
         appContext = this
-        // 崩溃栈写入 files/crash.log，便于事后定位（设置 → 运行诊断 可查看）
+        // 崩溃栈写入 files/crash.log，便于事后定位（设置 → 崩溃日志 可查看）
         CrashLogger.install(this)
     }
 

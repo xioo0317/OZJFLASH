@@ -27,6 +27,8 @@ interface SettingsRepository {
     var pageScale: Float
     /** 终端是否默认走 PTY（libtermux.so），否则用 ProcessBuilder 管道模式 */
     var terminalPty: Boolean
+    /** 应用显示语言：system = 跟随系统，否则为 BCP-47/限定符（zh-CN, ja, es…） */
+    var language: String
 }
 
 private const val SETTINGS_PREFS = "settings"
@@ -66,7 +68,7 @@ class SettingsRepositoryImpl : SettingsRepository {
         set(value) = prefs.edit { putBoolean("enable_blur", value) }
 
     override var enableFloatingBottomBar: Boolean
-        get() = prefs.getBoolean("enable_floating_bottom_bar", false)
+        get() = prefs.getBoolean("enable_floating_bottom_bar", true)
         set(value) = prefs.edit { putBoolean("enable_floating_bottom_bar", value) }
 
     override var enableFloatingBottomBarBlur: Boolean
@@ -88,4 +90,8 @@ class SettingsRepositoryImpl : SettingsRepository {
     override var terminalPty: Boolean
         get() = prefs.getBoolean("terminal_pty", false)
         set(value) = prefs.edit { putBoolean("terminal_pty", value) }
+
+    override var language: String
+        get() = prefs.getString("language", "system") ?: "system"
+        set(value) = prefs.edit { putString("language", value) }
 }

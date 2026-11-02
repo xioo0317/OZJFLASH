@@ -215,9 +215,10 @@ fun FloatingBottomBar(
     val isInDark = isInDarkTheme()
     val pillShape = remember { CircleShape }
     val accentColor = MiuixTheme.colorScheme.primary
-    val tabContentColor = MiuixTheme.colorScheme.onSurface
-    val surfaceContainer = MiuixTheme.colorScheme.surfaceContainer
-    val containerColor = if (isBlurEnabled) surfaceContainer.copy(0.4f) else surfaceContainer
+    // KSU 风格黑色液态悬浮底栏：容器恒为黑色（模糊开启时半透明黑以透出玻璃效果），
+    // 未选中内容用白色，选中内容用主题色。
+    val tabContentColor = Color.White
+    val containerColor = if (isBlurEnabled) Color.Black.copy(alpha = 0.55f) else Color.Black
 
     val tabsBackdrop = rememberLayerBackdrop()
     val density = LocalDensity.current

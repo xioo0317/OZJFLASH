@@ -1,45 +1,67 @@
 package com.android.ozjflash.ui.screen.settings
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.core.exponentialDecay
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.displayCutout
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.union
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.BugReport
+import androidx.compose.material.icons.rounded.DisplaySettings
+import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.rounded.Language
+import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.android.ozjflash.R
+import com.android.ozjflash.findActivity
 import com.android.ozjflash.ui.UiMode
+import com.android.ozjflash.ui.theme.LocalEnableBlur
+import com.android.ozjflash.ui.util.BlurredBar
+import com.android.ozjflash.ui.util.rememberBlurBackdrop
 import com.android.ozjflash.ui.viewmodel.AppUiState
-import top.yukonga.miuix.kmp.preference.ArrowPreference
 import top.yukonga.miuix.kmp.basic.Card
-import top.yukonga.miuix.kmp.basic.SmallTitle
-import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.basic.TextButton
-import top.yukonga.miuix.kmp.theme.MiuixTheme
+import top.yukonga.miuix.kmp.basic.Icon
+import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
+import top.yukonga.miuix.kmp.basic.Scaffold
+import top.yukonga.miuix.kmp.basic.TopAppBar
+import top.yukonga.miuix.kmp.basic.rememberTopAppBarState
+import top.yukonga.miuix.kmp.blur.layerBackdrop
+import top.yukonga.miuix.kmp.preference.ArrowPreference
+import top.yukonga.miuix.kmp.preference.OverlayDropdownPreference
+import top.yukonga.miuix.kmp.preference.SwitchPreference
+import top.yukonga.miuix.kmp.theme.MiuixTheme.colorScheme
 import top.yukonga.miuix.kmp.utils.overScrollVertical
+import top.yukonga.miuix.kmp.utils.scrollEndHaptic
 
-/** Miuix 主体的设置页 */
+/**
+ * Miuix 主体的设置页（照搬 KernelSU 的卡片 + 偏好组件结构）。
+ *
+ * 与 KernelSU 一致：这里只放「界面主体 / 语言 / 主题设置入口 / 终端 / 诊断」，
+ * 具体配色、模糊、悬浮底栏、缩放等全部收进二级页「主题设置」（Route.ColorPalette）。
+ */
 @Composable
 fun SettingsMiuix(
     uiState: AppUiState,
@@ -47,150 +69,154 @@ fun SettingsMiuix(
     bottomInnerPadding: Dp,
     isCurrentPage: Boolean,
 ) {
-    val colorScheme = MiuixTheme.colorScheme
+    val scrollBehavior = MiuixScrollBehavior(
+        rememberTopAppBarState(),
+        { true },
+        spring<Float>(),
+        exponentialDecay<Float>(),
+    )
+    val enableBlur = LocalEnableBlur.current
+    val backdrop = rememberBlurBackdrop(enableBlur)
+    val blurActive = backdrop != null
+    val barColor = if (blurActive) Color.Transparent else colorScheme.surface
+    val context = LocalContext.current
+    var showCrashLog by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .overScrollVertical()
-            .then(
-                if (bottomInnerPadding > 0.dp) Modifier.padding(bottom = bottomInnerPadding)
-                else Modifier.windowInsetsPadding(
-                    WindowInsets.systemBars.union(WindowInsets.displayCutout)
-                        .only(WindowInsetsSides.Bottom)
-                        .union(WindowInsets.navigationBars)
+    Scaffold(
+        topBar = {
+            BlurredBar(backdrop) {
+                TopAppBar(
+                    color = barColor,
+                    title = stringResource(R.string.settings),
+                    scrollBehavior = scrollBehavior,
                 )
-            )
-            .verticalScroll(rememberScrollStateCompat())
-            .padding(horizontal = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        SmallTitle(text = stringResource(R.string.settings_ui_mode), modifier = Modifier.padding(top = 8.dp))
-        Card(modifier = Modifier.fillMaxWidth()) {
-            Row(modifier = Modifier.padding(14.dp), horizontalArrangement = Arrangement.spacedBy(20.dp)) {
-                UiMode.entries.forEach { mode ->
-                    TextButton(
-                        text = if (mode == UiMode.Miuix) stringResource(R.string.settings_ui_mode_miuix)
-                        else stringResource(R.string.settings_ui_mode_material),
-                        onClick = { actions.setUiMode(mode) },
-                        enabled = uiState.uiMode != mode
-                    )
-                }
             }
-        }
-
-        SmallTitle(text = stringResource(R.string.settings_theme))
-        Card(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                colorModeOptions.forEach { (mode, label) ->
-                    Text(
-                        text = stringResource(label),
-                        fontSize = 13.sp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(androidx.compose.foundation.shape.RoundedCornerShape(8.dp))
-                            .clickable { actions.setColorMode(mode) }
-                            .padding(horizontal = 8.dp, vertical = 8.dp),
-                        color = if (uiState.appSettings.colorMode == mode) colorScheme.primary else colorScheme.onSurface
-                    )
-                }
-            }
-        }
-
-        SmallTitle(text = stringResource(R.string.settings_color))
-        Card(modifier = Modifier.fillMaxWidth()) {
-            Row(
-                modifier = Modifier.padding(14.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+        },
+        popupHost = { },
+        contentWindowInsets = WindowInsets.systemBars
+            .add(WindowInsets.displayCutout)
+            .only(WindowInsetsSides.Horizontal),
+    ) { innerPadding ->
+        Box(modifier = if (backdrop != null) Modifier.layerBackdrop(backdrop) else Modifier) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .scrollEndHaptic()
+                    .overScrollVertical()
+                    .nestedScroll(scrollBehavior.nestedScrollConnection)
+                    .padding(horizontal = 12.dp),
+                contentPadding = innerPadding,
+                overscrollEffect = null,
             ) {
-                keyColorOptions.forEach { (value, _) ->
-                    val selected = uiState.appSettings.keyColor == value
-                    Box(
-                        modifier = Modifier
-                            .size(if (selected) 40.dp else 32.dp)
-                            .clip(CircleShape)
-                            .background(if (value == 0) colorScheme.primary else Color(value))
-                            .clickable { actions.setKeyColor(value) }
-                    )
+                item {
+                    Column(
+                        modifier = Modifier.padding(top = 12.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        // 外观：界面主体 / 语言 / 主题设置（二级页）
+                        Card(modifier = Modifier.fillMaxWidth()) {
+                            val uiModeItems = listOf(
+                                stringResource(R.string.settings_ui_mode_miuix),
+                                stringResource(R.string.settings_ui_mode_material),
+                            )
+                            OverlayDropdownPreference(
+                                title = stringResource(R.string.settings_ui_mode),
+                                summary = stringResource(R.string.settings_ui_mode_summary),
+                                items = uiModeItems,
+                                startAction = {
+                                    Icon(
+                                        Icons.Rounded.DisplaySettings,
+                                        modifier = Modifier.padding(end = 6.dp),
+                                        contentDescription = stringResource(R.string.settings_ui_mode),
+                                        tint = colorScheme.onBackground,
+                                    )
+                                },
+                                selectedIndex = if (uiState.uiMode == UiMode.Miuix) 0 else 1,
+                                onSelectedIndexChange = {
+                                    actions.setUiMode(if (it == 0) UiMode.Miuix else UiMode.Material)
+                                },
+                            )
+
+                            val langEntries = listOf(
+                                "system" to stringResource(R.string.language_system),
+                                "en" to stringResource(R.string.language_en),
+                                "zh-CN" to stringResource(R.string.language_zh_rCN),
+                                "zh-TW" to stringResource(R.string.language_zh_rTW),
+                                "ja" to stringResource(R.string.language_ja),
+                                "es" to stringResource(R.string.language_es),
+                            )
+                            val langIndex = langEntries.indexOfFirst { it.first == uiState.language }.coerceAtLeast(0)
+                            OverlayDropdownPreference(
+                                title = stringResource(R.string.settings_language),
+                                summary = stringResource(R.string.settings_language_summary),
+                                items = langEntries.map { it.second },
+                                startAction = {
+                                    Icon(
+                                        Icons.Rounded.Language,
+                                        modifier = Modifier.padding(end = 6.dp),
+                                        contentDescription = stringResource(R.string.settings_language),
+                                        tint = colorScheme.onBackground,
+                                    )
+                                },
+                                selectedIndex = langIndex,
+                                onSelectedIndexChange = {
+                                    actions.setLanguage(langEntries[it].first)
+                                    context.findActivity()?.recreate()
+                                },
+                            )
+
+                            ArrowPreference(
+                                title = stringResource(R.string.settings_theme),
+                                summary = stringResource(R.string.settings_theme_summary),
+                                startAction = {
+                                    Icon(
+                                        Icons.Rounded.Palette,
+                                        modifier = Modifier.padding(end = 6.dp),
+                                        contentDescription = stringResource(R.string.settings_theme),
+                                        tint = colorScheme.onBackground,
+                                    )
+                                },
+                                onClick = actions::openColorPalette,
+                            )
+                        }
+
+                        // 诊断 / 其它
+                        Card(modifier = Modifier.fillMaxWidth()) {
+                            ArrowPreference(
+                                title = stringResource(R.string.settings_crash_log),
+                                summary = stringResource(R.string.settings_crash_log_summary),
+                                startAction = {
+                                    Icon(
+                                        Icons.Rounded.BugReport,
+                                        modifier = Modifier.padding(end = 6.dp),
+                                        contentDescription = stringResource(R.string.settings_crash_log),
+                                        tint = colorScheme.onBackground,
+                                    )
+                                },
+                                onClick = { showCrashLog = true },
+                            )
+                            ArrowPreference(
+                                title = stringResource(R.string.about),
+                                startAction = {
+                                    Icon(
+                                        Icons.Rounded.Info,
+                                        modifier = Modifier.padding(end = 6.dp),
+                                        contentDescription = stringResource(R.string.about),
+                                        tint = colorScheme.onBackground,
+                                    )
+                                },
+                                onClick = actions::openAbout,
+                            )
+                        }
+
+                        Spacer(Modifier.height(bottomInnerPadding))
+                    }
                 }
             }
         }
+    }
 
-        SmallTitle(text = stringResource(R.string.settings_page_scale))
-        Card(modifier = Modifier.fillMaxWidth()) {
-            Row(modifier = Modifier.padding(14.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                pageScaleOptions.forEach { scale ->
-                    TextButton(
-                        text = "${scale}x",
-                        onClick = { actions.setPageScale(scale) },
-                        enabled = uiState.pageScale != scale
-                    )
-                }
-            }
-        }
-
-        SmallTitle(text = stringResource(R.string.settings_others))
-        Card(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(vertical = 4.dp)) {
-                SwitchItem(
-                    title = stringResource(R.string.settings_enable_blur),
-                    summary = stringResource(R.string.settings_enable_blur_summary),
-                    checked = uiState.enableBlur,
-                    onCheckedChange = actions::setBlur
-                )
-                SwitchItem(
-                    title = stringResource(R.string.settings_enable_floating_bottom_bar),
-                    summary = stringResource(R.string.settings_enable_floating_bottom_bar_summary),
-                    checked = uiState.enableFloatingBottomBar,
-                    onCheckedChange = actions::setFloatingBottomBar
-                )
-                SwitchItem(
-                    title = stringResource(R.string.settings_terminal_pty),
-                    summary = stringResource(R.string.settings_terminal_pty_summary),
-                    checked = uiState.terminalPty,
-                    onCheckedChange = actions::setTerminalPty
-                )
-            }
-        }
-
-        Card(modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp)) {
-            ArrowPreference(
-                title = stringResource(R.string.about),
-                onClick = actions::openAbout
-            )
-        }
+    if (showCrashLog) {
+        CrashLogDialog(onDismiss = { showCrashLog = false })
     }
 }
-
-@Composable
-private fun SwitchItem(
-    title: String,
-    summary: String,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-) {
-    val colorScheme = MiuixTheme.colorScheme
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onCheckedChange(!checked) }
-            .padding(horizontal = 16.dp, vertical = 12.dp)
-    ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(text = title, fontSize = 14.sp)
-            Text(
-                text = summary,
-                fontSize = 11.sp,
-                color = colorScheme.onSurfaceVariantSummary
-            )
-        }
-        top.yukonga.miuix.kmp.basic.Switch(
-            checked = checked,
-            onCheckedChange = onCheckedChange,
-            modifier = Modifier.padding(start = 12.dp)
-        )
-    }
-}
-
-@Composable
-private fun rememberScrollStateCompat() = androidx.compose.foundation.rememberScrollState()

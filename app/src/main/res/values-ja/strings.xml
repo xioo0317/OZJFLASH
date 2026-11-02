@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">OZJFLASH</string>
+
+    <!-- 底欄與通用 -->
+    <string name="terminal">端末</string>
+    <string name="flash">フラッシュ</string>
+    <string name="home">ホーム</string>
+    <string name="tools">ツール</string>
+    <string name="settings">設定</string>
+    <string name="about">情報</string>
+    <string name="cancel">キャンセル</string>
+    <string name="confirm">決定</string>
+    <string name="ok">OK</string>
+    <string name="processing">処理中…</string>
+    <string name="nav_rail_expand">ナビゲーションレイルを展開</string>
+    <string name="nav_rail_collapse">ナビゲーションレイルを折りたたむ</string>
+
+    <!-- 終端 -->
+    <string name="terminal_running">シェル実行中</string>
+    <string name="terminal_stopped">シェル終了</string>
+
+    <!-- 工具 -->
+    <string name="tools_ready">すべての内蔵ツールが利用可能</string>
+    <string name="tools_missing">一部のツールが見つかりません</string>
+    <string name="tools_present">個のツールを展開</string>
+    <string name="tools_run_check">診断スクリプトを実行</string>
+
+    <!-- 設定 -->
+    <string name="settings_ui_mode">インターフェース</string>
+    <string name="settings_ui_mode_miuix">Miuix</string>
+    <string name="settings_ui_mode_material">Material Expressive</string>
+    <string name="settings_theme">テーマ</string>
+    <string name="settings_theme_system">システムに合わせる</string>
+    <string name="settings_theme_light">ライト</string>
+    <string name="settings_theme_dark">ダーク</string>
+    <string name="settings_theme_monet_system">ダイナミックカラー（システム）</string>
+    <string name="settings_theme_monet_light">ダイナミックカラー（ライト）</string>
+    <string name="settings_theme_monet_dark">ダイナミックカラー（ダーク）</string>
+    <string name="settings_theme_amoled">AMOLED ダーク</string>
+    <string name="settings_miuix_monet">Miuix ダイナミックカラー</string>
+    <string name="settings_miuix_monet_summary">Miuix をシステムの壁紙から配色に追従させる</string>
+    <string name="settings_color">アクセントカラー</string>
+    <string name="settings_color_dynamic">システム</string>
+    <string name="settings_color_green">緑</string>
+    <string name="settings_color_blue">青</string>
+    <string name="settings_color_purple">紫</string>
+    <string name="settings_color_red">赤</string>
+    <string name="settings_color_orange">オレンジ</string>
+    <string name="settings_color_custom">カスタム</string>
+    <string name="settings_page_scale">ページ倍率</string>
+    <string name="settings_others">その他</string>
+    <string name="settings_enable_blur">背景のぼかし</string>
+    <string name="settings_enable_blur_summary">バーとダイアログの背後に描画ベースのぼかしを有効化</string>
+    <string name="settings_enable_floating_bottom_bar">フローティングボトムバー</string>
+    <string name="settings_enable_floating_bottom_bar_summary">貼り付けナビをフローティングピルバーに置き換え</string>
+    <string name="settings_enable_floating_bottom_bar_blur">フローティングバーのぼかし</string>
+    <string name="settings_enable_floating_bottom_bar_blur_summary">フローティングバーの背景をぼかす</string>
+    <string name="settings_terminal_pty">本物の PTY 端末</string>
+    <string name="settings_terminal_pty_summary">パイプされたシェルの代わりに同梱の libtermux.so 擬似端末を使用</string>
+
+    <!-- 關於 -->
+    <string name="about_app_name_title">OZJFLASH</string>
+    <string name="about_app_name_value">内蔵ターミナルと root 不要のフラッシュ機能を備えた Compose ベースのツールセット。同梱の adb・fastboot・bash・mke2fs・make_f2fs・payload-dumper-go などの実行ファイルは初回起動時にプライベート領域へ展開され、ターミナルの PATH に追加されます。</string>
+    <string name="about_ui_title">デュアル UI</string>
+    <string name="about_ui_value">Miuix（Mi スタイル）と Material 3 Expressive の両方を同梱。設定 → インターフェースからいつでも切り替え可能。ページ・ナビ・ダイアログはいずれの主体でもネイティブに描画されます。</string>
+    <string name="about_tools_title">ソースについて</string>
+    <string name="about_tools_value">UI シェルは KernelSU Manager から移植（root・モジュール・HTTP・JNI 関連コードを削除）。フラッシュ用バイナリは公開されているプラットフォームツールのビルドから。本アプリは root を要求・利用しません。</string>
+    <string name="about_disclaimer_title">免責事項</string>
+    <string name="about_disclaimer_value">フラッシュ、ブートローダーのアンロック、パーティションの書き換えはデバイスの文鎮化や保証対象外を招く恐れがあります。自有デバイスの正当な修理・学習・研究でのみ使用してください。本ツールの使用による一切の結果は利用者が負担します。</string>
+
+    <!-- 主頁 -->
+    <string name="home_status_ready">内蔵ツールはすべて利用可能</string>
+    <string name="home_status_missing">%d 個のツールが不足</string>
+    <string name="home_status_title_ready">OZJFLASH 準備完了</string>
+    <string name="home_status_title_missing">ツールが不完全</string>
+    <string name="home_app_version">アプリバージョン</string>
+    <string name="home_android_version">Android バージョン</string>
+    <string name="home_device_model">デバイスモデル</string>
+    <string name="home_fingerprint">ビルドフィンガープリント</string>
+    <string name="home_abi">ABI</string>
+    <string name="home_selinux_status">SELinux ステータス</string>
+    <string name="home_seccomp_status">Seccomp ステータス</string>
+    <string name="home_support_title">OZJFLASH を支援</string>
+    <string name="home_support_content">プロジェクトにスターまたは Issue を投稿</string>
+    <string name="home_learn_title">詳しく見る</string>
+    <string name="home_learn_content">プロジェクトのソースと使い方ガイド</string>
+
+    <!-- 多語言 -->
+    <string name="settings_language">言語</string>
+    <string name="settings_language_summary">アプリの表示言語</string>
+    <string name="language_system">システムに合わせる</string>
+    <string name="language_en">English</string>
+    <string name="language_zh_rCN">简体中文</string>
+    <string name="language_zh_rTW">繁體中文</string>
+    <string name="language_ja">日本語</string>
+    <string name="language_es">Español</string>
+
+    <!-- 崩潰日誌 / 診斷 -->
+    <string name="settings_crash_log">クラッシュログ</string>
+    <string name="settings_crash_log_summary">files/crash.log に記録された直近のクラッシュを表示</string>
+    <string name="crash_log_empty">クラッシュは記録されていません</string>
+    <string name="crash_log_copy">コピー</string>
+    <string name="crash_log_clear">クリア</string>
+    <string name="crash_log_copied">クリップボードにコピーしました</string>
+    <string name="crash_log_description">OZJFLASH クラッシュログ（files/crash.log）</string>
+
+    <!-- テーマ設定画面（KernelSU ColorPalette を移植） -->
+    <string name="settings_theme_mode_system">システムに従う</string>
+    <string name="settings_theme_mode_light">ライト</string>
+    <string name="settings_theme_mode_dark">ダーク</string>
+    <string name="settings_theme_mode_amoled">AMOLED</string>
+    <string name="settings_monet">ダイナミックカラー</string>
+    <string name="settings_monet_summary">壁紙から配色を生成します</string>
+    <string name="settings_key_color">アクセントカラー</string>
+    <string name="settings_key_color_default">既定</string>
+    <string name="settings_color_style">カラースタイル</string>
+    <string name="settings_color_spec">カラースペック</string>
+    <string name="settings_floating_bottom_bar">フローティングバー</string>
+    <string name="settings_floating_bottom_bar_summary">ドックをフローティングバーに置き換えます</string>
+    <string name="settings_enable_glass">ガラス効果</string>
+    <string name="settings_enable_glass_summary">フローティングバーの背面をぼかします</string>
+    <string name="settings_navigation_badge">ナビゲーションバッジ</string>
+    <string name="settings_navigation_badge_summary">ツール不足時にバッジを表示します</string>
+    <string name="settings_page_scale_summary">画面全体の拡大率（80% - 110%）</string>
+</resources>

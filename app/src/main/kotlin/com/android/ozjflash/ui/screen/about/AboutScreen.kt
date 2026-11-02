@@ -1,12 +1,19 @@
 package com.android.ozjflash.ui.screen.about
 
-import top.yukonga.miuix.kmp.icon.extended.Back
-import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.captionBar
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -14,19 +21,27 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.ozjflash.R
 import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
+import com.android.ozjflash.ui.component.material.ExpressiveScaffold
+import com.android.ozjflash.ui.component.material.TonalCard
+import com.android.ozjflash.ui.component.material.TopBarBackButton
+import com.android.ozjflash.ui.component.material.expressiveTopAppBarColors
 import com.android.ozjflash.ui.navigation3.Navigator
+import top.yukonga.miuix.kmp.icon.extended.Back
 
 /** 关于页：GPU/Material/Miuix 三个主体各自不同的呈现 */
 @Composable
@@ -48,30 +63,59 @@ private fun aboutSections(): List<Pair<String, String>> = listOf(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutMaterial(navigator: Navigator) {
-    Column(Modifier.fillMaxSize()) {
-        TopAppBar(
-            title = { Text(stringResource(R.string.about)) },
-            navigationIcon = {
-                IconButton(onClick = { navigator.pop() }) {
-                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = null)
-                }
-            }
-        )
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+
+    ExpressiveScaffold(
+        topBar = {
+            LargeFlexibleTopAppBar(
+                title = { Text(stringResource(R.string.about)) },
+                navigationIcon = { TopBarBackButton(onClick = { navigator.pop() }) },
+                colors = expressiveTopAppBarColors(),
+                windowInsets = WindowInsets.safeDrawing.only(
+                    WindowInsetsSides.Top + WindowInsetsSides.Horizontal
+                ),
+                scrollBehavior = scrollBehavior,
+            )
+        },
+        contentWindowInsets = WindowInsets.safeDrawing.only(
+            WindowInsetsSides.Top + WindowInsetsSides.Horizontal
+        ),
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(14.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+                .padding(innerPadding)
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(13.dp),
         ) {
             aboutSections().forEach { (title, body) ->
-                OutlinedCard(modifier = Modifier.fillMaxWidth()) {
-                    Column(Modifier.padding(14.dp)) {
-                        Text(title, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
-                        Text(body, fontSize = 12.sp, lineHeight = 18.sp)
+                TonalCard(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                ) {
+                    Column(Modifier.padding(16.dp)) {
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                        Spacer(Modifier.height(6.dp))
+                        Text(
+                            text = body,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
                     }
                 }
             }
+            Spacer(
+                Modifier.height(
+                    WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() +
+                        WindowInsets.captionBar.asPaddingValues().calculateBottomPadding()
+                )
+            )
         }
     }
 }

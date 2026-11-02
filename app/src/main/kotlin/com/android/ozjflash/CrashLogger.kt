@@ -50,6 +50,10 @@ object CrashLogger {
     fun read(app: android.app.Application): String? =
         File(app.filesDir, FILE).takeIf { it.exists() && it.length() > 0 }?.readText()
 
+    /** 是否存在崩溃记录 */
+    fun exists(app: android.app.Application): Boolean =
+        File(app.filesDir, FILE).exists() && File(app.filesDir, FILE).length() > 0
+
     fun clear(app: android.app.Application) {
         runCatching { File(app.filesDir, FILE).delete() }
     }

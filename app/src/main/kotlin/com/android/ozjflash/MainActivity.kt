@@ -43,6 +43,7 @@ import kotlinx.coroutines.withContext
 import com.android.ozjflash.CrashLogger
 import com.android.ozjflash.flash.NativeLibs
 import com.android.ozjflash.terminal.TerminalEngine
+import com.android.ozjflash.terminal.rememberRealTerminal
 import com.android.ozjflash.ui.LocalMainPagerState
 import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
@@ -57,7 +58,8 @@ import com.android.ozjflash.ui.navigation3.Navigator
 import com.android.ozjflash.ui.navigation3.Route
 import com.android.ozjflash.ui.navigation3.rememberNavigator
 import com.android.ozjflash.ui.screen.about.AboutScreen
-import com.android.ozjflash.ui.screen.flash.FlashPager
+import com.android.ozjflash.ui.screen.colorpalette.ColorPaletteScreen
+import com.android.ozjflash.ui.screen.home.HomePager
 import com.android.ozjflash.ui.screen.settings.SettingPager
 import com.android.ozjflash.ui.screen.terminal.TerminalConsole
 import com.android.ozjflash.ui.screen.terminal.TerminalPager
@@ -149,11 +151,8 @@ class MainActivity : ComponentActivity() {
                             onBack = { navigator.pop() }
                         ) {
                             entry<Route.Main> { mainScreen() }
-                            entry<Route.Terminal> { mainScreen() }
-                            entry<Route.Flash> { mainScreen() }
-                            entry<Route.Tools> { mainScreen() }
-                            entry<Route.Settings> { mainScreen() }
                             entry<Route.About> { AboutScreen(navigator) }
+                            entry<Route.ColorPalette> { ColorPaletteScreen(viewModel, navigator) }
                         }
                     }
                     when (uiMode) {
@@ -191,9 +190,15 @@ private fun MainScreen(
     val scope = rememberCoroutineScope()
     val shellPath = remember(binPath) { NativeLibs.shellPath(binPath) }
     val console = remember {
-        TerminalEngine.USE_TERMUX_PTY = uiState.terminalPty
         TerminalEngine(scope, shellPath, NativeLibs.pathEnv(binPath, nativeDir))
     }.let { rememberTerminalConsole(it, binPath) }
+
+    // 终端页：Termux 上游真终端（libtermux.so PTY + ANSI 渲染）。
+    // 主界面期间保持同一会话，随主界面销毁才回收子进程。
+    val realTerminal = rememberRealTerminal(shellPath, binPath, nativeDir)
+    DisposableEffect(realTerminal) {
+        onDispose { realTerminal.session.finishIfRunning() }
+    }
 
     // 启动横幅：把工具链探测结果与上次崩溃摘要直接打进终端，
     // 用户不用翻 logcat 就能看出是工具没链接上、不可执行，还是别的问题
@@ -257,9 +262,9 @@ private fun MainScreen(
                     ),
                 ) { page ->
                     when (page) {
-                        0 -> TerminalPager(console, bottomInnerPadding, true)
-                        1 -> FlashPager(console, bottomInnerPadding, true)
-                        2 -> ToolsPager(console, binPath, bottomInnerPadding, true)
+                        0 -> HomePager(binPath, bottomInnerPadding, true)
+                        1 -> ToolsPager(console, binPath, bottomInnerPadding, true)
+                        2 -> TerminalPager(realTerminal, binPath, bottomInnerPadding, true)
                         3 -> SettingPager(viewModel, navController, bottomInnerPadding, true)
                     }
                 }

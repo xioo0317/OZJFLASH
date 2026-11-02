@@ -1,41 +1,56 @@
 package com.android.ozjflash.ui.screen.settings
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.BugReport
+import androidx.compose.material.icons.filled.DisplaySettings
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.android.ozjflash.R
+import com.android.ozjflash.findActivity
 import com.android.ozjflash.ui.UiMode
-import com.android.ozjflash.ui.theme.ColorMode
+import com.android.ozjflash.ui.component.material.ExpressiveScaffold
+import com.android.ozjflash.ui.component.material.SegmentedColumn
+import com.android.ozjflash.ui.component.material.SegmentedDropdownItem
+import com.android.ozjflash.ui.component.material.SegmentedListItem
+import com.android.ozjflash.ui.component.material.SegmentedSwitchItem
+import com.android.ozjflash.ui.component.material.expressiveTopAppBarColors
 import com.android.ozjflash.ui.viewmodel.AppUiState
 
-/** Material3 Expressive 主体的设置页 */
+/**
+ * Material3 Expressive 主体的设置页（照搬 KernelSU 的 SegmentedColumn 写法）。
+ *
+ * 分组与 Miuix 版完全一致：界面主体 / 语言 / 主题设置入口 → 终端 → 诊断。
+ */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsMaterial(
     uiState: AppUiState,
@@ -43,168 +58,114 @@ fun SettingsMaterial(
     bottomInnerPadding: Dp,
     isCurrentPage: Boolean,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 12.dp)
-            .padding(bottom = bottomInnerPadding + 12.dp),
-        verticalArrangement = Arrangement.spacedBy(6.dp)
-    ) {
-        SectionLabel(stringResource(R.string.settings_ui_mode))
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            UiMode.entries.forEach { mode ->
-                TextButton(
-                    onClick = { actions.setUiMode(mode) },
-                    colors = ButtonDefaults.textButtonColors(
-                        containerColor = if (uiState.uiMode == mode) MaterialTheme.colorScheme.primaryContainer
-                        else MaterialTheme.colorScheme.surfaceContainerHigh
-                    )
-                ) {
-                    Text(
-                        if (mode == UiMode.Miuix) stringResource(R.string.settings_ui_mode_miuix)
-                        else stringResource(R.string.settings_ui_mode_material),
-                        fontSize = 12.sp
-                    )
-                }
-            }
-        }
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val context = LocalContext.current
+    var showCrashLog by remember { mutableStateOf(false) }
 
-        SectionLabel(stringResource(R.string.settings_theme))
-        Column {
-            colorModeOptions.chunked(3).forEach { row ->
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    row.forEach { (mode, label) ->
-                        TextButton(
-                            onClick = { actions.setColorMode(mode) },
-                            colors = ButtonDefaults.textButtonColors(
-                                containerColor = if (uiState.appSettings.colorMode == mode)
-                                    MaterialTheme.colorScheme.secondaryContainer
-                                else MaterialTheme.colorScheme.surfaceContainerLow
-                            )
-                        ) {
-                            Text(stringResource(label), fontSize = 11.sp)
-                        }
-                    }
-                }
-            }
-        }
-
-        if (uiState.uiMode == UiMode.Miuix) {
-            SwitchRow(
-                title = stringResource(R.string.settings_miuix_monet),
-                summary = stringResource(R.string.settings_miuix_monet_summary),
-                checked = uiState.appSettings.colorMode.isMonet,
-                onCheckedChange = actions::setMiuixMonet
+    ExpressiveScaffold(
+        topBar = {
+            LargeFlexibleTopAppBar(
+                title = { Text(stringResource(R.string.settings)) },
+                colors = expressiveTopAppBarColors(),
+                windowInsets = WindowInsets.safeDrawing.only(
+                    WindowInsetsSides.Top + WindowInsetsSides.Horizontal
+                ),
+                scrollBehavior = scrollBehavior,
             )
-        }
-
-        SectionLabel(stringResource(R.string.settings_color))
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            keyColorOptions.forEach { (value, _) ->
-                val selected = uiState.appSettings.keyColor == value
-                Box(
-                    modifier = Modifier
-                        .size(if (selected) 40.dp else 34.dp)
-                        .clip(CircleShape)
-                        .background(
-                            if (value == 0) MaterialTheme.colorScheme.primary
-                            else Color(value)
-                        )
-                        .clickable { actions.setKeyColor(value) }
-                )
-            }
-        }
-
-        SectionLabel(stringResource(R.string.settings_page_scale))
-        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            pageScaleOptions.forEach { scale ->
-                TextButton(
-                    onClick = { actions.setPageScale(scale) },
-                    colors = ButtonDefaults.textButtonColors(
-                        containerColor = if (uiState.pageScale == scale) MaterialTheme.colorScheme.tertiaryContainer
-                        else MaterialTheme.colorScheme.surfaceContainerLow
-                    )
-                ) {
-                    Text("${scale}x", fontSize = 11.sp)
-                }
-            }
-        }
-
-        HorizontalDivider(Modifier.padding(vertical = 6.dp))
-
-        SwitchRow(
-            title = stringResource(R.string.settings_enable_blur),
-            summary = stringResource(R.string.settings_enable_blur_summary),
-            checked = uiState.enableBlur,
-            onCheckedChange = actions::setBlur
-        )
-        SwitchRow(
-            title = stringResource(R.string.settings_enable_floating_bottom_bar),
-            summary = stringResource(R.string.settings_enable_floating_bottom_bar_summary),
-            checked = uiState.enableFloatingBottomBar,
-            onCheckedChange = actions::setFloatingBottomBar
-        )
-        if (uiState.enableFloatingBottomBar) {
-            SwitchRow(
-                title = stringResource(R.string.settings_enable_floating_bottom_bar_blur),
-                summary = stringResource(R.string.settings_enable_floating_bottom_bar_blur_summary),
-                checked = uiState.enableFloatingBottomBarBlur,
-                onCheckedChange = actions::setFloatingBottomBarBlur
-            )
-        }
-        SwitchRow(
-            title = stringResource(R.string.settings_terminal_pty),
-            summary = stringResource(R.string.settings_terminal_pty_summary),
-            checked = uiState.terminalPty,
-            onCheckedChange = actions::setTerminalPty
-        )
-
-        ListItem(
-            headlineContent = { Text(stringResource(R.string.about), fontSize = 14.sp) },
+        },
+        contentWindowInsets = WindowInsets.safeDrawing.only(
+            WindowInsetsSides.Top + WindowInsetsSides.Horizontal
+        ),
+    ) { paddingValues ->
+        Column(
             modifier = Modifier
-                .clip(RoundedCornerShape(16.dp))
-                .clickable { actions.openAbout() }
-        )
+                .padding(paddingValues)
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                .verticalScroll(rememberScrollState()),
+        ) {
+            val uiModeItems = listOf(
+                stringResource(R.string.settings_ui_mode_miuix),
+                stringResource(R.string.settings_ui_mode_material),
+            )
+            val langEntries = listOf(
+                "system" to stringResource(R.string.language_system),
+                "en" to stringResource(R.string.language_en),
+                "zh-CN" to stringResource(R.string.language_zh_rCN),
+                "zh-TW" to stringResource(R.string.language_zh_rTW),
+                "ja" to stringResource(R.string.language_ja),
+                "es" to stringResource(R.string.language_es),
+            )
+            val themeEntry = stringResource(R.string.settings_theme)
+
+            SegmentedColumn(
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 13.dp),
+                content = listOf(
+                    {
+                        SegmentedDropdownItem(
+                            icon = Icons.Filled.DisplaySettings,
+                            title = stringResource(R.string.settings_ui_mode),
+                            summary = stringResource(R.string.settings_ui_mode_summary),
+                            items = uiModeItems,
+                            selectedIndex = if (uiState.uiMode == UiMode.Miuix) 0 else 1,
+                            onItemSelected = {
+                                actions.setUiMode(if (it == 0) UiMode.Miuix else UiMode.Material)
+                            },
+                        )
+                    },
+                    {
+                        SegmentedDropdownItem(
+                            icon = Icons.Filled.Language,
+                            title = stringResource(R.string.settings_language),
+                            summary = stringResource(R.string.settings_language_summary),
+                            items = langEntries.map { it.second },
+                            selectedIndex = langEntries.indexOfFirst { it.first == uiState.language }.coerceAtLeast(0),
+                            onItemSelected = {
+                                actions.setLanguage(langEntries[it].first)
+                                context.findActivity()?.recreate()
+                            },
+                        )
+                    },
+                    {
+                        SegmentedListItem(
+                            onClick = actions::openColorPalette,
+                            headlineContent = { Text(themeEntry) },
+                            supportingContent = { Text(stringResource(R.string.settings_theme_summary)) },
+                            leadingContent = { Icon(Icons.Filled.Palette, themeEntry) },
+                            trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null) },
+                        )
+                    },
+                ),
+            )
+
+            SegmentedColumn(
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 13.dp),
+                content = listOf(
+                    {
+                        SegmentedListItem(
+                            onClick = { showCrashLog = true },
+                            headlineContent = { Text(stringResource(R.string.settings_crash_log)) },
+                            supportingContent = { Text(stringResource(R.string.settings_crash_log_summary)) },
+                            leadingContent = {
+                                Icon(Icons.Filled.BugReport, stringResource(R.string.settings_crash_log))
+                            },
+                        )
+                    },
+                    {
+                        SegmentedListItem(
+                            onClick = actions::openAbout,
+                            headlineContent = { Text(stringResource(R.string.about)) },
+                            leadingContent = { Icon(Icons.Filled.Info, stringResource(R.string.about)) },
+                        )
+                    },
+                ),
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(bottomInnerPadding))
+        }
     }
-}
 
-@Composable
-private fun SectionLabel(text: String) {
-    Text(
-        text = text,
-        modifier = Modifier.padding(start = 8.dp, top = 8.dp),
-        style = MaterialTheme.typography.titleSmall,
-        color = MaterialTheme.colorScheme.primary
-    )
-}
-
-@Composable
-private fun SwitchRow(
-    title: String,
-    summary: String,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-) {
-    ListItem(
-        headlineContent = { Text(title, fontSize = 14.sp) },
-        supportingContent = { Text(summary, fontSize = 11.sp) },
-        trailingContent = { Switch(checked = checked, onCheckedChange = onCheckedChange) },
-        modifier = Modifier.fillMaxWidth()
-    )
-}
-
-@Composable
-internal fun RowScopeSpacer() = Box(Modifier.size(4.dp))
-
-internal typealias RowScope = androidx.compose.foundation.layout.RowScope
-
-@Composable
-internal fun AlignEnd(content: @Composable RowScope.() -> Unit) {
-    androidx.compose.foundation.layout.Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End,
-        verticalAlignment = Alignment.CenterVertically,
-        content = content
-    )
+    if (showCrashLog) {
+        CrashLogDialog(onDismiss = { showCrashLog = false })
+    }
 }

@@ -4,7 +4,8 @@
 
     <string name="terminal">终端</string>
     <string name="flash">刷写</string>
-    <string name="tools">工具箱</string>
+    <string name="home">主页</string>
+    <string name="tools">工具</string>
     <string name="settings">设置</string>
     <string name="about">关于</string>
     <string name="cancel">取消</string>
@@ -69,4 +70,57 @@
     <string name="about_tools_value">界面框架移植自 KernelSU Manager（已移除 root / 模块 / HTTP / JNI 相关代码），刷写可执行文件来自公开的平台工具构建。本应用不申请也不使用 root 权限。</string>
     <string name="about_disclaimer_title">免责声明</string>
     <string name="about_disclaimer_value">刷写、解锁 bootloader 与改写分区可能导致设备变砖、保修失效。请仅用于自有设备的合法维修、学习与研究，因使用本工具造成的一切后果由使用者自行承担。</string>
+
+    <!-- 主页 -->
+    <string name="home_status_ready">内置工具已齐备</string>
+    <string name="home_status_missing">缺失 %d 个工具</string>
+    <string name="home_status_title_ready">OZJFLASH 已就绪</string>
+    <string name="home_status_title_missing">工具不完整</string>
+    <string name="home_app_version">应用版本</string>
+    <string name="home_android_version">Android 版本</string>
+    <string name="home_device_model">设备型号</string>
+    <string name="home_fingerprint">构建指纹</string>
+    <string name="home_abi">ABI</string>
+    <string name="home_selinux_status">SELinux 状态</string>
+    <string name="home_seccomp_status">Seccomp 状态</string>
+    <string name="home_support_title">支持 OZJFLASH</string>
+    <string name="home_support_content">为项目点星或提交问题</string>
+    <string name="home_learn_title">了解更多</string>
+    <string name="home_learn_content">项目源码与使用指南</string>
+
+    <!-- 多语言 -->
+    <string name="settings_language">语言</string>
+    <string name="settings_language_summary">应用显示语言</string>
+    <string name="language_system">跟随系统</string>
+    <string name="language_en">English</string>
+    <string name="language_zh_rCN">简体中文</string>
+    <string name="language_zh_rTW">繁體中文</string>
+    <string name="language_ja">日本語</string>
+    <string name="language_es">Español</string>
+
+    <!-- 崩溃日志 / 诊断 -->
+    <string name="settings_crash_log">崩溃日志</string>
+    <string name="settings_crash_log_summary">查看 files/crash.log 中记录的最近一次崩溃</string>
+    <string name="crash_log_empty">暂无崩溃记录</string>
+    <string name="crash_log_copy">复制</string>
+    <string name="crash_log_clear">清空</string>
+    <string name="crash_log_copied">已复制到剪贴板</string>
+    <!-- 主题设置页（照搬 KernelSU ColorPalette） -->
+    <string name="settings_theme_mode_system">跟随系统</string>
+    <string name="settings_theme_mode_light">浅色</string>
+    <string name="settings_theme_mode_dark">深色</string>
+    <string name="settings_theme_mode_amoled">纯黑</string>
+    <string name="settings_monet">动态取色</string>
+    <string name="settings_monet_summary">根据系统壁纸生成整套配色</string>
+    <string name="settings_key_color">主题色</string>
+    <string name="settings_key_color_default">默认</string>
+    <string name="settings_color_style">配色风格</string>
+    <string name="settings_color_spec">配色规范</string>
+    <string name="settings_floating_bottom_bar">悬浮底栏</string>
+    <string name="settings_floating_bottom_bar_summary">用悬浮胶囊条替代贴底导航栏</string>
+    <string name="settings_enable_glass">液态玻璃</string>
+    <string name="settings_enable_glass_summary">对悬浮底栏背后的内容做模糊</string>
+    <string name="settings_navigation_badge">导航栏角标</string>
+    <string name="settings_navigation_badge_summary">工具缺失时在底栏显示角标</string>
+    <string name="settings_page_scale_summary">整体界面缩放（80% - 110%）</string>
 </resources>

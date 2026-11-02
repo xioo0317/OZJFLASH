@@ -7,12 +7,12 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Handyman
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Terminal
-import androidx.compose.material.icons.outlined.Bolt
 import androidx.compose.material.icons.outlined.Handyman
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Terminal
 import androidx.compose.material3.Badge
@@ -34,9 +34,9 @@ fun BottomBarMaterial(navigationBadge: NavigationBadgeState) {
     val mainPagerState = LocalMainPagerState.current
 
     val items = listOf(
-        Triple(R.string.terminal, Icons.Filled.Terminal, Icons.Outlined.Terminal),
-        Triple(R.string.flash, Icons.Filled.Bolt, Icons.Outlined.Bolt),
+        Triple(R.string.home, Icons.Filled.Home, Icons.Outlined.Home),
         Triple(R.string.tools, Icons.Filled.Handyman, Icons.Outlined.Handyman),
+        Triple(R.string.terminal, Icons.Filled.Terminal, Icons.Outlined.Terminal),
         Triple(R.string.settings, Icons.Filled.Settings, Icons.Outlined.Settings)
     )
 

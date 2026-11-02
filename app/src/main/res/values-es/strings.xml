@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">OZJFLASH</string>
+
+    <!-- 底欄與通用 -->
+    <string name="terminal">Terminal</string>
+    <string name="flash">Flash</string>
+    <string name="home">Inicio</string>
+    <string name="tools">Herramientas</string>
+    <string name="settings">Ajustes</string>
+    <string name="about">Acerca de</string>
+    <string name="cancel">Cancelar</string>
+    <string name="confirm">Confirmar</string>
+    <string name="ok">OK</string>
+    <string name="processing">Procesando…</string>
+    <string name="nav_rail_expand">Expandir barra de navegación</string>
+    <string name="nav_rail_collapse">Contraer barra de navegación</string>
+
+    <!-- 終端 -->
+    <string name="terminal_running">shell en ejecución</string>
+    <string name="terminal_stopped">shell finalizado</string>
+
+    <!-- 工具 -->
+    <string name="tools_ready">Todas las herramientas integradas están listas</string>
+    <string name="tools_missing">Faltan algunas herramientas</string>
+    <string name="tools_present">herramientas extraídas</string>
+    <string name="tools_run_check">Ejecutar script de autocomprobación</string>
+
+    <!-- 設定 -->
+    <string name="settings_ui_mode">Interfaz</string>
+    <string name="settings_ui_mode_miuix">Miuix</string>
+    <string name="settings_ui_mode_material">Material Expressive</string>
+    <string name="settings_theme">Tema</string>
+    <string name="settings_theme_system">Seguir al sistema</string>
+    <string name="settings_theme_light">Claro</string>
+    <string name="settings_theme_dark">Oscuro</string>
+    <string name="settings_theme_monet_system">Color dinámico (sistema)</string>
+    <string name="settings_theme_monet_light">Color dinámico claro</string>
+    <string name="settings_theme_monet_dark">Color dinámico oscuro</string>
+    <string name="settings_theme_amoled">AMOLED oscuro</string>
+    <string name="settings_miuix_monet">Color dinámico de Miuix</string>
+    <string name="settings_miuix_monet_summary">Hacer que Miuix siga la paleta del fondo del sistema</string>
+    <string name="settings_color">Color de acento</string>
+    <string name="settings_color_dynamic">Sistema</string>
+    <string name="settings_color_green">Verde</string>
+    <string name="settings_color_blue">Azul</string>
+    <string name="settings_color_purple">Púrpura</string>
+    <string name="settings_color_red">Rojo</string>
+    <string name="settings_color_orange">Naranja</string>
+    <string name="settings_color_custom">Personalizado</string>
+    <string name="settings_page_scale">Escala de página</string>
+    <string name="settings_others">Otros</string>
+    <string name="settings_enable_blur">Desenfoque de fondo</string>
+    <string name="settings_enable_blur_summary">Habilitar desenfoque basado en efecto de render detrás de barras y diálogos</string>
+    <string name="settings_enable_floating_bottom_bar">Barra inferior flotante</string>
+    <string name="settings_enable_floating_bottom_bar_summary">Reemplazar la barra acoplada por una píldora flotante</string>
+    <string name="settings_enable_floating_bottom_bar_blur">Desenfoque de la barra flotante</string>
+    <string name="settings_enable_floating_bottom_bar_blur_summary">Desenfocar el fondo de la barra flotante</string>
+    <string name="settings_terminal_pty">Terminal PTY real</string>
+    <string name="settings_terminal_pty_summary">Usar la pseudo-terminal libtermux.so integrada en lugar de un shell por tubería</string>
+
+    <!-- 關於 -->
+    <string name="about_app_name_title">OZJFLASH</string>
+    <string name="about_app_name_value">Conjunto de herramientas basado en Compose con terminal integrada y flujo de flasheo sin root. Los binarios incluidos (adb, fastboot, bash, mke2fs, make_f2fs, payload-dumper-go y más) se extraen al almacenamiento privado y se añaden al PATH de la terminal.</string>
+    <string name="about_ui_title">Doble IU</string>
+    <string name="about_ui_value">Incluye ambos hosts de interfaz: Miuix (estilo MIUI) y Material 3 Expressive. Cambia entre ellos en Ajustes → Interfaz; páginas, barras y diálogos se renderizan de forma nativa en el host activo.</string>
+    <string name="about_tools_title">Fuentes</string>
+    <string name="about_tools_value">El shell de la IU deriva de KernelSU Manager (se eliminó el código de root, módulos, HTTP y JNI); los binarios de flasheo provienen de compilaciones públicas de herramientas de plataforma. Esta app nunca solicita ni usa root.</string>
+    <string name="about_disclaimer_title">Aviso legal</string>
+    <string name="about_disclaimer_value">El flasheo, el desbloqueo del bootloader y la modificación de particiones pueden bloquear el dispositivo y anular la garantía. Úsalo solo en tu propio hardware para reparación, estudio e investigación legales. Tú asumes la responsabilidad total de todo lo que hagas con esta herramienta.</string>
+
+    <!-- 主頁 -->
+    <string name="home_status_ready">Todas las herramientas integradas están listas</string>
+    <string name="home_status_missing">Faltan %d herramientas</string>
+    <string name="home_status_title_ready">OZJFLASH listo</string>
+    <string name="home_status_title_missing">Herramientas incompletas</string>
+    <string name="home_app_version">Versión de la app</string>
+    <string name="home_android_version">Versión de Android</string>
+    <string name="home_device_model">Modelo del dispositivo</string>
+    <string name="home_fingerprint">Huella de compilación</string>
+    <string name="home_abi">ABI</string>
+    <string name="home_selinux_status">Estado de SELinux</string>
+    <string name="home_seccomp_status">Estado de Seccomp</string>
+    <string name="home_support_title">Apoya OZJFLASH</string>
+    <string name="home_support_content">Dale una estrella al proyecto o abre un issue</string>
+    <string name="home_learn_title">Saber más</string>
+    <string name="home_learn_content">Código fuente y guía de uso del proyecto</string>
+
+    <!-- 多語言 -->
+    <string name="settings_language">Idioma</string>
+    <string name="settings_language_summary">Idioma de visualización de la app</string>
+    <string name="language_system">Seguir al sistema</string>
+    <string name="language_en">English</string>
+    <string name="language_zh_rCN">简体中文</string>
+    <string name="language_zh_rTW">繁體中文</string>
+    <string name="language_ja">日本語</string>
+    <string name="language_es">Español</string>
+
+    <!-- 崩潰日誌 / 診斷 -->
+    <string name="settings_crash_log">Registro de fallos</string>
+    <string name="settings_crash_log_summary">Ver el último fallo registrado en files/crash.log</string>
+    <string name="crash_log_empty">No hay registros de fallos</string>
+    <string name="crash_log_copy">Copiar</string>
+    <string name="crash_log_clear">Borrar</string>
+    <string name="crash_log_copied">Copiado al portapapeles</string>
+    <string name="crash_log_description">Registro de fallos de OZJFLASH (files/crash.log)</string>
+
+    <!-- Pantalla de tema (adaptada de KernelSU ColorPalette) -->
+    <string name="settings_theme_mode_system">Seguir al sistema</string>
+    <string name="settings_theme_mode_light">Claro</string>
+    <string name="settings_theme_mode_dark">Oscuro</string>
+    <string name="settings_theme_mode_amoled">AMOLED</string>
+    <string name="settings_monet">Color dinámico</string>
+    <string name="settings_monet_summary">Genera la paleta desde el fondo de pantalla</string>
+    <string name="settings_key_color">Color de acento</string>
+    <string name="settings_key_color_default">Predeterminado</string>
+    <string name="settings_color_style">Estilo de color</string>
+    <string name="settings_color_spec">Especificación de color</string>
+    <string name="settings_floating_bottom_bar">Barra inferior flotante</string>
+    <string name="settings_floating_bottom_bar_summary">Sustituye el dock por una barra flotante</string>
+    <string name="settings_enable_glass">Efecto cristal</string>
+    <string name="settings_enable_glass_summary">Desenfoca el fondo detrás de la barra flotante</string>
+    <string name="settings_navigation_badge">Insignia de navegación</string>
+    <string name="settings_navigation_badge_summary">Muestra una insignia cuando faltan herramientas</string>
+    <string name="settings_page_scale_summary">Escala de toda la interfaz (80% - 110%)</string>
+</resources>

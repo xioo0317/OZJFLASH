@@ -22,12 +22,15 @@ data class AppUiState(
         colorSpec = com.materialkolor.dynamiccolor.ColorSpec.SpecVersion.SPEC_2025,
     ),
     val uiMode: UiMode = UiMode.fromValue(UiMode.DEFAULT_VALUE),
+    /** Miuix 主体下是否按系统壁纸生成配色（Material 主体恒由 Material You 决定） */
+    val miuixMonet: Boolean = false,
     val enableBlur: Boolean = false,
     val enableFloatingBottomBar: Boolean = false,
     val enableFloatingBottomBarBlur: Boolean = false,
     val enableNavigationBadge: Boolean = true,
     val pageScale: Float = 1.0f,
     val terminalPty: Boolean = false,
+    val language: String = "system",
     val selectedMainPage: Int = 0,
 )
 
@@ -42,12 +45,14 @@ class AppViewModel(
         AppUiState(
             appSettings = ThemeController.getAppSettings(repo),
             uiMode = UiMode.fromValue(repo.uiMode),
+            miuixMonet = repo.miuixMonet,
             enableBlur = repo.enableBlur,
             enableFloatingBottomBar = repo.enableFloatingBottomBar,
             enableFloatingBottomBarBlur = repo.enableFloatingBottomBarBlur,
             enableNavigationBadge = repo.enableNavigationBadge,
             pageScale = repo.pageScale,
             terminalPty = repo.terminalPty,
+            language = repo.language,
         )
     )
     val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
@@ -71,7 +76,10 @@ class AppViewModel(
 
     fun setMiuixMonet(enabled: Boolean) {
         repo.miuixMonet = enabled
-        _uiState.value = _uiState.value.copy(appSettings = ThemeController.getAppSettings(repo))
+        _uiState.value = _uiState.value.copy(
+            miuixMonet = enabled,
+            appSettings = ThemeController.getAppSettings(repo),
+        )
     }
 
     fun setKeyColor(color: Int) {
@@ -81,6 +89,11 @@ class AppViewModel(
 
     fun setPaletteStyle(name: String) {
         repo.colorStyle = name
+        _uiState.value = _uiState.value.copy(appSettings = ThemeController.getAppSettings(repo))
+    }
+
+    fun setColorSpec(name: String) {
+        repo.colorSpec = name
         _uiState.value = _uiState.value.copy(appSettings = ThemeController.getAppSettings(repo))
     }
 
@@ -112,6 +125,11 @@ class AppViewModel(
     fun setTerminalPty(enabled: Boolean) {
         repo.terminalPty = enabled
         _uiState.value = _uiState.value.copy(terminalPty = enabled)
+    }
+
+    fun setLanguage(code: String) {
+        repo.language = code
+        _uiState.value = _uiState.value.copy(language = code)
     }
 
     fun setSelectedMainPage(page: Int) {
