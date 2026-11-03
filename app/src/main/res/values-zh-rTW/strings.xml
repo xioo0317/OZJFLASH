@@ -39,11 +39,15 @@
     <string name="usb_denied">已拒絕授權，工具無法開啟該裝置</string>
     <string name="usb_grant_toast">正在請求 USB 存取權限…</string>
 
+    <!-- 终端顶栏 -->
+    <string name="terminal_clear">清除畫面</string>
+    <string name="terminal_restart">重開工作階段</string>
+
     <!-- 設定 -->
-    <string name="settings_ui_mode">介面主體</string>
+    <string name="settings_ui_mode">介面風格</string>
     <string name="settings_ui_mode_summary">選擇應用的介面風格</string>
     <string name="settings_ui_mode_miuix">Miuix</string>
-    <string name="settings_ui_mode_material">Material Expressive</string>
+    <string name="settings_ui_mode_material">Material</string>
     <string name="settings_theme">主題設定</string>
     <string name="settings_theme_summary">選擇應用的主題模式</string>
     <string name="settings_theme_system">跟隨系統</string>
@@ -138,4 +142,6 @@
     <string name="settings_navigation_badge">導航欄角標</string>
     <string name="settings_navigation_badge_summary">工具缺失時在底欄顯示角標</string>
     <string name="settings_page_scale_summary">整體介面縮放（80% - 110%）</string>
+    <string name="settings_pager_swipe">允許左右滑動切換頁面</string>
+    <string name="settings_pager_swipe_summary">關閉後只能用底部列切換頁面，避免與終端等橫向手勢衝突</string>
 </resources>

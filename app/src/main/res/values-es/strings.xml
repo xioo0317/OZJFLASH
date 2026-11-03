@@ -39,11 +39,15 @@
     <string name="usb_denied">Acceso denegado: las herramientas no pueden abrir este dispositivo</string>
     <string name="usb_grant_toast">Solicitando acceso USB…</string>
 
+    <!-- 终端顶栏 -->
+    <string name="terminal_clear">Limpiar pantalla</string>
+    <string name="terminal_restart">Reiniciar sesión</string>
+
     <!-- 設定 -->
-    <string name="settings_ui_mode">Interfaz</string>
+    <string name="settings_ui_mode">Estilo de interfaz</string>
     <string name="settings_ui_mode_summary">Elige el estilo de la interfaz</string>
     <string name="settings_ui_mode_miuix">Miuix</string>
-    <string name="settings_ui_mode_material">Material Expressive</string>
+    <string name="settings_ui_mode_material">Material</string>
     <string name="settings_theme">Ajustes del tema</string>
     <string name="settings_theme_summary">Elige el modo de tema de la app</string>
     <string name="settings_theme_system">Seguir al sistema</string>
@@ -138,4 +142,6 @@
     <string name="settings_navigation_badge">Insignia de navegación</string>
     <string name="settings_navigation_badge_summary">Muestra una insignia cuando faltan herramientas</string>
     <string name="settings_page_scale_summary">Escala de toda la interfaz (80% - 110%)</string>
+    <string name="settings_pager_swipe">Deslizar para cambiar de página</string>
+    <string name="settings_pager_swipe_summary">Permite deslizar horizontalmente entre páginas; desactívalo para cambiar solo desde la barra inferior</string>
 </resources>

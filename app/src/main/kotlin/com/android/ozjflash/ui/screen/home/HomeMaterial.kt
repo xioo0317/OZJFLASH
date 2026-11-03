@@ -2,7 +2,6 @@ package com.android.ozjflash.ui.screen.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -11,11 +10,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Android
 import androidx.compose.material.icons.filled.Fingerprint
@@ -31,6 +29,7 @@ import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.contentColorFor
@@ -38,6 +37,7 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
@@ -48,12 +48,11 @@ import com.android.ozjflash.R
 import com.android.ozjflash.ui.component.material.ExpressiveScaffold
 import com.android.ozjflash.ui.component.material.SegmentedColumn
 import com.android.ozjflash.ui.component.material.SegmentedListItem
-import com.android.ozjflash.ui.component.material.TonalCard
 import com.android.ozjflash.ui.component.material.expressiveTopAppBarColors
 
 /**
  * Material3 Expressive 主体的主页（跟进 KernelSU HomePagerMaterial 的写法：
- * ExpressiveScaffold + LargeFlexibleTopAppBar + SegmentedColumn / TonalCard）。
+ * ExpressiveScaffold + LargeFlexibleTopAppBar + SegmentedColumn / SegmentedListItem）。
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -99,118 +98,130 @@ fun HomePagerMaterial(
 private fun StatusCardMaterial(state: HomeUiState) {
     val ready = state.toolsReady
     val containerColor = if (ready) {
-        MaterialTheme.colorScheme.primaryContainer
+        MaterialTheme.colorScheme.secondaryContainer
     } else {
         MaterialTheme.colorScheme.errorContainer
     }
-    TonalCard(
+    val contentColor = MaterialTheme.colorScheme.contentColorFor(containerColor)
+    val title = stringResource(
+        if (ready) R.string.home_status_title_ready else R.string.home_status_title_missing,
+    )
+    val summary = stringResource(
+        if (ready) R.string.home_status_ready else R.string.home_status_missing,
+        state.toolsMissing.size,
+    )
+
+    // 与 KernelSU 的 StatusCard 一致：Surface(shapes.large) + 透明 ListItem，
+    // 圆角完全交给 MaterialTheme.shapes.large，不再自己写死 RoundedCornerShape
+    Surface(
         modifier = Modifier.fillMaxWidth(),
-        containerColor = containerColor,
-        shape = RoundedCornerShape(20.dp),
+        color = containerColor,
+        contentColor = contentColor,
+        shape = MaterialTheme.shapes.large,
     ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                imageVector = if (ready) Icons.Rounded.CheckCircle else Icons.Rounded.Warning,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.contentColorFor(containerColor),
-                modifier = Modifier.size(40.dp),
-            )
-            Column(modifier = Modifier.padding(start = 14.dp)) {
-                Text(
-                    text = stringResource(
-                        if (ready) R.string.home_status_title_ready else R.string.home_status_title_missing,
-                    ),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.contentColorFor(containerColor),
+        ListItem(
+            leadingContent = {
+                Icon(
+                    imageVector = if (ready) Icons.Rounded.CheckCircle else Icons.Rounded.Warning,
+                    contentDescription = title,
                 )
-                Text(
-                    text = stringResource(
-                        if (ready) R.string.home_status_ready else R.string.home_status_missing,
-                        state.toolsMissing.size,
-                    ),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.contentColorFor(containerColor),
-                )
-                if (!ready) {
+            },
+            supportingContent = {
+                Column {
                     Text(
-                        text = state.toolsMissing.joinToString(", "),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.contentColorFor(containerColor),
-                        modifier = Modifier.padding(top = 4.dp),
+                        text = summary,
+                        style = MaterialTheme.typography.bodyMedium,
                     )
+                    if (!ready) {
+                        Text(
+                            text = state.toolsMissing.joinToString(", "),
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(top = 2.dp),
+                        )
+                    }
                 }
-            }
-        }
+            },
+            verticalAlignment = Alignment.CenterVertically,
+            colors = ListItemDefaults.colors(
+                containerColor = Color.Transparent,
+                contentColor = contentColor,
+                leadingContentColor = contentColor,
+                trailingContentColor = contentColor,
+                supportingContentColor = contentColor.copy(alpha = 0.7f),
+            ),
+            content = {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            },
+        )
     }
 }
 
 @Composable
 private fun InfoCardMaterial(state: HomeUiState) {
-    SegmentedColumn(
-        modifier = Modifier.fillMaxWidth(),
-        content = listOf(
-            {
-                InfoRow(
-                    icon = Icons.Filled.Android,
-                    title = stringResource(R.string.home_app_version),
-                    content = state.appVersion,
-                )
-            },
-            {
-                InfoRow(
-                    icon = Icons.Filled.Android,
-                    title = stringResource(R.string.home_android_version),
-                    content = "${state.androidVersion} (API ${state.sdk})",
-                )
-            },
-            {
-                InfoRow(
-                    icon = Icons.Filled.Smartphone,
-                    title = stringResource(R.string.home_device_model),
-                    content = state.deviceModel,
-                )
-            },
-            {
-                InfoRow(
-                    icon = Icons.Filled.Tag,
-                    title = stringResource(R.string.home_abi),
-                    content = state.abi,
-                )
-            },
-            {
-                InfoRow(
-                    icon = Icons.Filled.Fingerprint,
-                    title = stringResource(R.string.home_fingerprint),
-                    content = state.fingerprint,
-                )
-            },
-            {
-                InfoRow(
-                    icon = Icons.Filled.Security,
-                    title = stringResource(R.string.home_selinux_status),
-                    content = state.selinuxStatus,
-                )
-            },
-        ),
-    )
+    // KernelSU 写法：SegmentedColumn(DSL) + SegmentedListItem，
+    // ListItem 不读 LocalListItemShapes，用它会把卡片画成直角色块
+    SegmentedColumn(modifier = Modifier.fillMaxWidth()) {
+        item {
+            InfoRow(
+                icon = Icons.Filled.Android,
+                title = stringResource(R.string.home_app_version),
+                content = state.appVersion,
+            )
+        }
+        item {
+            InfoRow(
+                icon = Icons.Filled.Android,
+                title = stringResource(R.string.home_android_version),
+                content = "${state.androidVersion} (API ${state.sdk})",
+            )
+        }
+        item {
+            InfoRow(
+                icon = Icons.Filled.Smartphone,
+                title = stringResource(R.string.home_device_model),
+                content = state.deviceModel,
+            )
+        }
+        item {
+            InfoRow(
+                icon = Icons.Filled.Tag,
+                title = stringResource(R.string.home_abi),
+                content = state.abi,
+            )
+        }
+        item {
+            InfoRow(
+                icon = Icons.Filled.Fingerprint,
+                title = stringResource(R.string.home_fingerprint),
+                content = state.fingerprint,
+            )
+        }
+        item {
+            InfoRow(
+                icon = Icons.Filled.Security,
+                title = stringResource(R.string.home_selinux_status),
+                content = state.selinuxStatus,
+            )
+        }
+    }
 }
 
 @Composable
 private fun InfoRow(icon: ImageVector, title: String, content: String) {
-    ListItem(
-        colors = ListItemDefaults.segmentedColors(
-            containerColor = MaterialTheme.colorScheme.surfaceBright,
-            supportingContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        ),
-        leadingContent = {
-            Icon(icon, contentDescription = title, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-        },
+    SegmentedListItem(
         headlineContent = { Text(title, style = MaterialTheme.typography.bodyLarge) },
-        supportingContent = { Text(content, style = MaterialTheme.typography.bodySmall) },
+        leadingContent = { Icon(icon, contentDescription = title) },
+        supportingContent = {
+            Text(
+                text = content,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        },
     )
 }
 
@@ -218,27 +229,26 @@ private fun InfoRow(icon: ImageVector, title: String, content: String) {
 private fun SupportLinksMaterial(actions: HomeActions) {
     val githubUrl = stringResource(R.string.home_github_url)
     val learnUrl = stringResource(R.string.home_learn_url)
-    SegmentedColumn(
-        modifier = Modifier.fillMaxWidth(),
-        content = listOf(
-            {
-                SegmentedListItem(
-                    onClick = { actions.onOpenUrl(githubUrl) },
-                    headlineContent = { Text(stringResource(R.string.home_support_title)) },
-                    supportingContent = { Text(stringResource(R.string.home_support_content)) },
-                    leadingContent = { Icon(Icons.Rounded.Star, stringResource(R.string.home_support_title)) },
-                )
-            },
-            {
-                SegmentedListItem(
-                    onClick = { actions.onOpenUrl(learnUrl) },
-                    headlineContent = { Text(stringResource(R.string.home_learn_title)) },
-                    supportingContent = { Text(stringResource(R.string.home_learn_content)) },
-                    leadingContent = {
-                        Icon(Icons.AutoMirrored.Filled.MenuBook, stringResource(R.string.home_learn_title))
-                    },
-                )
-            },
-        ),
-    )
+    SegmentedColumn(modifier = Modifier.fillMaxWidth()) {
+        item {
+            SegmentedListItem(
+                onClick = { actions.onOpenUrl(githubUrl) },
+                headlineContent = { Text(stringResource(R.string.home_support_title)) },
+                supportingContent = { Text(stringResource(R.string.home_support_content)) },
+                leadingContent = { Icon(Icons.Rounded.Star, stringResource(R.string.home_support_title)) },
+                trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null) },
+            )
+        }
+        item {
+            SegmentedListItem(
+                onClick = { actions.onOpenUrl(learnUrl) },
+                headlineContent = { Text(stringResource(R.string.home_learn_title)) },
+                supportingContent = { Text(stringResource(R.string.home_learn_content)) },
+                leadingContent = {
+                    Icon(Icons.AutoMirrored.Filled.MenuBook, stringResource(R.string.home_learn_title))
+                },
+                trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null) },
+            )
+        }
+    }
 }

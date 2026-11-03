@@ -28,6 +28,7 @@ data class AppUiState(
     val enableFloatingBottomBar: Boolean = false,
     val enableFloatingBottomBarBlur: Boolean = false,
     val enableNavigationBadge: Boolean = true,
+    val enablePagerSwipe: Boolean = true,
     val pageScale: Float = 1.0f,
     val terminalPty: Boolean = false,
     val language: String = "system",
@@ -50,6 +51,7 @@ class AppViewModel(
             enableFloatingBottomBar = repo.enableFloatingBottomBar,
             enableFloatingBottomBarBlur = repo.enableFloatingBottomBarBlur,
             enableNavigationBadge = repo.enableNavigationBadge,
+            enablePagerSwipe = repo.enablePagerSwipe,
             pageScale = repo.pageScale,
             terminalPty = repo.terminalPty,
             language = repo.language,
@@ -120,6 +122,11 @@ class AppViewModel(
     fun setPageScale(scale: Float) {
         repo.pageScale = scale
         _uiState.value = _uiState.value.copy(pageScale = scale)
+    }
+
+    fun setPagerSwipe(enabled: Boolean) {
+        repo.enablePagerSwipe = enabled
+        _uiState.value = _uiState.value.copy(enablePagerSwipe = enabled)
     }
 
     fun setTerminalPty(enabled: Boolean) {

@@ -24,6 +24,8 @@ interface SettingsRepository {
     var enableFloatingBottomBarBlur: Boolean
     var enableNavigationBadge: Boolean
     var navigationRailExpanded: Boolean
+    /** 是否允许在主界面左右滑动切换页面（关闭后只能用底栏切换，避免与终端/横向手势冲突） */
+    var enablePagerSwipe: Boolean
     var pageScale: Float
     /** 终端是否默认走 PTY（libtermux.so），否则用 ProcessBuilder 管道模式 */
     var terminalPty: Boolean
@@ -82,6 +84,10 @@ class SettingsRepositoryImpl : SettingsRepository {
     override var navigationRailExpanded: Boolean
         get() = prefs.getBoolean("nav_rail_expanded", false)
         set(value) = prefs.edit { putBoolean("nav_rail_expanded", value) }
+
+    override var enablePagerSwipe: Boolean
+        get() = prefs.getBoolean("enable_pager_swipe", true)
+        set(value) = prefs.edit { putBoolean("enable_pager_swipe", value) }
 
     override var pageScale: Float
         get() = prefs.getFloat("page_scale", 1.0f)

@@ -40,6 +40,7 @@ class ColorPaletteActions internal constructor(
     fun setFloatingBottomBar(enabled: Boolean) = viewModel.setFloatingBottomBar(enabled)
     fun setFloatingBottomBarBlur(enabled: Boolean) = viewModel.setFloatingBottomBarBlur(enabled)
     fun setNavigationBadge(enabled: Boolean) = viewModel.setNavigationBadge(enabled)
+    fun setPagerSwipe(enabled: Boolean) = viewModel.setPagerSwipe(enabled)
     fun setPageScale(value: Float) = viewModel.setPageScale(value)
 }
 

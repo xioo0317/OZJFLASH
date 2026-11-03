@@ -40,6 +40,7 @@ import androidx.compose.material.icons.rounded.CallToAction
 import androidx.compose.material.icons.rounded.Colorize
 import androidx.compose.material.icons.rounded.DesignServices
 import androidx.compose.material.icons.rounded.Style
+import androidx.compose.material.icons.rounded.SwapHoriz
 import androidx.compose.material.icons.rounded.Wallpaper
 import androidx.compose.material.icons.rounded.WaterDrop
 import androidx.compose.runtime.Composable
@@ -325,6 +326,20 @@ fun ColorPaletteScreenMiuix(
                             .padding(top = 12.dp)
                             .fillMaxWidth(),
                     ) {
+                        SwitchPreference(
+                            title = stringResource(id = R.string.settings_pager_swipe),
+                            summary = stringResource(id = R.string.settings_pager_swipe_summary),
+                            startAction = {
+                                Icon(
+                                    Icons.Rounded.SwapHoriz,
+                                    modifier = Modifier.padding(end = 6.dp),
+                                    contentDescription = stringResource(id = R.string.settings_pager_swipe),
+                                    tint = colorScheme.onBackground,
+                                )
+                            },
+                            checked = uiState.enablePagerSwipe,
+                            onCheckedChange = actions::setPagerSwipe,
+                        )
                         var sliderValue by remember(uiState.pageScale) { mutableFloatStateOf(uiState.pageScale) }
                         ArrowPreference(
                             title = stringResource(id = R.string.settings_page_scale),

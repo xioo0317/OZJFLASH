@@ -47,11 +47,15 @@
     <string name="usb_denied">Access denied — the tools cannot open this device</string>
     <string name="usb_grant_toast">Requesting USB access…</string>
 
+    <!-- 终端顶栏 -->
+    <string name="terminal_clear">Clear screen</string>
+    <string name="terminal_restart">Restart session</string>
+
     <!-- 设置 -->
-    <string name="settings_ui_mode">Interface style</string>
-    <string name="settings_ui_mode_summary">Choose the interface style of the app</string>
+    <string name="settings_ui_mode">UI Style</string>
+    <string name="settings_ui_mode_summary">Choose the interface style.</string>
     <string name="settings_ui_mode_miuix">Miuix</string>
-    <string name="settings_ui_mode_material">Material Expressive</string>
+    <string name="settings_ui_mode_material">Material</string>
     <string name="settings_theme">Theme settings</string>
     <string name="settings_theme_summary">Choose the app theme mode</string>
     <string name="settings_theme_system">Follow system</string>
@@ -148,6 +152,8 @@
     <string name="settings_navigation_badge">Navigation badge</string>
     <string name="settings_navigation_badge_summary">Show a badge on the bottom bar when tools are missing</string>
     <string name="settings_page_scale_summary">Scale the whole interface (80% - 110%)</string>
+    <string name="settings_pager_swipe">Swipe to switch pages</string>
+    <string name="settings_pager_swipe_summary">Allow horizontal swiping between pages; turn off to switch via the dock only</string>
 
     <!-- Termux terminal-view text selection -->
     <string name="paste_text">Paste</string>

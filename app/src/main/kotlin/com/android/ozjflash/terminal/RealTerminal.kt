@@ -3,10 +3,13 @@ package com.android.ozjflash.terminal
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.os.SystemClock
 import android.view.HapticFeedbackConstants
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
+import androidx.compose.foundation.gestures.rememberTransformableState
+import androidx.compose.foundation.gestures.transformable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,6 +22,15 @@ import com.termux.terminal.TerminalSession
 import com.termux.terminal.TerminalSessionClient
 import com.termux.view.TerminalView
 import com.termux.view.TerminalViewClient
+import kotlin.math.roundToInt
+
+/** 终端字号（sp）：默认与 Termux 一致，双指缩放限制在同一区间 */
+private const val DEFAULT_TEXT_SIZE = 13f
+private const val MIN_TEXT_SIZE = 8f
+private const val MAX_TEXT_SIZE = 32f
+
+/** Compose 层缩放后，内置手势在该时间窗内不再调整字号 */
+private const val COMPOSE_ZOOM_WINDOW_MS = 400L
 
 /**
  * 真终端（Termux 上游 terminal-emulator / terminal-view 移植）。
@@ -95,18 +107,43 @@ class OzjTerminalViewClient : TerminalViewClient {
     fun toggleCtrl() { ctrlActive = !ctrlActive }
     fun toggleAlt() { altActive = !altActive }
 
-    private var textSizeDp = 13
+    private var textSizeSp = DEFAULT_TEXT_SIZE
+
+    /** Compose 层 transformable 上次缩放的时刻：避免与 TerminalView 内置手势重复放大 */
+    private var lastComposeZoomAt = 0L
 
     private val imm: InputMethodManager
         get() = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
+    /** 双指缩放：TerminalView 内部手势回调，累积比例超阈值后按步进调整字号 */
     override fun onScale(scale: Float): Float {
+        if (SystemClock.uptimeMillis() - lastComposeZoomAt < COMPOSE_ZOOM_WINDOW_MS) {
+            // Compose 层已经处理过这次捏合，内置手势只复位累积值，避免双倍缩放
+            return 1f
+        }
         if (scale < 0.9f || scale > 1.1f) {
-            textSizeDp = (textSizeDp * (if (scale < 1f) 0.95f else 1.05f)).toInt().coerceIn(8, 26)
-            view.setTextSize(textSizeDp)
+            zoom(if (scale < 1f) 0.94f else 1.06f)
             return 1f
         }
         return scale
+    }
+
+    /** 由 Compose 层的 transformable 调用 */
+    fun zoomFromCompose(factor: Float) {
+        lastComposeZoomAt = SystemClock.uptimeMillis()
+        zoom(factor)
+    }
+
+    /** 缩放字号（sp），供双指手势与顶栏/设置共用 */
+    fun zoom(factor: Float) {
+        textSizeSp = (textSizeSp * factor).coerceIn(MIN_TEXT_SIZE, MAX_TEXT_SIZE)
+        if (::view.isInitialized) view.setTextSize(textSizeSp.roundToInt())
+    }
+
+    /** 重置为 Termux 默认字号 */
+    fun resetZoom() {
+        textSizeSp = DEFAULT_TEXT_SIZE
+        if (::view.isInitialized) view.setTextSize(textSizeSp.roundToInt())
     }
 
     override fun onSingleTapUp(e: MotionEvent?) {
@@ -217,6 +254,17 @@ class RealTerminal(
     fun sendTab() = session.writeBytes(byteArrayOf(9))
     fun sendArrow(seq: String) = session.writeBytes(seq.toByteArray(Charsets.UTF_8))
 
+    /** 清屏：Ctrl+L，bash / zsh / mksh 都识别 */
+    fun clearScreen() = session.writeBytes(byteArrayOf(12))
+
+    /** 粘贴系统剪贴板到 PTY（顶栏按钮用） */
+    fun pasteFromClipboard() {
+        val ctx = ozjApp
+        val cm = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager ?: return
+        val text = cm.primaryClip?.getItemAt(0)?.coerceToText(ctx)?.toString() ?: return
+        sendInput(text)
+    }
+
     companion object {
         /** 滚回缓冲行数（Termux 默认 2000） */
         internal const val TRANSCRIPT_ROWS = 2000
@@ -226,6 +274,12 @@ class RealTerminal(
         const val ARROW_DOWN = "\u001b[B"
         const val ARROW_RIGHT = "\u001b[C"
         const val ARROW_LEFT = "\u001b[D"
+
+        /** Termux 默认 extra-keys 里的其余功能键序列 */
+        const val KEY_HOME = "\u001b[H"
+        const val KEY_END = "\u001b[F"
+        const val KEY_PAGE_UP = "\u001b[5~"
+        const val KEY_PAGE_DOWN = "\u001b[6~"
     }
 }
 
@@ -250,7 +304,7 @@ fun rememberRealTerminal(shellPath: String, binPath: String, nativeDir: String?)
     }
 }
 
-/** 把 Termux 的 TerminalView 挂进 Compose 树（黑底、ANSI 渲染、软键盘输入） */
+/** 把 Termux 的 TerminalView 挂进 Compose 树（黑底、ANSI 渲染、软键盘输入、双指缩放） */
 @Composable
 fun RealTerminalView(
     terminal: RealTerminal,
@@ -258,14 +312,19 @@ fun RealTerminalView(
     modifier: Modifier = Modifier,
 ) {
     val viewClient = terminal.viewClient
+    // Compose 层的双指缩放兜底：TerminalView 自身的手势偶尔会被外层分页手势吃掉，
+    // 这里再用 transformable 接一次（canPan=false，单指滚动仍交给 TerminalView）
+    val transformState = rememberTransformableState { zoomChange, _, _ ->
+        viewClient.zoomFromCompose(zoomChange)
+    }
     AndroidView(
-        modifier = modifier,
+        modifier = modifier.transformable(state = transformState, canPan = { false }),
         factory = { context ->
             TerminalView(context, null).apply {
                 setTerminalViewClient(viewClient)
                 viewClient.view = this
                 terminal.client.view = this
-                setTextSize(13)
+                setTextSize(DEFAULT_TEXT_SIZE.roundToInt())
                 isFocusable = true
                 isFocusableInTouchMode = true
                 attachSession(terminal.session)

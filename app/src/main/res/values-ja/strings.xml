@@ -39,11 +39,15 @@
     <string name="usb_denied">アクセスが拒否されたため、ツールはこのデバイスを開けません</string>
     <string name="usb_grant_toast">USB アクセス権限を要求しています…</string>
 
+    <!-- 终端顶栏 -->
+    <string name="terminal_clear">画面を消去</string>
+    <string name="terminal_restart">セッションを再起動</string>
+
     <!-- 設定 -->
-    <string name="settings_ui_mode">インターフェース</string>
+    <string name="settings_ui_mode">UI スタイル</string>
     <string name="settings_ui_mode_summary">アプリのインターフェーススタイルを選択します</string>
     <string name="settings_ui_mode_miuix">Miuix</string>
-    <string name="settings_ui_mode_material">Material Expressive</string>
+    <string name="settings_ui_mode_material">Material</string>
     <string name="settings_theme">テーマ設定</string>
     <string name="settings_theme_summary">アプリのテーマモードを選択します</string>
     <string name="settings_theme_system">システムに合わせる</string>
@@ -138,4 +142,6 @@
     <string name="settings_navigation_badge">ナビゲーションバッジ</string>
     <string name="settings_navigation_badge_summary">ツール不足時にバッジを表示します</string>
     <string name="settings_page_scale_summary">画面全体の拡大率（80% - 110%）</string>
+    <string name="settings_pager_swipe">左右スワイプでページ切替</string>
+    <string name="settings_pager_swipe_summary">オフにすると下部バーのみでページを切り替えます（ターミナルの横操作と競合しません）</string>
 </resources>

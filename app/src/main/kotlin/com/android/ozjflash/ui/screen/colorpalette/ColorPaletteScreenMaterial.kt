@@ -46,12 +46,11 @@ import androidx.compose.material.icons.filled.Brightness3
 import androidx.compose.material.icons.filled.Brightness4
 import androidx.compose.material.icons.filled.Brightness7
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.rounded.CallToAction
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Colorize
 import androidx.compose.material.icons.rounded.DesignServices
 import androidx.compose.material.icons.rounded.Style
-import androidx.compose.material.icons.rounded.WaterDrop
+import androidx.compose.material.icons.rounded.SwapHoriz
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -275,21 +274,11 @@ fun ColorPaletteScreenMaterial(
                     content = listOf(
                         {
                             SegmentedSwitchItem(
-                                icon = Icons.Rounded.CallToAction,
-                                title = stringResource(R.string.settings_floating_bottom_bar),
-                                summary = stringResource(R.string.settings_floating_bottom_bar_summary),
-                                checked = uiState.enableFloatingBottomBar,
-                                onCheckedChange = actions::setFloatingBottomBar,
-                            )
-                        },
-                        {
-                            SegmentedSwitchItem(
-                                icon = Icons.Rounded.WaterDrop,
-                                title = stringResource(R.string.settings_enable_glass),
-                                summary = stringResource(R.string.settings_enable_glass_summary),
-                                enabled = uiState.enableFloatingBottomBar,
-                                checked = uiState.enableFloatingBottomBarBlur,
-                                onCheckedChange = actions::setFloatingBottomBarBlur,
+                                icon = Icons.Rounded.SwapHoriz,
+                                title = stringResource(R.string.settings_pager_swipe),
+                                summary = stringResource(R.string.settings_pager_swipe_summary),
+                                checked = uiState.enablePagerSwipe,
+                                onCheckedChange = actions::setPagerSwipe,
                             )
                         },
                     ),

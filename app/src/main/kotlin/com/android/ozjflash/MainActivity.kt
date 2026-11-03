@@ -293,6 +293,8 @@ private fun MainScreen(
                     state = mainPagerState.pagerState,
                     beyondViewportPageCount = 1,
                     overscrollEffect = null,
+                    // 主题设置里的「允许左右滑动切换页面」：关闭后只能用底栏/侧栏切换
+                    userScrollEnabled = uiState.enablePagerSwipe,
                     flingBehavior = PagerDefaults.flingBehavior(
                         state = mainPagerState.pagerState,
                         snapAnimationSpec = PagerNavigationSpringSpec,
