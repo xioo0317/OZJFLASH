@@ -154,6 +154,8 @@
     <string name="settings_page_scale_summary">Scale the whole interface (80% - 110%)</string>
     <string name="settings_pager_swipe">Swipe to switch pages</string>
     <string name="settings_pager_swipe_summary">Allow horizontal swiping between pages; turn off to switch via the dock only</string>
+    <string name="settings_enable_predictive_back">Predictive back gesture</string>
+    <string name="settings_enable_predictive_back_summary">Enable predictive back gesture support.</string>
 
     <!-- Termux terminal-view text selection -->
     <string name="paste_text">Paste</string>

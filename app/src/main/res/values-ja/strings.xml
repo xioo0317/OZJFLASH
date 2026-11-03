@@ -144,4 +144,6 @@
     <string name="settings_page_scale_summary">画面全体の拡大率（80% - 110%）</string>
     <string name="settings_pager_swipe">左右スワイプでページ切替</string>
     <string name="settings_pager_swipe_summary">オフにすると下部バーのみでページを切り替えます（ターミナルの横操作と競合しません）</string>
+    <string name="settings_enable_predictive_back">予測型バックジェスチャー</string>
+    <string name="settings_enable_predictive_back_summary">システムの予測型戻るジェスチャーを有効にします。</string>
 </resources>

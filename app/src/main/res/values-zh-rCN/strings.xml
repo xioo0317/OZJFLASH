@@ -144,4 +144,6 @@
     <string name="settings_page_scale_summary">整体界面缩放（80% - 110%）</string>
     <string name="settings_pager_swipe">允许左右滑动切换页面</string>
     <string name="settings_pager_swipe_summary">关闭后只能用底栏切换页面，避免与终端等横向手势冲突</string>
+    <string name="settings_enable_predictive_back">预测性返回手势</string>
+    <string name="settings_enable_predictive_back_summary">开启系统预测性返回手势预览。</string>
 </resources>

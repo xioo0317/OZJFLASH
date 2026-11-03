@@ -1,7 +1,9 @@
 package com.android.ozjflash.ui.screen.colorpalette
 
 import androidx.compose.runtime.Immutable
+import com.android.ozjflash.OzjFlashApplication
 import com.android.ozjflash.R
+import com.android.ozjflash.ozjApp
 import com.android.ozjflash.ui.navigation3.Navigator
 import com.android.ozjflash.ui.theme.ColorMode
 import com.android.ozjflash.ui.viewmodel.AppUiState
@@ -42,6 +44,15 @@ class ColorPaletteActions internal constructor(
     fun setNavigationBadge(enabled: Boolean) = viewModel.setNavigationBadge(enabled)
     fun setPagerSwipe(enabled: Boolean) = viewModel.setPagerSwipe(enabled)
     fun setPageScale(value: Float) = viewModel.setPageScale(value)
+
+    /**
+     * 预测性返回手势：写入设置并即时应用到 ApplicationInfo（系统级标志，
+     * 真正的动画预览要等下一次 Activity 重建 —— 由 UI 层在切换后 recreate）。
+     */
+    fun setPredictiveBack(enabled: Boolean) {
+        viewModel.setEnablePredictiveBack(enabled)
+        OzjFlashApplication.setEnableOnBackInvokedCallback(ozjApp.applicationInfo, enabled)
+    }
 }
 
 /** 当前主题模式在 TabRow / 分段按钮中的下标（纯黑已移除，归入深色） */

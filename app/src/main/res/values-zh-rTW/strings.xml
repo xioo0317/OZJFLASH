@@ -144,4 +144,6 @@
     <string name="settings_page_scale_summary">整體介面縮放（80% - 110%）</string>
     <string name="settings_pager_swipe">允許左右滑動切換頁面</string>
     <string name="settings_pager_swipe_summary">關閉後只能用底部列切換頁面，避免與終端等橫向手勢衝突</string>
+    <string name="settings_enable_predictive_back">預測性返回手勢</string>
+    <string name="settings_enable_predictive_back_summary">開啟系統預測性返回手勢預覽。</string>
 </resources>

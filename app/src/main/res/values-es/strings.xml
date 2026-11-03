@@ -144,4 +144,6 @@
     <string name="settings_page_scale_summary">Escala de toda la interfaz (80% - 110%)</string>
     <string name="settings_pager_swipe">Deslizar para cambiar de página</string>
     <string name="settings_pager_swipe_summary">Permite deslizar horizontalmente entre páginas; desactívalo para cambiar solo desde la barra inferior</string>
+    <string name="settings_enable_predictive_back">Gesto de retroceso predictivo</string>
+    <string name="settings_enable_predictive_back_summary">Activa la vista previa del gesto de retroceso predictivo del sistema.</string>
 </resources>

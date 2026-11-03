@@ -40,12 +40,16 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import android.os.Build
+import androidx.activity.ComponentActivity
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Brightness1
 import androidx.compose.material.icons.filled.Brightness3
 import androidx.compose.material.icons.filled.Brightness4
 import androidx.compose.material.icons.filled.Brightness7
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Colorize
 import androidx.compose.material.icons.rounded.DesignServices
@@ -100,6 +104,7 @@ fun ColorPaletteScreenMaterial(
     state: ColorPaletteUiState,
     actions: ColorPaletteActions,
 ) {
+    val activity = LocalContext.current as? ComponentActivity
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val uiState = state.uiState
     val currentColorMode = state.currentColorMode
@@ -280,6 +285,20 @@ fun ColorPaletteScreenMaterial(
                                 checked = uiState.enablePagerSwipe,
                                 onCheckedChange = actions::setPagerSwipe,
                             )
+                        },
+                        {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                                SegmentedSwitchItem(
+                                    icon = Icons.Filled.ArrowBack,
+                                    title = stringResource(R.string.settings_enable_predictive_back),
+                                    summary = stringResource(R.string.settings_enable_predictive_back_summary),
+                                    checked = uiState.enablePredictiveBack,
+                                    onCheckedChange = { enabled ->
+                                        actions.setPredictiveBack(enabled)
+                                        activity?.recreate()
+                                    },
+                                )
+                            }
                         },
                     ),
                 )

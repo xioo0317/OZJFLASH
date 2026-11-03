@@ -16,8 +16,8 @@ android {
         applicationId 'com.android.ozjflash'
         minSdk 26
         targetSdk 34
-        versionCode 9
-        versionName '1.8'
+        versionCode 10
+        versionName '1.9'
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         ndk {
@@ -81,6 +81,9 @@ dependencies {
     implementation libs.miuix.nav
     implementation libs.miuix.preference
     implementation libs.miuix.blur
+
+    // 预测性返回手势：反射调用 Android 14 隐藏 API ApplicationInfo.setEnableOnBackInvokedCallback
+    implementation("org.lsposed.hiddenapibypass:hiddenapibypass:4.0")
 
     debugImplementation libs.androidx.ui.tooling
     debugImplementation libs.androidx.ui.test.manifest

@@ -2,6 +2,8 @@ package com.android.ozjflash.ui.screen.colorpalette
 
 import android.annotation.SuppressLint
 import android.os.Build
+import androidx.activity.ComponentActivity
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.animation.core.spring
@@ -43,6 +45,7 @@ import androidx.compose.material.icons.rounded.Style
 import androidx.compose.material.icons.rounded.SwapHoriz
 import androidx.compose.material.icons.rounded.Wallpaper
 import androidx.compose.material.icons.rounded.WaterDrop
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -98,6 +101,7 @@ fun ColorPaletteScreenMiuix(
     state: ColorPaletteUiState,
     actions: ColorPaletteActions,
 ) {
+    val activity = LocalContext.current as? ComponentActivity
     val scrollBehavior = MiuixScrollBehavior(
         rememberTopAppBarState(),
         { true },
@@ -340,6 +344,25 @@ fun ColorPaletteScreenMiuix(
                             checked = uiState.enablePagerSwipe,
                             onCheckedChange = actions::setPagerSwipe,
                         )
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                            SwitchPreference(
+                                title = stringResource(id = R.string.settings_enable_predictive_back),
+                                summary = stringResource(id = R.string.settings_enable_predictive_back_summary),
+                                startAction = {
+                                    Icon(
+                                        Icons.Filled.ArrowBack,
+                                        modifier = Modifier.padding(end = 6.dp),
+                                        contentDescription = stringResource(id = R.string.settings_enable_predictive_back),
+                                        tint = colorScheme.onBackground,
+                                    )
+                                },
+                                checked = uiState.enablePredictiveBack,
+                                onCheckedChange = { enabled ->
+                                    actions.setPredictiveBack(enabled)
+                                    activity?.recreate()
+                                },
+                            )
+                        }
                         var sliderValue by remember(uiState.pageScale) { mutableFloatStateOf(uiState.pageScale) }
                         ArrowPreference(
                             title = stringResource(id = R.string.settings_page_scale),
