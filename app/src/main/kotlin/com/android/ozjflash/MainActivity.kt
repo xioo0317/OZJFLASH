@@ -295,7 +295,11 @@ private fun MainScreen(
                         Modifier.layerBackdrop(backdrop)
                     } else Modifier,
                     state = mainPagerState.pagerState,
-                    beyondViewportPageCount = 1,
+                    // 首次打开应用后切换导航栏会卡：HorizontalPager 默认只预组合相邻 1 页，
+                    // 首次切到未组合的页（终端的真终端视图 / 设置页的模糊 shader）会在主线程一次性
+                    // 组合，丢帧卡顿。这里把所有页在启动期一次性预组合，切换时只是重组已有子树，
+                    // 与 KernelSU Manager 的预加载思路一致。代价是启动稍重，换取切换顺滑。
+                    beyondViewportPageCount = MAIN_PAGE_COUNT - 1,
                     overscrollEffect = null,
                     // 主题设置里的「允许左右滑动切换页面」：关闭后只能用底栏/侧栏切换
                     userScrollEnabled = uiState.enablePagerSwipe,

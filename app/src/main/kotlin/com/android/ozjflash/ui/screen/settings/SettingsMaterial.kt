@@ -113,6 +113,15 @@ fun SettingsMaterial(
                         )
                     },
                     {
+                        SegmentedListItem(
+                            onClick = actions::openColorPalette,
+                            headlineContent = { Text(themeEntry) },
+                            supportingContent = { Text(stringResource(R.string.settings_theme_summary)) },
+                            leadingContent = { Icon(Icons.Filled.Palette, themeEntry) },
+                            trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null) },
+                        )
+                    },
+                    {
                         SegmentedDropdownItem(
                             icon = Icons.Filled.Language,
                             title = stringResource(R.string.settings_language),
@@ -125,15 +134,6 @@ fun SettingsMaterial(
                             },
                         )
                     },
-                    {
-                        SegmentedListItem(
-                            onClick = actions::openColorPalette,
-                            headlineContent = { Text(themeEntry) },
-                            supportingContent = { Text(stringResource(R.string.settings_theme_summary)) },
-                            leadingContent = { Icon(Icons.Filled.Palette, themeEntry) },
-                            trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null) },
-                        )
-                    },
                 ),
             )
 
@@ -143,10 +143,10 @@ fun SettingsMaterial(
                     {
                         SegmentedListItem(
                             onClick = { showCrashLog = true },
-                            headlineContent = { Text(stringResource(R.string.settings_crash_log)) },
-                            supportingContent = { Text(stringResource(R.string.settings_crash_log_summary)) },
+                            headlineContent = { Text(stringResource(R.string.settings_log)) },
+                            supportingContent = { Text(stringResource(R.string.settings_log_summary)) },
                             leadingContent = {
-                                Icon(Icons.Filled.BugReport, stringResource(R.string.settings_crash_log))
+                                Icon(Icons.Filled.BugReport, stringResource(R.string.settings_log))
                             },
                         )
                     },

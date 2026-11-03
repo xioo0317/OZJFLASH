@@ -1,5 +1,7 @@
 package com.android.ozjflash.ui.screen.terminal
 
+import androidx.compose.animation.core.exponentialDecay
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,15 +17,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ContentPaste
 import androidx.compose.material.icons.rounded.DeleteSweep
 import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.TopAppBar as MaterialTopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,7 +43,12 @@ import androidx.compose.ui.unit.sp
 import com.android.ozjflash.R
 import com.android.ozjflash.terminal.RealTerminal
 import com.android.ozjflash.terminal.RealTerminalView
+import com.android.ozjflash.ui.LocalUiMode
+import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.component.usb.UsbStatusPill
+import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
+import top.yukonga.miuix.kmp.basic.TopAppBar
+import top.yukonga.miuix.kmp.basic.rememberTopAppBarState
 import top.yukonga.miuix.kmp.basic.Text
 
 /** 终端页背景：与 Termux 上游一致，恒为纯黑，不跟随主题 */
@@ -65,6 +74,7 @@ fun TerminalMiuix(
  *
  * 布局对齐 Termux 上游：顶部一条会话栏（粘贴 / 清屏 / 重开会话），
  * 中间吃满的终端视图，底部两行 extra-keys（Termux 默认键位）。
+ * 顶栏统一使用各主体自带的 TopAppBar 组件（仿主页），终端为纯黑固定栏，不折叠。
  */
 @Composable
 internal fun TerminalPane(
@@ -102,43 +112,51 @@ internal fun TerminalPane(
     }
 }
 
-/** 会话顶栏：标题 + 粘贴 / 清屏 / 重开 */
+/** 终端顶栏：按当前 UI 主体分派到对应的原生 TopAppBar 组件，保证与主页顶栏一致 */
 @Composable
 private fun TerminalTopBar(terminal: RealTerminal) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(TerminalBackground)
-            .statusBarsPadding()
-            .height(48.dp)
-            .padding(horizontal = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            text = stringResource(R.string.terminal),
-            color = TerminalForeground,
-            fontSize = 15.sp,
-            fontWeight = FontWeight.Medium,
-        )
-        Spacer(Modifier.weight(1f))
-        TerminalTopBarAction(
-            icon = Icons.Rounded.ContentPaste,
-            contentDescription = stringResource(R.string.paste_text),
-            onClick = terminal::pasteFromClipboard,
-        )
-        TerminalTopBarAction(
-            icon = Icons.Rounded.DeleteSweep,
-            contentDescription = stringResource(R.string.terminal_clear),
-            onClick = terminal::clearScreen,
-        )
-        TerminalTopBarAction(
-            icon = Icons.Rounded.Refresh,
-            contentDescription = stringResource(R.string.terminal_restart),
-            onClick = terminal::restart,
-        )
-        // USB 状态胶囊搬到顶栏（与参考图一致），深色背景下用 dark 变体
-        UsbStatusPill(dark = true, modifier = Modifier.padding(start = 4.dp))
+    when (LocalUiMode.current) {
+        UiMode.Miuix -> MiuixTerminalTopBar(terminal)
+        UiMode.Material -> MaterialTerminalTopBar(terminal)
     }
+}
+
+@Composable
+private fun MiuixTerminalTopBar(terminal: RealTerminal) {
+    val scrollBehavior = MiuixScrollBehavior(
+        rememberTopAppBarState(),
+        { true },
+        spring<Float>(),
+        exponentialDecay<Float>(),
+    )
+    TopAppBar(
+        color = TerminalBackground,
+        titleColor = TerminalForeground,
+        title = stringResource(R.string.terminal),
+        actions = {
+            TerminalTopBarAction(Icons.Rounded.ContentPaste, stringResource(R.string.paste_text), terminal::pasteFromClipboard)
+            TerminalTopBarAction(Icons.Rounded.DeleteSweep, stringResource(R.string.terminal_clear), terminal::clearScreen)
+            TerminalTopBarAction(Icons.Rounded.Refresh, stringResource(R.string.terminal_restart), terminal::restart)
+            // USB 状态胶囊搬到顶栏（与参考图一致），深色背景下用 dark 变体
+            UsbStatusPill(dark = true, modifier = Modifier.padding(start = 4.dp))
+        },
+        scrollBehavior = scrollBehavior,
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun MaterialTerminalTopBar(terminal: RealTerminal) {
+    MaterialTopAppBar(
+        title = { Text(stringResource(R.string.terminal), color = TerminalForeground) },
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = TerminalBackground),
+        actions = {
+            TerminalTopBarAction(Icons.Rounded.ContentPaste, stringResource(R.string.paste_text), terminal::pasteFromClipboard)
+            TerminalTopBarAction(Icons.Rounded.DeleteSweep, stringResource(R.string.terminal_clear), terminal::clearScreen)
+            TerminalTopBarAction(Icons.Rounded.Refresh, stringResource(R.string.terminal_restart), terminal::restart)
+            UsbStatusPill(dark = true, modifier = Modifier.padding(start = 4.dp))
+        },
+    )
 }
 
 @Composable

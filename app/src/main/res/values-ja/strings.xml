@@ -115,14 +115,17 @@
     <string name="language_ja">日本語</string>
     <string name="language_es">Español</string>
 
-    <!-- 崩潰日誌 / 診斷 -->
-    <string name="settings_crash_log">クラッシュログ</string>
-    <string name="settings_crash_log_summary">files/crash.log に記録された直近のクラッシュを表示</string>
-    <string name="crash_log_empty">クラッシュは記録されていません</string>
-    <string name="crash_log_copy">コピー</string>
-    <string name="crash_log_clear">クリア</string>
-    <string name="crash_log_copied">クリップボードにコピーしました</string>
-    <string name="crash_log_description">OZJFLASH クラッシュログ（files/crash.log）</string>
+    <!-- ログ / 診斷 -->
+    <string name="settings_log">ログ</string>
+    <string name="settings_log_summary">アプリのログを表示・書き出し（crash.log など）</string>
+    <string name="log_empty">ログは記録されていません</string>
+    <string name="log_copy">コピー</string>
+    <string name="log_clear">クリア</string>
+    <string name="log_copied">クリップボードにコピーしました</string>
+    <string name="log_description">OZJFLASH ログ</string>
+    <string name="log_export">ログを書き出し</string>
+    <string name="log_export_success">ログアーカイブを作成しました</string>
+    <string name="log_export_failed">ログの書き出しに失敗しました</string>
 
     <!-- テーマ設定画面（KernelSU ColorPalette を移植） -->
     <string name="settings_theme_mode_system">システムに従う</string>

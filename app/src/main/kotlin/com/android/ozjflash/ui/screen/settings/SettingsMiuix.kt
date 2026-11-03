@@ -113,7 +113,7 @@ fun SettingsMiuix(
                         modifier = Modifier.padding(top = 12.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
-                        // 外观：界面主体 / 语言 / 主题设置（二级页）
+                        // 外观：界面切换 / 主题设置 / 语言（二级页）
                         Card(modifier = Modifier.fillMaxWidth()) {
                             val uiModeItems = listOf(
                                 stringResource(R.string.settings_ui_mode_miuix),
@@ -135,6 +135,20 @@ fun SettingsMiuix(
                                 onSelectedIndexChange = {
                                     actions.setUiMode(if (it == 0) UiMode.Miuix else UiMode.Material)
                                 },
+                            )
+
+                            ArrowPreference(
+                                title = stringResource(R.string.settings_theme),
+                                summary = stringResource(R.string.settings_theme_summary),
+                                startAction = {
+                                    Icon(
+                                        Icons.Rounded.Palette,
+                                        modifier = Modifier.padding(end = 6.dp),
+                                        contentDescription = stringResource(R.string.settings_theme),
+                                        tint = colorScheme.onBackground,
+                                    )
+                                },
+                                onClick = actions::openColorPalette,
                             )
 
                             val langEntries = listOf(
@@ -164,32 +178,18 @@ fun SettingsMiuix(
                                     context.findActivity()?.recreate()
                                 },
                             )
-
-                            ArrowPreference(
-                                title = stringResource(R.string.settings_theme),
-                                summary = stringResource(R.string.settings_theme_summary),
-                                startAction = {
-                                    Icon(
-                                        Icons.Rounded.Palette,
-                                        modifier = Modifier.padding(end = 6.dp),
-                                        contentDescription = stringResource(R.string.settings_theme),
-                                        tint = colorScheme.onBackground,
-                                    )
-                                },
-                                onClick = actions::openColorPalette,
-                            )
                         }
 
                         // 诊断 / 其它
                         Card(modifier = Modifier.fillMaxWidth()) {
                             ArrowPreference(
-                                title = stringResource(R.string.settings_crash_log),
-                                summary = stringResource(R.string.settings_crash_log_summary),
+                                title = stringResource(R.string.settings_log),
+                                summary = stringResource(R.string.settings_log_summary),
                                 startAction = {
                                     Icon(
                                         Icons.Rounded.BugReport,
                                         modifier = Modifier.padding(end = 6.dp),
-                                        contentDescription = stringResource(R.string.settings_crash_log),
+                                        contentDescription = stringResource(R.string.settings_log),
                                         tint = colorScheme.onBackground,
                                     )
                                 },

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- 日志压缩包输出目录（cache/logs），供分享 Intent 临时授权读取 -->
+    <cache-path name="logs" path="logs/" />
+    <!-- 应用私有 files 目录（crash.log 等），兜底授权 -->
+    <files-path name="files" path="." />
+</paths>

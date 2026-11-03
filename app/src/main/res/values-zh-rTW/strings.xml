@@ -115,14 +115,17 @@
     <string name="language_ja">日本語</string>
     <string name="language_es">Español</string>
 
-    <!-- 崩潰日誌 / 診斷 -->
-    <string name="settings_crash_log">崩潰日誌</string>
-    <string name="settings_crash_log_summary">查看 files/crash.log 中記錄的最近一次崩潰</string>
-    <string name="crash_log_empty">暫無崩潰記錄</string>
-    <string name="crash_log_copy">複製</string>
-    <string name="crash_log_clear">清空</string>
-    <string name="crash_log_copied">已複製到剪貼板</string>
-    <string name="crash_log_description">OZJFLASH 崩潰日誌（files/crash.log）</string>
+    <!-- 日誌 / 診斷 -->
+    <string name="settings_log">日誌</string>
+    <string name="settings_log_summary">查看並匯出應用日誌（crash.log 等）</string>
+    <string name="log_empty">暫無日誌</string>
+    <string name="log_copy">複製</string>
+    <string name="log_clear">清空</string>
+    <string name="log_copied">已複製到剪貼板</string>
+    <string name="log_description">OZJFLASH 日誌</string>
+    <string name="log_export">匯出日誌</string>
+    <string name="log_export_success">日誌壓縮包已生成</string>
+    <string name="log_export_failed">生成日誌壓縮包失敗</string>
 
     <!-- 主題設定頁（照搬 KernelSU ColorPalette） -->
     <string name="settings_theme_mode_system">跟隨系統</string>

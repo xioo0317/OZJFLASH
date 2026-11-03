@@ -115,14 +115,17 @@
     <string name="language_ja">日本語</string>
     <string name="language_es">Español</string>
 
-    <!-- 崩潰日誌 / 診斷 -->
-    <string name="settings_crash_log">Registro de fallos</string>
-    <string name="settings_crash_log_summary">Ver el último fallo registrado en files/crash.log</string>
-    <string name="crash_log_empty">No hay registros de fallos</string>
-    <string name="crash_log_copy">Copiar</string>
-    <string name="crash_log_clear">Borrar</string>
-    <string name="crash_log_copied">Copiado al portapapeles</string>
-    <string name="crash_log_description">Registro de fallos de OZJFLASH (files/crash.log)</string>
+    <!-- Registro / diagnóstico -->
+    <string name="settings_log">Registro</string>
+    <string name="settings_log_summary">Ver y exportar los registros de la app (crash.log, etc.)</string>
+    <string name="log_empty">No hay registros</string>
+    <string name="log_copy">Copiar</string>
+    <string name="log_clear">Borrar</string>
+    <string name="log_copied">Copiado al portapapeles</string>
+    <string name="log_description">Registros de OZJFLASH</string>
+    <string name="log_export">Exportar registros</string>
+    <string name="log_export_success">Archivo de registros exportado</string>
+    <string name="log_export_failed">Error al exportar los registros</string>
 
     <!-- Pantalla de tema (adaptada de KernelSU ColorPalette) -->
     <string name="settings_theme_mode_system">Seguir al sistema</string>
