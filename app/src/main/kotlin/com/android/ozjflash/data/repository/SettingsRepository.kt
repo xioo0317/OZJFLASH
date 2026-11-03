@@ -24,9 +24,9 @@ interface SettingsRepository {
     var enableFloatingBottomBarBlur: Boolean
     var enableNavigationBadge: Boolean
     var navigationRailExpanded: Boolean
-    /** 是否允许在主界面左右滑动切换页面（关闭后只能用底栏切换，避免与终端/横向手势冲突） */
+    /** 是否允许在主界面左右滑动切换页面（默认关闭，只能用底栏切换，避免与终端/横向手势冲突） */
     var enablePagerSwipe: Boolean
-    /** 是否开启系统预测性返回手势（Android 14+，默认关闭，需在 Activity 重建后生效） */
+    /** 是否开启系统预测性返回手势（Android 14+，默认开启，需在 Activity 重建后生效） */
     var enablePredictiveBack: Boolean
     var pageScale: Float
     /** 终端是否默认走 PTY（libtermux.so），否则用 ProcessBuilder 管道模式 */
@@ -88,11 +88,11 @@ class SettingsRepositoryImpl : SettingsRepository {
         set(value) = prefs.edit { putBoolean("nav_rail_expanded", value) }
 
     override var enablePagerSwipe: Boolean
-        get() = prefs.getBoolean("enable_pager_swipe", true)
+        get() = prefs.getBoolean("enable_pager_swipe", false)
         set(value) = prefs.edit { putBoolean("enable_pager_swipe", value) }
 
     override var enablePredictiveBack: Boolean
-        get() = prefs.getBoolean("enable_predictive_back", false)
+        get() = prefs.getBoolean("enable_predictive_back", true)
         set(value) = prefs.edit { putBoolean("enable_predictive_back", value) }
 
     override var pageScale: Float

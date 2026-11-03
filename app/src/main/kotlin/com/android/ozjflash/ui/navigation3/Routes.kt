@@ -46,4 +46,12 @@ sealed interface Route : NavKey, Parcelable {
     @Serializable
     @Parcelize
     data object ColorPalette : Route
+
+    @Serializable
+    @Parcelize
+    data object Fastboot : Route
+
+    @Serializable
+    @Parcelize
+    data object Adb : Route
 }

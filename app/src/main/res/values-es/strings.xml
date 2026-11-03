@@ -146,4 +146,14 @@
     <string name="settings_pager_swipe_summary">Permite deslizar horizontalmente entre páginas; desactívalo para cambiar solo desde la barra inferior</string>
     <string name="settings_enable_predictive_back">Gesto de retroceso predictivo</string>
     <string name="settings_enable_predictive_back_summary">Activa la vista previa del gesto de retroceso predictivo del sistema.</string>
+
+    <!-- Página de herramientas / cápsula de estado USB -->
+    <string name="tools_fastboot">Fastboot</string>
+    <string name="tools_adb">ADB</string>
+    <string name="tools_fastboot_desc">Ejecuta comandos fastboot / fastbootd para flashear, desbloquear o reiniciar el bootloader.</string>
+    <string name="tools_adb_desc">Ejecuta comandos adb para sideload, shell, copia de seguridad y gestión del dispositivo.</string>
+    <string name="usb_status_none">Ningún dispositivo conectado</string>
+    <string name="usb_status_connected">%1$d dispositivo(s) conectado(s)</string>
+    <string name="usb_menu_no_device">Ningún dispositivo conectado</string>
+    <string name="usb_refresh_list">Actualizar lista</string>
 </resources>

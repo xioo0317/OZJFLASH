@@ -146,4 +146,14 @@
     <string name="settings_pager_swipe_summary">關閉後只能用底部列切換頁面，避免與終端等橫向手勢衝突</string>
     <string name="settings_enable_predictive_back">預測性返回手勢</string>
     <string name="settings_enable_predictive_back_summary">開啟系統預測性返回手勢預覽。</string>
+
+    <!-- 工具頁 / USB 頂欄狀態膠囊 -->
+    <string name="tools_fastboot">Fastboot</string>
+    <string name="tools_adb">ADB</string>
+    <string name="tools_fastboot_desc">執行 fastboot / fastbootd 指令，用於刷寫、解鎖或重啟引導載入程式。</string>
+    <string name="tools_adb_desc">執行 adb 指令，用於 sideload、shell、備份與裝置管理。</string>
+    <string name="usb_status_none">未連接裝置</string>
+    <string name="usb_status_connected">已連接 %1$d 台裝置</string>
+    <string name="usb_menu_no_device">無已連接裝置</string>
+    <string name="usb_refresh_list">重新整理清單</string>
 </resources>

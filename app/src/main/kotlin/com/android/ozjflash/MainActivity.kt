@@ -68,6 +68,8 @@ import com.android.ozjflash.ui.screen.terminal.TerminalConsole
 import com.android.ozjflash.ui.screen.terminal.TerminalPager
 import com.android.ozjflash.ui.screen.terminal.rememberTerminalConsole
 import com.android.ozjflash.ui.screen.tools.ToolsPager
+import com.android.ozjflash.ui.screen.tools.ToolKind
+import com.android.ozjflash.ui.screen.tools.ToolTerminalScreen
 import com.android.ozjflash.ui.screen.tools.rememberToolsState
 import com.android.ozjflash.ui.theme.LocalColorMode
 import com.android.ozjflash.ui.theme.LocalEnableBlur
@@ -184,6 +186,8 @@ class MainActivity : ComponentActivity() {
                             entry<Route.Main> { mainScreen() }
                             entry<Route.About> { AboutScreen(navigator) }
                             entry<Route.ColorPalette> { ColorPaletteScreen(viewModel, navigator) }
+                            entry<Route.Fastboot> { ToolTerminalScreen(navigator, ToolKind.FASTBOOT) }
+                            entry<Route.Adb> { ToolTerminalScreen(navigator, ToolKind.ADB) }
                         }
                     }
                     when (uiMode) {

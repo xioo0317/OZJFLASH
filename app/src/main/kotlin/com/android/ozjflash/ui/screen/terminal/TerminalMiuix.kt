@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import com.android.ozjflash.R
 import com.android.ozjflash.terminal.RealTerminal
 import com.android.ozjflash.terminal.RealTerminalView
+import com.android.ozjflash.ui.component.usb.UsbStatusPill
 import top.yukonga.miuix.kmp.basic.Text
 
 /** 终端页背景：与 Termux 上游一致，恒为纯黑，不跟随主题 */
@@ -135,6 +136,8 @@ private fun TerminalTopBar(terminal: RealTerminal) {
             contentDescription = stringResource(R.string.terminal_restart),
             onClick = terminal::restart,
         )
+        // USB 状态胶囊搬到顶栏（与参考图一致），深色背景下用 dark 变体
+        UsbStatusPill(dark = true, modifier = Modifier.padding(start = 4.dp))
     }
 }
 

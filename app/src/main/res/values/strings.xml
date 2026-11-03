@@ -161,4 +161,14 @@
     <string name="paste_text">Paste</string>
     <string name="copy_text">Copy</string>
     <string name="text_selection_more">More…</string>
+
+    <!-- 工具页 / USB 顶栏状态胶囊 -->
+    <string name="tools_fastboot">Fastboot</string>
+    <string name="tools_adb">ADB</string>
+    <string name="tools_fastboot_desc">Run fastboot / fastbootd commands to flash, unlock or reboot the bootloader.</string>
+    <string name="tools_adb_desc">Run adb commands for sideload, shell, backup and device management.</string>
+    <string name="usb_status_none">No device connected</string>
+    <string name="usb_status_connected">%1$d device(s) connected</string>
+    <string name="usb_menu_no_device">No connected device</string>
+    <string name="usb_refresh_list">Refresh list</string>
 </resources>
