@@ -151,14 +151,63 @@ object NativeLibs {
         return listOf(binPath, nativeDir, sysPath).filter { !it.isNullOrEmpty() }.joinToString(":")
     }
 
+    /**
+     * 终端工作目录 / HOME。
+     *
+     * 之前直接用 filesDir，在部分 ROM 上 shell 启动时 getcwd() 会拿到 EACCES
+     * （"shell-init: error retrieving current directory"），提示符也退化成裸的
+     * bash-5.2$。这里单独开 files/home，与 Termux 的约定一致。
+     */
+    fun homeDir(context: Context): File = File(context.filesDir, "home").apply {
+        if (!isDirectory) mkdirs()
+    }
+
     /** 终端进程环境变量 */
-    fun shellEnv(context: Context, binPath: String, nativeDir: String? = null): Map<String, String> = mapOf(
-        "PATH" to pathEnv(binPath, nativeDir),
-        "HOME" to context.filesDir.absolutePath,
-        "TMPDIR" to context.cacheDir.absolutePath,
-        "TERM" to "xterm-256color",
-        "LANG" to "en_US.UTF-8"
-    )
+    fun shellEnv(context: Context, binPath: String, nativeDir: String? = null): Map<String, String> {
+        val home = homeDir(context)
+        return mapOf(
+            "PATH" to pathEnv(binPath, nativeDir),
+            "HOME" to home.absolutePath,
+            "TMPDIR" to context.cacheDir.absolutePath,
+            "TERM" to "xterm-256color",
+            "LANG" to "en_US.UTF-8",
+            // mksh（/system/bin/sh）读 $ENV 作为启动脚本
+            "ENV" to File(home, ".mkshrc").absolutePath,
+            // 给 rc 里展示工具链路径用
+            "OZJ_BIN" to binPath,
+        )
+    }
+
+    /**
+     * 准备交互式 shell 的启动脚本。
+     *
+     * - 我们自己维护一份 `.ozjflash.rc`（每次启动重写，仅做展示与提示符），不污染用户配置；
+     * - 在用户的 `.bashrc` / `.mkshrc` 末尾幂等地挂一行 source（带 marker，不重复追加）。
+     * - banner 由 shell 自己 print，不再把命令当按键注入 PTY，因此不会再出现「命令被回显」的情况。
+     */
+    fun prepareShell(context: Context, binPath: String): File {
+        val home = homeDir(context)
+        val rc = listOf(
+            "# 由 OZJFLASH 自动生成，请勿手改",
+            "case \"\$-\" in *i*) ;; *) return 0 2>/dev/null || exit 0 ;; esac",
+            "export PS1='\\[\\e[1;32m\\]ozjflash\\[\\e[0m\\]:\\[\\e[1;34m\\]\\w\\[\\e[0m\\]\\$ '",
+            "printf '\\n\\033[1;32m OZJFLASH\\033[0m \\033[2m· 终端就绪\\033[0m\\n'",
+            "printf '\\033[2m PATH %s\\033[0m\\n\\n' \"\$OZJ_BIN\"",
+        ).joinToString("\n") + "\n"
+        File(home, ".ozjflash.rc").writeText(rc)
+
+        val marker = "# OZJFLASH-RC"
+        val sourceLine = "$marker\n[ -f \"\$HOME/.ozjflash.rc\" ] && . \"\$HOME/.ozjflash.rc\"\n"
+        for (name in listOf(".bashrc", ".mkshrc")) {
+            val f = File(home, name)
+            val text = if (f.exists()) f.readText() else ""
+            if (!text.contains(marker)) {
+                val lead = if (text.isEmpty() || text.endsWith("\n")) "" else "\n"
+                f.appendText(lead + sourceLine)
+            }
+        }
+        return home
+    }
 
     /** 选择终端 shell：优先自带 bash，否则回退 /system/bin/sh */
     fun shellPath(binPath: String): String {

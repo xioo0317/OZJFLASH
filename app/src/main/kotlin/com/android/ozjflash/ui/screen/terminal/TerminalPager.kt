@@ -68,12 +68,11 @@ fun rememberTerminalConsole(engine: TerminalEngine, binDir: String): TerminalCon
 @Composable
 fun TerminalPager(
     terminal: RealTerminal,
-    binPath: String,
     bottomInnerPadding: Dp,
     isCurrentPage: Boolean,
 ) {
     when (LocalUiMode.current) {
-        UiMode.Miuix -> TerminalMiuix(terminal, binPath, bottomInnerPadding, isCurrentPage)
-        UiMode.Material -> TerminalMaterial(terminal, binPath, bottomInnerPadding, isCurrentPage)
+        UiMode.Miuix -> TerminalMiuix(terminal, bottomInnerPadding, isCurrentPage)
+        UiMode.Material -> TerminalMaterial(terminal, bottomInnerPadding, isCurrentPage)
     }
 }

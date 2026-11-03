@@ -214,24 +214,9 @@ class RealTerminal(
     var session: TerminalSession = session
         private set
 
-    private var bannerSent = false
-
     val isRunning: Boolean get() = session.isRunning()
 
     fun newSession(): TerminalSession = TerminalSession(shellPath, cwd, null, env, TRANSCRIPT_ROWS, client)
-
-    /** 首次挂载时把工具链提示打进终端（作为 shell 输入执行，输出自然回显） */
-    fun sendBannerIfNeeded(binPath: String) {
-        if (bannerSent) return
-        bannerSent = true
-        val missing = com.android.ozjflash.flash.NativeLibs.missingTools(binPath)
-        val hint = if (missing.isEmpty()) {
-            "[OZJFLASH] tools ready, PATH includes: $binPath"
-        } else {
-            "[OZJFLASH] tools: $binPath (missing: ${missing.joinToString()})"
-        }
-        session.writeBytes("printf '\\\\n%s\\\\n' '$hint'\n".toByteArray(Charsets.UTF_8))
-    }
 
     fun restart() {
         try {
@@ -239,7 +224,6 @@ class RealTerminal(
         } catch (_: Throwable) {
         }
         session = newSession()
-        bannerSent = false
         val v = client.view
         if (v != null) {
             v.attachSession(session)
@@ -292,15 +276,18 @@ fun rememberRealTerminal(shellPath: String, binPath: String, nativeDir: String?)
         val env = com.android.ozjflash.flash.NativeLibs.shellEnv(ozjApp, binPath, nativeDir)
             .map { (k, v) -> "$k=$v" }
             .toTypedArray()
+        val home = com.android.ozjflash.flash.NativeLibs.prepareShell(ozjApp, binPath)
+        val cwd = runCatching { if (home.isDirectory && home.canRead()) home.canonicalPath else "/" }
+            .getOrDefault("/")
         val session = TerminalSession(
             shellPath,
-            ozjApp.filesDir.absolutePath,
+            cwd,
             null,
             env,
             RealTerminal.Companion.TRANSCRIPT_ROWS,
             client,
         )
-        RealTerminal(shellPath, ozjApp.filesDir.absolutePath, env, client, viewClient, session)
+        RealTerminal(shellPath, cwd, env, client, viewClient, session)
     }
 }
 
@@ -308,7 +295,6 @@ fun rememberRealTerminal(shellPath: String, binPath: String, nativeDir: String?)
 @Composable
 fun RealTerminalView(
     terminal: RealTerminal,
-    binPath: String,
     modifier: Modifier = Modifier,
 ) {
     val viewClient = terminal.viewClient
@@ -328,7 +314,6 @@ fun RealTerminalView(
                 isFocusable = true
                 isFocusableInTouchMode = true
                 attachSession(terminal.session)
-                terminal.sendBannerIfNeeded(binPath)
                 requestFocus()
             }
         },

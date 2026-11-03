@@ -53,11 +53,10 @@ private val TerminalKeyActive = Color(0xFF2F6B45)
 @Composable
 fun TerminalMiuix(
     terminal: RealTerminal,
-    binPath: String,
     bottomInnerPadding: Dp,
     isCurrentPage: Boolean,
 ) {
-    TerminalPane(terminal, binPath, bottomInnerPadding)
+    TerminalPane(terminal, bottomInnerPadding)
 }
 
 /**
@@ -69,7 +68,6 @@ fun TerminalMiuix(
 @Composable
 internal fun TerminalPane(
     terminal: RealTerminal,
-    binPath: String,
     bottomInnerPadding: Dp,
 ) {
     Column(
@@ -91,7 +89,7 @@ internal fun TerminalPane(
                     } else Modifier
                 )
         ) {
-            RealTerminalView(terminal = terminal, binPath = binPath, modifier = Modifier.fillMaxSize())
+            RealTerminalView(terminal = terminal, modifier = Modifier.fillMaxSize())
         }
 
         TerminalExtraKeysRow(terminal)

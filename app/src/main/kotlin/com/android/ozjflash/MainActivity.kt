@@ -303,7 +303,7 @@ private fun MainScreen(
                     when (page) {
                         0 -> HomePager(binPath, bottomInnerPadding, true)
                         1 -> ToolsPager(console, binPath, bottomInnerPadding, true)
-                        2 -> TerminalPager(realTerminal, binPath, bottomInnerPadding, true)
+                        2 -> TerminalPager(realTerminal, bottomInnerPadding, true)
                         3 -> SettingPager(viewModel, navController, bottomInnerPadding, true)
                     }
                 }

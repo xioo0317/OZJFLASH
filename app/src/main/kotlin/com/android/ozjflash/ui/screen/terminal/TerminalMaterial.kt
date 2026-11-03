@@ -8,9 +8,8 @@ import com.android.ozjflash.terminal.RealTerminal
 @Composable
 fun TerminalMaterial(
     terminal: RealTerminal,
-    binPath: String,
     bottomInnerPadding: Dp,
     isCurrentPage: Boolean,
 ) {
-    TerminalPane(terminal, binPath, bottomInnerPadding)
+    TerminalPane(terminal, bottomInnerPadding)
 }
