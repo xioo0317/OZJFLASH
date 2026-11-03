@@ -24,10 +24,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.ozjflash.R
 import com.android.ozjflash.flash.UsbDeviceInfo
 import com.android.ozjflash.flash.UsbHost
+import com.android.ozjflash.flash.UsbMode
 import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.component.material.ExpressiveDialog
@@ -88,6 +90,14 @@ fun UsbHostCard(modifier: Modifier = Modifier) {
     }
 }
 
+/** 连接模式对应的标识颜色 */
+private fun modeColor(mode: UsbMode): Color = when (mode) {
+    UsbMode.EDL, UsbMode.DLOAD, UsbMode.MTK_BROM -> Color(0xFFE5534B)
+    UsbMode.FASTBOOT, UsbMode.ADB -> Color(0xFF3DDC84)
+    UsbMode.QUALCOMM, UsbMode.XIAOMI, UsbMode.OPPO, UsbMode.ONEPLUS, UsbMode.ANDROID_BRAND -> Color(0xFF5B9BD5)
+    else -> Color(0xFF9AA0A6)
+}
+
 @Composable
 private fun UsbHostCardMiuix(
     devices: List<UsbDeviceInfo>,
@@ -128,6 +138,12 @@ private fun UsbHostCardMiuix(
                                     text = info.vidPid,
                                     fontSize = 11.sp,
                                     color = colorScheme.onSurfaceVariantSummary
+                                )
+                                Text(
+                                    text = info.mode.label,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = modeColor(info.mode)
                                 )
                             }
                             if (info.granted) {
@@ -209,6 +225,12 @@ private fun UsbHostCardMaterial(
                                     text = info.vidPid,
                                     style = MaterialTheme.typography.labelSmall,
                                     color = colorScheme.onSurfaceVariant
+                                )
+                                M3Text(
+                                    text = info.mode.label,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Medium,
+                                    color = modeColor(info.mode)
                                 )
                             }
                             if (info.granted) {

@@ -160,4 +160,6 @@
     <string name="usb_status_connected">已连接 %1$d 台设备</string>
     <string name="usb_menu_no_device">无已连接设备</string>
     <string name="usb_refresh_list">刷新列表</string>
+    <string name="tools_flash">刷写</string>
+    <string name="tools_flash_desc">通过 fastboot / EDL / MTK / OTA payload 向设备刷写。</string>
 </resources>

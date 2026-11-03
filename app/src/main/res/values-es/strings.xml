@@ -159,4 +159,6 @@
     <string name="usb_status_connected">%1$d dispositivo(s) conectado(s)</string>
     <string name="usb_menu_no_device">Ningún dispositivo conectado</string>
     <string name="usb_refresh_list">Actualizar lista</string>
+    <string name="tools_flash">Flash</string>
+    <string name="tools_flash_desc">Flashea fastboot / EDL / MTK / OTA payload al dispositivo.</string>
 </resources>

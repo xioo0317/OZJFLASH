@@ -70,6 +70,7 @@ import com.android.ozjflash.ui.screen.terminal.rememberTerminalConsole
 import com.android.ozjflash.ui.screen.tools.ToolsPager
 import com.android.ozjflash.ui.screen.tools.ToolKind
 import com.android.ozjflash.ui.screen.tools.ToolTerminalScreen
+import com.android.ozjflash.flash.FlashScreen
 import com.android.ozjflash.ui.screen.tools.rememberToolsState
 import com.android.ozjflash.ui.theme.LocalColorMode
 import com.android.ozjflash.ui.theme.LocalEnableBlur
@@ -188,6 +189,7 @@ class MainActivity : ComponentActivity() {
                             entry<Route.ColorPalette> { ColorPaletteScreen(viewModel, navigator) }
                             entry<Route.Fastboot> { ToolTerminalScreen(navigator, ToolKind.FASTBOOT) }
                             entry<Route.Adb> { ToolTerminalScreen(navigator, ToolKind.ADB) }
+                            entry<Route.Flash> { FlashScreen() }
                         }
                     }
                     when (uiMode) {
@@ -224,9 +226,10 @@ private fun MainScreen(
 
     val scope = rememberCoroutineScope()
     val shellPath = remember(binPath) { NativeLibs.shellPath(binPath) }
-    val console = remember {
+    val engine = remember {
         TerminalEngine(scope, shellPath, NativeLibs.pathEnv(binPath, nativeDir))
-    }.let { rememberTerminalConsole(it, binPath) }
+    }
+    val console = rememberTerminalConsole(engine, binPath)
 
     // 终端页：Termux 上游真终端（libtermux.so PTY + ANSI 渲染）。
     // 主界面期间保持同一会话，随主界面销毁才回收子进程。

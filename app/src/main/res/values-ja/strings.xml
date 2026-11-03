@@ -159,4 +159,6 @@
     <string name="usb_status_connected">%1$d 台のデバイスが接続されています</string>
     <string name="usb_menu_no_device">接続されたデバイスなし</string>
     <string name="usb_refresh_list">リストを更新</string>
+    <string name="tools_flash">刷写</string>
+    <string name="tools_flash_desc">fastboot / EDL / MTK / OTA payload 経由でデバイスに書き込み。</string>
 </resources>

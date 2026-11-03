@@ -107,6 +107,13 @@ fun ToolsMaterial(
                 titleRes = R.string.tools_adb,
                 descRes = R.string.tools_adb_desc,
             )
+            ToolCardMaterial(
+                navigator = navigator,
+                route = Route.Flash,
+                icon = Icons.Rounded.FlashOn,
+                titleRes = R.string.tools_flash,
+                descRes = R.string.tools_flash_desc,
+            )
             Box(Modifier.height(bottomInnerPadding))
         }
     }

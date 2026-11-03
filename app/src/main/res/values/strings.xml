@@ -174,4 +174,6 @@
     <string name="usb_status_connected">%1$d device(s) connected</string>
     <string name="usb_menu_no_device">No connected device</string>
     <string name="usb_refresh_list">Refresh list</string>
+    <string name="tools_flash">Flash</string>
+    <string name="tools_flash_desc">Flash fastboot / EDL / MTK / OTA payload to the device.</string>
 </resources>
