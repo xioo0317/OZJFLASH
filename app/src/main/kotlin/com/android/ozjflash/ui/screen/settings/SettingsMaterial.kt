@@ -12,6 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.DisplaySettings
 import androidx.compose.material.icons.filled.Info
@@ -28,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -36,6 +38,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.android.ozjflash.R
 import com.android.ozjflash.findActivity
+import com.android.ozjflash.flash.FlashBridge
 import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.component.material.ExpressiveScaffold
 import com.android.ozjflash.ui.component.material.SegmentedColumn
@@ -61,6 +64,7 @@ fun SettingsMaterial(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val context = LocalContext.current
     var showCrashLog by remember { mutableStateOf(false) }
+    val rootMode by FlashBridge.rootMode.collectAsStateWithLifecycle()
 
     ExpressiveScaffold(
         topBar = {
@@ -132,6 +136,21 @@ fun SettingsMaterial(
                                 actions.setLanguage(langEntries[it].first)
                                 context.findActivity()?.recreate()
                             },
+                        )
+                    },
+                ),
+            )
+
+            SegmentedColumn(
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 13.dp),
+                content = listOf(
+                    {
+                        SegmentedSwitchItem(
+                            icon = Icons.Filled.AdminPanelSettings,
+                            title = stringResource(R.string.settings_root_mode),
+                            summary = stringResource(R.string.settings_root_mode_summary),
+                            checked = rootMode,
+                            onCheckedChange = { actions.setRootMode(it) },
                         )
                     },
                 ),

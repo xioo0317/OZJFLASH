@@ -161,4 +161,6 @@
     <string name="usb_refresh_list">Actualizar lista</string>
     <string name="tools_flash">Flash</string>
     <string name="tools_flash_desc">Flashea fastboot / EDL / MTK / OTA payload al dispositivo.</string>
+    <string name="settings_root_mode">Modo Root (ejecución su)</string>
+    <string name="settings_root_mode_summary">Desactivado: flashea vía puente nativo USB Host (sin root). Activado: ejecuta las herramientas directamente con su.</string>
 </resources>

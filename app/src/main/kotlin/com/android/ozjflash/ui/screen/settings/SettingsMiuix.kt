@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AdminPanelSettings
 import androidx.compose.material.icons.rounded.BugReport
 import androidx.compose.material.icons.rounded.DisplaySettings
 import androidx.compose.material.icons.rounded.Info
@@ -28,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -37,6 +39,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.android.ozjflash.R
 import com.android.ozjflash.findActivity
+import com.android.ozjflash.flash.FlashBridge
 import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.util.BlurredBar
@@ -81,6 +84,7 @@ fun SettingsMiuix(
     val barColor = if (blurActive) Color.Transparent else colorScheme.surface
     val context = LocalContext.current
     var showCrashLog by remember { mutableStateOf(false) }
+    val rootMode by FlashBridge.rootMode.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -176,6 +180,24 @@ fun SettingsMiuix(
                                 onSelectedIndexChange = {
                                     actions.setLanguage(langEntries[it].first)
                                     context.findActivity()?.recreate()
+                                },
+                            )
+                        }
+
+                        // 刷写执行模式：false=免 root 走 USB 原生桥；true=Root 直接 su 执行工具
+                        Card(modifier = Modifier.fillMaxWidth()) {
+                            SwitchPreference(
+                                title = stringResource(R.string.settings_root_mode),
+                                summary = stringResource(R.string.settings_root_mode_summary),
+                                checked = rootMode,
+                                onCheckedChange = { actions.setRootMode(it) },
+                                startAction = {
+                                    Icon(
+                                        Icons.Rounded.AdminPanelSettings,
+                                        modifier = Modifier.padding(end = 6.dp),
+                                        contentDescription = stringResource(R.string.settings_root_mode),
+                                        tint = colorScheme.onBackground,
+                                    )
                                 },
                             )
                         }

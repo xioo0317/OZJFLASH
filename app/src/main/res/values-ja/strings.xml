@@ -161,4 +161,6 @@
     <string name="usb_refresh_list">リストを更新</string>
     <string name="tools_flash">刷写</string>
     <string name="tools_flash_desc">fastboot / EDL / MTK / OTA payload 経由でデバイスに書き込み。</string>
+    <string name="settings_root_mode">Root モード（su 実行）</string>
+    <string name="settings_root_mode_summary">オフ：USB Host ネイティブブリッジ経由で root 不要；オン：su で直接ツールを実行。</string>
 </resources>

@@ -162,4 +162,6 @@
     <string name="usb_refresh_list">刷新列表</string>
     <string name="tools_flash">刷写</string>
     <string name="tools_flash_desc">通过 fastboot / EDL / MTK / OTA payload 向设备刷写。</string>
+    <string name="settings_root_mode">Root 模式（su 执行）</string>
+    <string name="settings_root_mode_summary">关闭：经 USB Host 原生桥免 root 刷写；开启：直接用 su 执行工具。</string>
 </resources>

@@ -121,6 +121,10 @@ fun FlashScreen() {
             }
 
             // —— Fastboot ——
+            // 执行策略（对标 MOFLASH 的 root/usbhost 双模式）：
+            //  - 免 root（默认）：所有 fastboot 操作都走进程内原生桥（NativeCmd + USB fd），
+            //    因为非 root 进程打不开 /dev/bus/usb，裸 fastboot 二进制必然识别不到设备；
+            //  - root：直接用 su 以绝对路径执行内置 fastboot 二进制（root 可访问 /dev/bus/usb）。
             FlashCard(title = "Fastboot") {
                 var partition by remember { mutableStateOf("") }
                 var image by remember { mutableStateOf("") }
@@ -135,18 +139,56 @@ fun FlashScreen() {
                             nativeStatus = null
                             if (!rootMode) {
                                 val ok = FlashBridge.flashViaNative(context, partition, image)
-                                if (ok) { nativeStatus = "原生桥已提交刷写：$partition <- $image"; return@launch }
-                                nativeStatus = "原生桥不可用，已回退到终端命令"
+                                nativeStatus = if (ok) "原生桥已提交刷写：$partition <- $image"
+                                else "原生桥不可用，请在「设置」开启 Root 模式用 su 执行"
+                            } else {
+                                engine.writeLine(FlashBridge.cmdSuFastboot(binPath, "flash $partition $image"))
+                                nativeStatus = "已提交（Root 模式：su 执行 fastboot）"
                             }
-                            engine.writeLine(FlashBridge.cmdFlash(partition, image))
                         }
                     }, Modifier.weight(1f)) { Text("刷写分区") }
-                    Button(onClick = { engine.writeLine(FlashBridge.cmdGetvarAll()) }, Modifier.weight(1f)) { Text("getvar all") }
+                    Button(onClick = {
+                        scope.launch {
+                            nativeStatus = null
+                            if (!rootMode) {
+                                val ok = FlashBridge.getvarViaNative(context)
+                                nativeStatus = if (ok) "原生桥已提交 getvar all"
+                                else "原生桥不可用，请在「设置」开启 Root 模式用 su 执行"
+                            } else {
+                                engine.writeLine(FlashBridge.cmdSuFastboot(binPath, "getvar all"))
+                                nativeStatus = "已提交（Root 模式：su 执行）"
+                            }
+                        }
+                    }, Modifier.weight(1f)) { Text("getvar all") }
                 }
                 Spacer(Modifier.height(8.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Button(onClick = { engine.writeLine(FlashBridge.cmdRebootBootloader()) }, Modifier.weight(1f)) { Text("重启 BL") }
-                    Button(onClick = { engine.writeLine(FlashBridge.cmdRebootFastboot()) }, Modifier.weight(1f)) { Text("重启 FB") }
+                    Button(onClick = {
+                        scope.launch {
+                            nativeStatus = null
+                            if (!rootMode) {
+                                val ok = FlashBridge.rebootViaNative(context, "bootloader")
+                                nativeStatus = if (ok) "原生桥已提交：重启到 Bootloader"
+                                else "原生桥不可用，请在「设置」开启 Root 模式用 su 执行"
+                            } else {
+                                engine.writeLine(FlashBridge.cmdSuFastboot(binPath, "reboot bootloader"))
+                                nativeStatus = "已提交（Root 模式：su 执行）"
+                            }
+                        }
+                    }, Modifier.weight(1f)) { Text("重启 BL") }
+                    Button(onClick = {
+                        scope.launch {
+                            nativeStatus = null
+                            if (!rootMode) {
+                                val ok = FlashBridge.rebootViaNative(context, "fastboot")
+                                nativeStatus = if (ok) "原生桥已提交：重启到 Fastboot"
+                                else "原生桥不可用，请在「设置」开启 Root 模式用 su 执行"
+                            } else {
+                                engine.writeLine(FlashBridge.cmdSuFastboot(binPath, "reboot-bootloader"))
+                                nativeStatus = "已提交（Root 模式：su 执行）"
+                            }
+                        }
+                    }, Modifier.weight(1f)) { Text("重启 FB") }
                 }
             }
 

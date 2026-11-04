@@ -6,6 +6,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.ozjflash.R
+import com.android.ozjflash.flash.FlashBridge
 import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.navigation3.Navigator
@@ -31,6 +32,8 @@ class SettingsActions internal constructor(
     fun setPageScale(value: Float) = viewModel.setPageScale(value)
     fun setTerminalPty(enabled: Boolean) = viewModel.setTerminalPty(enabled)
     fun setLanguage(code: String) = viewModel.setLanguage(code)
+    /** 刷写执行模式：false=免 root 走 USB 原生桥；true=Root 直接 su 执行工具 */
+    fun setRootMode(enabled: Boolean) = FlashBridge.setRootMode(enabled)
     fun openAbout() = navigator.push(Route.About)
     fun openColorPalette() = navigator.push(Route.ColorPalette)
 }

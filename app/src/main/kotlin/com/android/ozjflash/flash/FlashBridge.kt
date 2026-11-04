@@ -91,4 +91,11 @@ object FlashBridge {
 
     /** 7z 解包 loader / 线刷包（lib7zz.so 即 7z 本体） */
     fun cmdSevenZipExtract(archive: String, outDir: String) = "7z x $archive -o$outDir"
+
+    /**
+     * root 模式：用 su 以绝对路径直接执行 fastboot。
+     * su 环境的 PATH 不含应用的 bin 目录，所以必须传 binPath/fastboot 完整路径，
+     * 而非裸 `fastboot`（否则 su -c 找不到命令）。
+     */
+    fun cmdSuFastboot(binPath: String, args: String) = "su -c \"$binPath/fastboot $args\""
 }

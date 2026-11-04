@@ -176,4 +176,6 @@
     <string name="usb_refresh_list">Refresh list</string>
     <string name="tools_flash">Flash</string>
     <string name="tools_flash_desc">Flash fastboot / EDL / MTK / OTA payload to the device.</string>
+    <string name="settings_root_mode">Root mode (su execution)</string>
+    <string name="settings_root_mode_summary">Off: flash via USB Host native bridge (no root). On: run tools directly with su.</string>
 </resources>
