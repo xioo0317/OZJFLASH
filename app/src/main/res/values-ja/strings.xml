@@ -157,6 +157,7 @@
     <string name="tools_adb_desc">adb コマンドを実行し、sideload、shell、バックアップ、デバイス管理を行います。</string>
     <string name="usb_status_none">デバイス未接続</string>
     <string name="usb_status_connected">%1$d 台のデバイスが接続されています</string>
+    <string name="usb_status_connected_type">接続済み %1$s デバイス</string>
     <string name="usb_menu_no_device">接続されたデバイスなし</string>
     <string name="usb_refresh_list">リストを更新</string>
     <string name="tools_flash">刷写</string>

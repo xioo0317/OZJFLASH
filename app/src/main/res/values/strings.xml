@@ -172,6 +172,7 @@
     <string name="tools_adb_desc">Run adb commands for sideload, shell, backup and device management.</string>
     <string name="usb_status_none">No device connected</string>
     <string name="usb_status_connected">%1$d device(s) connected</string>
+    <string name="usb_status_connected_type">Connected to %1$s device</string>
     <string name="usb_menu_no_device">No connected device</string>
     <string name="usb_refresh_list">Refresh list</string>
     <string name="tools_flash">Flash</string>

@@ -157,6 +157,7 @@
     <string name="tools_adb_desc">Ejecuta comandos adb para sideload, shell, copia de seguridad y gestión del dispositivo.</string>
     <string name="usb_status_none">Ningún dispositivo conectado</string>
     <string name="usb_status_connected">%1$d dispositivo(s) conectado(s)</string>
+    <string name="usb_status_connected_type">Dispositivo %1$s conectado</string>
     <string name="usb_menu_no_device">Ningún dispositivo conectado</string>
     <string name="usb_refresh_list">Actualizar lista</string>
     <string name="tools_flash">Flash</string>

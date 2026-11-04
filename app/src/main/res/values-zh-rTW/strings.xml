@@ -157,6 +157,7 @@
     <string name="tools_adb_desc">執行 adb 指令，用於 sideload、shell、備份與裝置管理。</string>
     <string name="usb_status_none">未連接裝置</string>
     <string name="usb_status_connected">已連接 %1$d 台裝置</string>
+    <string name="usb_status_connected_type">已連接%1$s裝置</string>
     <string name="usb_menu_no_device">無已連接裝置</string>
     <string name="usb_refresh_list">重新整理清單</string>
     <string name="tools_flash">刷寫</string>
