@@ -154,12 +154,28 @@ object NativeLibs {
     /**
      * 终端工作目录 / HOME。
      *
-     * 之前直接用 filesDir，在部分 ROM 上 shell 启动时 getcwd() 会拿到 EACCES
-     * （"shell-init: error retrieving current directory"），提示符也退化成裸的
-     * bash-5.2$。这里单独开 files/home，与 Termux 的约定一致。
+     * 之前直接用 filesDir（/data/data/<pkg>/files/home）。在多数 ROM 上，应用 UID 对
+     * /data/data 只有「执行(x)」、没有「读(r)」权限；bash 启动做 getcwd() 时若需要解析
+     * 整条路径就会吃 EACCES，报
+     *   shell-init: error retrieving current directory: getcwd: Permission denied
+     * 这就是终端「访问不了 APP 私有目录」的根因（并非上游 UID 残留，而是 /data/data/<pkg>
+     * 的祖先目录权限让 getcwd 失败）。
+     *
+     * 根治：HOME/cwd 放到 /data/local/tmp/<pkg>，其祖先 /data、/data/local、/data/local/tmp
+     * 均为 755/1777，任何 UID 都能无障碍 traverse + read，getcwd 永不再报错。/data/local/tmp
+     * 不可写时再回退到应用私有 cache（应用 UID 对其有完整权限，getcwd 同样可用）。
+     * 注意：OZJ_BIN 等工具链路径仍指向 files/bin，与 HOME 无关，不受此改动影响。
      */
-    fun homeDir(context: Context): File = File(context.filesDir, "home").apply {
-        if (!isDirectory) mkdirs()
+    fun homeDir(context: Context): File {
+        val pkg = runCatching { context.packageName }.getOrDefault("ozjflash")
+        val tmp = File("/data/local/tmp", pkg)
+        if ((tmp.exists() && tmp.isDirectory) || runCatching { tmp.mkdirs() }.getOrDefault(false)) {
+            // 0700：仅本 UID 可读写，避免其它应用翻看终端历史
+            runCatching { Os.chmod(tmp.absolutePath, 0b111000000) }
+            return tmp
+        }
+        // 兜底：应用私有 cache（/data/data/<pkg>/cache，应用 UID 必有完整权限）
+        return File(context.cacheDir, "home").apply { mkdirs() }
     }
 
     /** 终端进程环境变量 */
