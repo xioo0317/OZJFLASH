@@ -1,9 +1,6 @@
 package com.android.ozjflash.ui.util
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -12,7 +9,9 @@ import com.android.ozjflash.ui.theme.LocalBlurStyle
 import top.yukonga.miuix.kmp.blur.BlendColorEntry
 import top.yukonga.miuix.kmp.blur.BlurColors
 import top.yukonga.miuix.kmp.blur.LayerBackdrop
+import top.yukonga.miuix.kmp.blur.ProgressiveBlur
 import top.yukonga.miuix.kmp.blur.rememberLayerBackdrop
+import top.yukonga.miuix.kmp.blur.progressiveTextureBlur
 import top.yukonga.miuix.kmp.blur.textureBlur
 import top.yukonga.miuix.kmp.shader.isRenderEffectSupported
 import top.yukonga.miuix.kmp.theme.MiuixTheme
@@ -40,28 +39,17 @@ fun BlurredBar(
         ),
     )
     if (blurActive && backdrop != null && blurStyle == "gradient") {
-        // 渐变（渐进）模糊：把顶/底栏竖向切成三段，半径由小到大，得到液态玻璃般的效果
-        Box {
-            Column(modifier = Modifier.fillMaxSize()) {
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.34f)
-                        .textureBlur(backdrop = backdrop, shape = RectangleShape, blurRadius = 8f, colors = colors),
-                )
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.33f)
-                        .textureBlur(backdrop = backdrop, shape = RectangleShape, blurRadius = 18f, colors = colors),
-                )
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.33f)
-                        .textureBlur(backdrop = backdrop, shape = RectangleShape, blurRadius = 30f, colors = colors),
-                )
-            }
+        // 渐变（渐进）模糊：使用 Miuix 内置 progressiveTextureBlur + ProgressiveBlur.Top。
+        // 模糊半径随高度平滑过渡、底部自然淡出，既不会拉伸铺满整屏，也不会出现生硬的分界线。
+        Box(
+            modifier = Modifier.progressiveTextureBlur(
+                backdrop,
+                RectangleShape,
+                25f,
+                ProgressiveBlur.Top,
+                colors = colors,
+            ),
+        ) {
             content()
         }
     } else {

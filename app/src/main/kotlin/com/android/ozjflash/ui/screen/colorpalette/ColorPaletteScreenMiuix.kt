@@ -300,7 +300,7 @@ fun ColorPaletteScreenMiuix(
                                     items = effectItems,
                                     startAction = {
                                         Icon(
-                                            Icons.Rounded.BlurOn,
+                                            Icons.Rounded.Style,
                                             modifier = Modifier.padding(end = 6.dp),
                                             contentDescription = stringResource(id = R.string.settings_blur_effect),
                                             tint = colorScheme.onBackground,
@@ -496,7 +496,7 @@ private fun ThemePreviewCardMiuix(
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth(0.62f)
+                .fillMaxWidth(0.5f)
                 .aspectRatio(screenRatio)
                 .clip(RoundedCornerShape(20.dp))
                 .background(bgColor)
