@@ -72,6 +72,8 @@
     <string name="settings_others">Otros</string>
     <string name="settings_enable_blur">Desenfoque</string>
     <string name="settings_enable_blur_summary">Desenfoca las barras superior e inferior</string>
+    <string name="settings_usb_pill_blur">Cristal de la píldora</string>
+    <string name="settings_usb_pill_blur_summary">Aplica un efecto de cristal a la píldora USB</string>
     <string name="settings_blur_effect">Efecto</string>
     <string name="settings_blur_effect_gaussian">Desenfoque gaussiano</string>
     <string name="settings_blur_effect_gradient">Desenfoque degradado</string>
@@ -169,6 +171,7 @@
     <string name="tools_cmd_output">Salida</string>
     <string name="tools_cmd_empty">Aún sin salida</string>
     <string name="usb_status_none">Ningún dispositivo conectado</string>
+    <string name="usb_status_connected_device">Dispositivo conectado</string>
     <string name="usb_status_connected">%1$d dispositivo(s) conectado(s)</string>
     <string name="usb_status_connected_type">Dispositivo %1$s conectado</string>
     <string name="usb_menu_no_device">Ningún dispositivo conectado</string>

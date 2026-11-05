@@ -315,6 +315,30 @@ fun ColorPaletteScreenMiuix(
                         }
                     }
 
+                    // USB 胶囊液态玻璃：独立开关，不依赖顶/底栏模糊
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        Card(
+                            modifier = Modifier
+                                .padding(top = 12.dp)
+                                .fillMaxWidth(),
+                        ) {
+                            SwitchPreference(
+                                title = stringResource(id = R.string.settings_usb_pill_blur),
+                                summary = stringResource(id = R.string.settings_usb_pill_blur_summary),
+                                startAction = {
+                                    Icon(
+                                        Icons.Rounded.BlurOn,
+                                        modifier = Modifier.padding(end = 6.dp),
+                                        contentDescription = stringResource(id = R.string.settings_usb_pill_blur),
+                                        tint = colorScheme.onBackground,
+                                    )
+                                },
+                                checked = uiState.usbPillBlur,
+                                onCheckedChange = actions::setUsbPillBlur,
+                            )
+                        }
+                    }
+
                     Card(
                         modifier = Modifier
                             .padding(top = 12.dp)

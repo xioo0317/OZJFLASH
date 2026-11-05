@@ -1,7 +1,7 @@
 package com.android.ozjflash.ui.component.usb
 
+import android.os.Build
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -14,8 +14,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowDropUp
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface as M3Surface
 import androidx.compose.material3.Text as M3Text
 import androidx.compose.material3.TextButton as M3TextButton
 import androidx.compose.runtime.Composable
@@ -26,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -39,55 +43,83 @@ import com.android.ozjflash.flash.UsbHost
 import com.android.ozjflash.flash.UsbMode
 import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
+import com.android.ozjflash.ui.component.liquid.lens
+import com.android.ozjflash.ui.component.liquid.vibrancy
+import com.android.ozjflash.ui.theme.LocalUsbPillBlur
 import top.yukonga.miuix.kmp.basic.DropdownDefaults
 import top.yukonga.miuix.kmp.basic.DropdownEntry
 import top.yukonga.miuix.kmp.basic.DropdownItem
+import top.yukonga.miuix.kmp.basic.Icon as MiuixIcon
+import top.yukonga.miuix.kmp.basic.Surface as MiuixSurface
 import top.yukonga.miuix.kmp.basic.Text as MiuixText
+import top.yukonga.miuix.kmp.blur.blur
+import top.yukonga.miuix.kmp.blur.drawBackdrop
+import top.yukonga.miuix.kmp.blur.layerBackdrop
+import top.yukonga.miuix.kmp.blur.rememberLayerBackdrop
 import top.yukonga.miuix.kmp.popup.OverlayDropdownPopup
+import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /**
- * 顶栏 USB 状态胶囊：右侧一个圆角胶囊按钮，内含状态灰点 + 文案 + 上箭头；
- * 点击弹出下拉（设备列表 / 请求授权 / 刷新列表）。
+ * 顶栏 USB 状态胶囊。
  *
- * - MIUI（Miuix）皮肤：下拉直接用 Miuix 的 [OverlayDropdownPopup]（与设置页
- *   「界面风格」「语言」那套下拉是同一个组件），不再自绘卡片，观感与 MIUI 系统一致；
- * - M3（Material）皮肤：下拉用 Material3 的 DropdownMenu / DropdownMenuItem。
+ * - **风格对应组件**：MIUI 主体用 Miuix [MiuixSurface]，M3 主体用 Material3 [M3Surface]，
+ *   点击反馈由各自组件自带；文字 / 图标也分别用 MiuixText + MiuixIcon 与 M3Text + Icon。
+ * - **主题取色**：容器与文字颜色全部取自当前 colorScheme（浅色=白、深色/纯黑=黑、
+ *   动态取色时自动带主题色），不再硬编码灰底黑字。胶囊文案统一为「已连接设备」，
+ *   避免在可折叠顶栏收起时挤占小标题；设备详情点击胶囊在下拉里查看。
+ * - **液态玻璃**：主题设置「胶囊模糊」开启后，用 Miuix 的 drawBackdrop + blur/lens/vibrancy
+ *   把胶囊折射成玻璃（与悬浮底栏同款效果），API < 33 自动降级为普通实色胶囊。
  *
- * 点设备条目 → 弹出 [UsbDeviceInfoDialog]（设备信息详情）。
- * 设备接入/拔出由 [UsbHost] 的广播接收器自动 refresh，这里挂载时再补一次枚举，
- * 做到「连接设备自动访问」。
- *
- * [dark] 为 true 时按终端纯黑背景配色（浅字 + 半透明深底），否则跟随浅色主题。
+ * [dark] 为终端页纯黑背景的专属配色开关（避免黑底上出现一块亮色胶囊）。
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UsbStatusPill(dark: Boolean = false, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val uiMode = LocalUiMode.current
     val devices by UsbHost.devices.collectAsStateWithLifecycle()
+    val pillBlurEnabled = LocalUsbPillBlur.current
     var expanded by remember { mutableStateOf(false) }
-    // 非空时显示设备信息弹窗
     var infoDevice by remember { mutableStateOf<UsbDeviceInfo?>(null) }
 
     // 挂载即枚举一次，确保进入页面时立刻反映已接入的设备（自动访问）
     LaunchedEffect(Unit) { UsbHost.refresh(context) }
 
-    val granted = devices.count { it.granted }
-    val (dotColor, statusText) = when {
-        devices.isEmpty() ->
-            (if (dark) Color(0xFF9AA0A6) else Color(0xFF9E9E9E)) to
-                stringResource(R.string.usb_status_none)
-        devices.size == 1 -> {
-            val t = modeShortType(devices[0].mode)
-            (if (granted > 0) Color(0xFF4CAF50) else Color(0xFFFFB300)) to
-                stringResource(R.string.usb_status_connected_type, t)
-        }
-        else ->
-            (if (granted > 0) Color(0xFF4CAF50) else Color(0xFFFFB300)) to
-                stringResource(R.string.usb_status_connected, devices.size)
+    val connected = devices.isNotEmpty()
+    val granted = devices.any { it.granted }
+    val statusText = stringResource(
+        if (connected) R.string.usb_status_connected_device else R.string.usb_status_none,
+    )
+
+    // 颜色随主题设置的取色走：白 / 黑 / 纯黑 / 动态取色全部由 colorScheme 决定
+    val baseContainer = when (uiMode) {
+        UiMode.Miuix -> MiuixTheme.colorScheme.surfaceVariant
+        UiMode.Material -> MaterialTheme.colorScheme.surfaceContainerHigh
+    }
+    val baseContent = when (uiMode) {
+        UiMode.Miuix -> MiuixTheme.colorScheme.onSurface
+        UiMode.Material -> MaterialTheme.colorScheme.onSurface
+    }
+    val containerColor = if (dark) Color(0xFF2A2A2A) else baseContainer
+    val contentColor = if (dark) Color(0xFFE6E6E6) else baseContent
+
+    val dotColor = when {
+        !connected -> if (dark) Color(0xFF9AA0A6) else baseContent.copy(alpha = 0.45f)
+        granted -> Color(0xFF4CAF50)
+        else -> Color(0xFFFFB300)
     }
 
-    val pillBg = if (dark) Color(0xFF2A2A2A) else Color(0xFFE8EAED)
-    val textColor = if (dark) Color(0xFFE6E6E6) else Color(0xFF1F1F1F)
+    val pillShape = RoundedCornerShape(50)
+    // RuntimeShader 需要 API 33；低版本不触碰 blur 链路，避免 NoClassDefFoundError
+    val glassEnabled = pillBlurEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+
+    // 液态玻璃的模糊源：胶囊背后一层主题色，经 blur + lens + vibrancy 折射成玻璃质感
+    val glassBackdrop = if (glassEnabled) {
+        rememberLayerBackdrop {
+            drawRect(containerColor)
+            drawContent()
+        }
+    } else null
 
     val openInfo: (UsbDeviceInfo) -> Unit = {
         expanded = false
@@ -95,36 +127,68 @@ fun UsbStatusPill(dark: Boolean = false, modifier: Modifier = Modifier) {
     }
 
     Box(modifier = modifier) {
-        // 胶囊本体（外形两种皮肤一致，文案组件随皮肤切换）
-        Row(
-            modifier = Modifier
-                .clip(RoundedCornerShape(50))
-                .background(pillBg)
-                .clickable { expanded = !expanded }
-                .padding(horizontal = 10.dp, vertical = 6.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
-        ) {
+        // 采样层：与胶囊内容同尺寸的不可见镜像，注册为液态玻璃的模糊源
+        // （与悬浮底栏 alpha(0f) + layerBackdrop 同一套做法，无需 matchParentSize）
+        if (glassEnabled && glassBackdrop != null) {
             Box(
                 modifier = Modifier
-                    .size(8.dp)
-                    .clip(CircleShape)
-                    .background(dotColor)
-            )
-            when (uiMode) {
-                UiMode.Miuix -> MiuixText(statusText, color = textColor, fontSize = 13.sp)
-                UiMode.Material -> M3Text(statusText, color = textColor, fontSize = 13.sp)
+                    .alpha(0f)
+                    .layerBackdrop(glassBackdrop),
+            ) {
+                when (uiMode) {
+                    UiMode.Miuix -> PillContentMiuix(statusText, dotColor, contentColor)
+                    UiMode.Material -> PillContentMaterial(statusText, dotColor, contentColor)
+                }
             }
-            Icon(
-                Icons.Rounded.ArrowDropUp,
-                contentDescription = null,
-                tint = textColor,
-                modifier = Modifier.size(18.dp),
-            )
         }
 
-        // 下拉挂在同一个 Box 里：Miuix 的 OverlayListPopup 以父布局边界为锚点，
-        // 这样弹层正好贴在胶囊下方、右边缘对齐
+        val surfaceModifier = Modifier
+            .clip(pillShape)
+            .then(
+                if (glassEnabled && glassBackdrop != null) {
+                    Modifier.drawBackdrop(
+                        backdrop = glassBackdrop,
+                        shape = { pillShape },
+                        effects = {
+                            padding = maxOf(padding, 20.dp.toPx())
+                            vibrancy()
+                            blur(5.dp.toPx(), 5.dp.toPx())
+                            lens(
+                                refractionHeight = 10.dp.toPx(),
+                                refractionAmount = 10.dp.toPx(),
+                            )
+                        },
+                        onDrawSurface = { drawRect(containerColor.copy(alpha = 0.28f)) },
+                    )
+                } else {
+                    Modifier
+                },
+            )
+
+        when (uiMode) {
+            UiMode.Miuix -> MiuixSurface(
+                onClick = { expanded = !expanded },
+                modifier = surfaceModifier,
+                shape = pillShape,
+                color = if (glassEnabled) Color.Transparent else containerColor,
+                contentColor = contentColor,
+            ) {
+                PillContentMiuix(statusText, dotColor, contentColor)
+            }
+
+            UiMode.Material -> M3Surface(
+                onClick = { expanded = !expanded },
+                modifier = surfaceModifier,
+                shape = pillShape,
+                color = if (glassEnabled) Color.Transparent else containerColor,
+                contentColor = contentColor,
+                tonalElevation = 0.dp,
+            ) {
+                PillContentMaterial(statusText, dotColor, contentColor)
+            }
+        }
+
+        // 下拉挂在同一个 Box 里：Miuix 的 OverlayDropdownPopup 以父布局边界为锚点
         when (uiMode) {
             UiMode.Miuix -> MiuixDeviceDropdown(
                 expanded = expanded,
@@ -151,7 +215,53 @@ fun UsbStatusPill(dark: Boolean = false, modifier: Modifier = Modifier) {
     }
 }
 
-/** 按连接模式给出用于状态文案的短类型名 */
+@Composable
+private fun PillContentMiuix(text: String, dotColor: Color, contentColor: Color) {
+    Row(
+        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        Box(
+            modifier = Modifier
+                .size(8.dp)
+                .clip(CircleShape)
+                .background(dotColor),
+        )
+        MiuixText(text, color = contentColor, fontSize = 13.sp, maxLines = 1)
+        MiuixIcon(
+            imageVector = Icons.Rounded.ArrowDropUp,
+            contentDescription = null,
+            tint = contentColor,
+            modifier = Modifier.size(18.dp),
+        )
+    }
+}
+
+@Composable
+private fun PillContentMaterial(text: String, dotColor: Color, contentColor: Color) {
+    Row(
+        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        Box(
+            modifier = Modifier
+                .size(8.dp)
+                .clip(CircleShape)
+                .background(dotColor),
+        )
+        M3Text(text, color = contentColor, fontSize = 13.sp, maxLines = 1)
+        Icon(
+            Icons.Rounded.ArrowDropUp,
+            contentDescription = null,
+            tint = contentColor,
+            modifier = Modifier.size(18.dp),
+        )
+    }
+}
+
+/** 按连接模式给出用于下拉项的短类型名 */
 private fun modeShortType(mode: UsbMode): String = when (mode) {
     UsbMode.ADB -> "ADB"
     UsbMode.FASTBOOT -> "Fastboot"

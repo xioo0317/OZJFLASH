@@ -72,6 +72,8 @@
     <string name="settings_others">其它</string>
     <string name="settings_enable_blur">模糊</string>
     <string name="settings_enable_blur_summary">啟用頂欄與底欄的模糊效果</string>
+    <string name="settings_usb_pill_blur">膠囊模糊</string>
+    <string name="settings_usb_pill_blur_summary">開啟後 USB 膠囊呈現液態玻璃效果</string>
     <string name="settings_blur_effect">效果</string>
     <string name="settings_blur_effect_gaussian">高斯模糊</string>
     <string name="settings_blur_effect_gradient">漸變模糊</string>
@@ -169,6 +171,7 @@
     <string name="tools_cmd_output">輸出</string>
     <string name="tools_cmd_empty">尚無輸出</string>
     <string name="usb_status_none">未連接裝置</string>
+    <string name="usb_status_connected_device">已連接裝置</string>
     <string name="usb_status_connected">已連接 %1$d 台裝置</string>
     <string name="usb_status_connected_type">已連接%1$s裝置</string>
     <string name="usb_menu_no_device">無已連接裝置</string>

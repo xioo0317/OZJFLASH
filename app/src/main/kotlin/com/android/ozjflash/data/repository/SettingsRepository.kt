@@ -22,6 +22,8 @@ interface SettingsRepository {
     var enableBlur: Boolean
     /** 模糊风格：gaussian = 高斯模糊（默认）；gradient = 渐变模糊 */
     var blurStyle: String
+    /** USB 状态胶囊是否使用液态玻璃效果（独立于顶/底栏模糊，默认关闭） */
+    var usbPillBlur: Boolean
     var enableFloatingBottomBar: Boolean
     var enableFloatingBottomBarBlur: Boolean
     var enableNavigationBadge: Boolean
@@ -76,6 +78,10 @@ class SettingsRepositoryImpl : SettingsRepository {
     override var blurStyle: String
         get() = prefs.getString("blur_style", "gaussian") ?: "gaussian"
         set(value) = prefs.edit { putString("blur_style", value) }
+
+    override var usbPillBlur: Boolean
+        get() = prefs.getBoolean("usb_pill_blur", false)
+        set(value) = prefs.edit { putBoolean("usb_pill_blur", value) }
 
     override var enableFloatingBottomBar: Boolean
         get() = prefs.getBoolean("enable_floating_bottom_bar", true)

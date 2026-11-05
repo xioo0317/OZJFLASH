@@ -26,6 +26,8 @@ data class AppUiState(
     val miuixMonet: Boolean = false,
     val enableBlur: Boolean = false,
     val blurStyle: String = "gaussian",
+    /** USB 状态胶囊的液态玻璃效果开关 */
+    val usbPillBlur: Boolean = false,
     val enableFloatingBottomBar: Boolean = false,
     val enableFloatingBottomBarBlur: Boolean = false,
     val enableNavigationBadge: Boolean = true,
@@ -51,6 +53,7 @@ class AppViewModel(
             miuixMonet = repo.miuixMonet,
             enableBlur = repo.enableBlur,
             blurStyle = repo.blurStyle,
+            usbPillBlur = repo.usbPillBlur,
             enableFloatingBottomBar = repo.enableFloatingBottomBar,
             enableFloatingBottomBarBlur = repo.enableFloatingBottomBarBlur,
             enableNavigationBadge = repo.enableNavigationBadge,
@@ -111,6 +114,11 @@ class AppViewModel(
     fun setBlurStyle(style: String) {
         repo.blurStyle = style
         _uiState.value = _uiState.value.copy(blurStyle = style)
+    }
+
+    fun setUsbPillBlur(enabled: Boolean) {
+        repo.usbPillBlur = enabled
+        _uiState.value = _uiState.value.copy(usbPillBlur = enabled)
     }
 
     fun setFloatingBottomBar(enabled: Boolean) {

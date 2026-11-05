@@ -72,6 +72,8 @@
     <string name="settings_others">その他</string>
     <string name="settings_enable_blur">ぼかし</string>
     <string name="settings_enable_blur_summary">上部・下部バーの背後をぼかします</string>
+    <string name="settings_usb_pill_blur">カプセルぼかし</string>
+    <string name="settings_usb_pill_blur_summary">USB カプセルにガラス効果を適用します</string>
     <string name="settings_blur_effect">エフェクト</string>
     <string name="settings_blur_effect_gaussian">ガウスぼかし</string>
     <string name="settings_blur_effect_gradient">グラデーションぼかし</string>
@@ -169,6 +171,7 @@
     <string name="tools_cmd_output">出力</string>
     <string name="tools_cmd_empty">出力はまだありません</string>
     <string name="usb_status_none">デバイス未接続</string>
+    <string name="usb_status_connected_device">デバイス接続済み</string>
     <string name="usb_status_connected">%1$d 台のデバイスが接続されています</string>
     <string name="usb_status_connected_type">接続済み %1$s デバイス</string>
     <string name="usb_menu_no_device">接続されたデバイスなし</string>

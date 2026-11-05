@@ -80,6 +80,8 @@
     <string name="settings_others">Other</string>
     <string name="settings_enable_blur">Blur</string>
     <string name="settings_enable_blur_summary">Blur the top and bottom bars</string>
+    <string name="settings_usb_pill_blur">Pill glass</string>
+    <string name="settings_usb_pill_blur_summary">Give the USB pill a liquid glass effect</string>
     <string name="settings_blur_effect">Effect</string>
     <string name="settings_blur_effect_gaussian">Gaussian blur</string>
     <string name="settings_blur_effect_gradient">Gradient blur</string>
@@ -184,6 +186,7 @@
     <string name="tools_cmd_output">Output</string>
     <string name="tools_cmd_empty">No output yet</string>
     <string name="usb_status_none">No device connected</string>
+    <string name="usb_status_connected_device">Device connected</string>
     <string name="usb_status_connected">%1$d device(s) connected</string>
     <string name="usb_status_connected_type">Connected to %1$s device</string>
     <string name="usb_menu_no_device">No connected device</string>

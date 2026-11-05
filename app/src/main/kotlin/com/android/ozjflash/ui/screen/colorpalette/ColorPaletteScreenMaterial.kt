@@ -50,6 +50,7 @@ import androidx.compose.material.icons.filled.Brightness4
 import androidx.compose.material.icons.filled.Brightness7
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.rounded.BlurOn
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Colorize
 import androidx.compose.material.icons.rounded.DesignServices
@@ -302,6 +303,23 @@ fun ColorPaletteScreenMaterial(
                         },
                     ),
                 )
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                item {
+                    SegmentedColumn(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        content = listOf({
+                            SegmentedSwitchItem(
+                                icon = Icons.Rounded.BlurOn,
+                                title = stringResource(R.string.settings_usb_pill_blur),
+                                summary = stringResource(R.string.settings_usb_pill_blur_summary),
+                                checked = uiState.usbPillBlur,
+                                onCheckedChange = actions::setUsbPillBlur,
+                            )
+                        }),
+                    )
+                }
             }
 
             item {

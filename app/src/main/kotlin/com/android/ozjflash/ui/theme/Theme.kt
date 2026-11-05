@@ -137,6 +137,9 @@ val LocalEnableBlur = staticCompositionLocalOf { false }
 /** 模糊风格：gaussian = 默认高斯模糊；gradient = 渐变（渐进）模糊。供顶/底栏 BlurredBar 读取 */
 val LocalBlurStyle = staticCompositionLocalOf { "gaussian" }
 
+/** USB 状态胶囊是否使用液态玻璃效果（独立于顶/底栏模糊） */
+val LocalUsbPillBlur = staticCompositionLocalOf { false }
+
 val LocalEnableFloatingBottomBar = staticCompositionLocalOf { false }
 
 val LocalEnableFloatingBottomBarBlur = staticCompositionLocalOf { false }
