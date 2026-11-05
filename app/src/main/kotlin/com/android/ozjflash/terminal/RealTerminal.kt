@@ -29,6 +29,11 @@ private const val DEFAULT_TEXT_SIZE = 13f
 private const val MIN_TEXT_SIZE = 8f
 private const val MAX_TEXT_SIZE = 32f
 
+/** sp 转 px：Termux 的 TerminalView.setTextSize 接收的是像素值，需把 sp 字号换算后再传入，
+ *  否则在 2x+ 密度屏上会被当成 px 渲染得过小 */
+private fun Float.toPx(context: Context): Int =
+    (this * context.resources.displayMetrics.scaledDensity).roundToInt()
+
 /** Compose 层缩放后，内置手势在该时间窗内不再调整字号 */
 private const val COMPOSE_ZOOM_WINDOW_MS = 400L
 
@@ -137,13 +142,13 @@ class OzjTerminalViewClient : TerminalViewClient {
     /** 缩放字号（sp），供双指手势与顶栏/设置共用 */
     fun zoom(factor: Float) {
         textSizeSp = (textSizeSp * factor).coerceIn(MIN_TEXT_SIZE, MAX_TEXT_SIZE)
-        if (::view.isInitialized) view.setTextSize(textSizeSp.roundToInt())
+        if (::view.isInitialized) view.setTextSize(textSizeSp.toPx(view.context))
     }
 
     /** 重置为 Termux 默认字号 */
     fun resetZoom() {
         textSizeSp = DEFAULT_TEXT_SIZE
-        if (::view.isInitialized) view.setTextSize(textSizeSp.roundToInt())
+        if (::view.isInitialized) view.setTextSize(textSizeSp.toPx(view.context))
     }
 
     override fun onSingleTapUp(e: MotionEvent?) {
@@ -310,7 +315,7 @@ fun RealTerminalView(
                 setTerminalViewClient(viewClient)
                 viewClient.view = this
                 terminal.client.view = this
-                setTextSize(DEFAULT_TEXT_SIZE.roundToInt())
+                setTextSize(DEFAULT_TEXT_SIZE.toPx(context))
                 isFocusable = true
                 isFocusableInTouchMode = true
                 attachSession(terminal.session)
