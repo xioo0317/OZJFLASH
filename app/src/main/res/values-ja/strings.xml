@@ -159,6 +159,13 @@
     <string name="tools_adb">ADB</string>
     <string name="tools_fastboot_desc">fastboot / fastbootd コマンドを実行し、フラッシュ、アンロック、ブートローダーの再起動を行います。</string>
     <string name="tools_adb_desc">adb コマンドを実行し、sideload、shell、バックアップ、デバイス管理を行います。</string>
+    <string name="tools_cmd_title">コマンドライン</string>
+    <string name="tools_cmd_desc">fastboot コマンドを直接実行します（例: devices、getvar all、reboot bootloader）。</string>
+    <string name="tools_cmd_hint">例: devices / getvar all</string>
+    <string name="tools_cmd_run">実行</string>
+    <string name="tools_cmd_running">実行中…</string>
+    <string name="tools_cmd_output">出力</string>
+    <string name="tools_cmd_empty">出力はまだありません</string>
     <string name="usb_status_none">デバイス未接続</string>
     <string name="usb_status_connected">%1$d 台のデバイスが接続されています</string>
     <string name="usb_status_connected_type">接続済み %1$s デバイス</string>

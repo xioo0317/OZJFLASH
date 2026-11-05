@@ -159,6 +159,13 @@
     <string name="tools_adb">ADB</string>
     <string name="tools_fastboot_desc">Ejecuta comandos fastboot / fastbootd para flashear, desbloquear o reiniciar el bootloader.</string>
     <string name="tools_adb_desc">Ejecuta comandos adb para sideload, shell, copia de seguridad y gestión del dispositivo.</string>
+    <string name="tools_cmd_title">Línea de comandos</string>
+    <string name="tools_cmd_desc">Ejecuta comandos fastboot directamente, p. ej. devices, getvar all, reboot bootloader.</string>
+    <string name="tools_cmd_hint">p. ej. devices / getvar all</string>
+    <string name="tools_cmd_run">Ejecutar</string>
+    <string name="tools_cmd_running">Ejecutando…</string>
+    <string name="tools_cmd_output">Salida</string>
+    <string name="tools_cmd_empty">Aún sin salida</string>
     <string name="usb_status_none">Ningún dispositivo conectado</string>
     <string name="usb_status_connected">%1$d dispositivo(s) conectado(s)</string>
     <string name="usb_status_connected_type">Dispositivo %1$s conectado</string>

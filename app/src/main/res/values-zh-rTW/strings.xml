@@ -159,6 +159,13 @@
     <string name="tools_adb">ADB</string>
     <string name="tools_fastboot_desc">執行 fastboot / fastbootd 指令，用於刷寫、解鎖或重啟引導載入程式。</string>
     <string name="tools_adb_desc">執行 adb 指令，用於 sideload、shell、備份與裝置管理。</string>
+    <string name="tools_cmd_title">命令列</string>
+    <string name="tools_cmd_desc">直接執行 fastboot 指令，例如 devices、getvar all、reboot bootloader。</string>
+    <string name="tools_cmd_hint">例如 devices / getvar all</string>
+    <string name="tools_cmd_run">執行</string>
+    <string name="tools_cmd_running">執行中…</string>
+    <string name="tools_cmd_output">輸出</string>
+    <string name="tools_cmd_empty">尚無輸出</string>
     <string name="usb_status_none">未連接裝置</string>
     <string name="usb_status_connected">已連接 %1$d 台裝置</string>
     <string name="usb_status_connected_type">已連接%1$s裝置</string>
