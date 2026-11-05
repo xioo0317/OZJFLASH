@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.DisplaySettings
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Terminal
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFlexibleTopAppBar
@@ -159,6 +160,17 @@ fun SettingsMaterial(
             SegmentedColumn(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 13.dp),
                 content = listOf(
+                    {
+                        SegmentedListItem(
+                            onClick = actions::openTerminal,
+                            headlineContent = { Text(stringResource(R.string.terminal)) },
+                            supportingContent = { Text(stringResource(R.string.terminal_open_summary)) },
+                            leadingContent = {
+                                Icon(Icons.Filled.Terminal, stringResource(R.string.terminal))
+                            },
+                            trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null) },
+                        )
+                    },
                     {
                         SegmentedListItem(
                             onClick = { showCrashLog = true },

@@ -1,14 +1,18 @@
 package com.android.ozjflash.ui.screen.terminal
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import com.android.ozjflash.flash.NativeLibs
 import com.android.ozjflash.terminal.RealTerminal
 import com.android.ozjflash.terminal.TerminalEngine
+import com.android.ozjflash.terminal.rememberRealTerminal
 import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
 
@@ -75,4 +79,18 @@ fun TerminalPager(
         UiMode.Miuix -> TerminalMiuix(terminal, bottomInnerPadding, isCurrentPage)
         UiMode.Material -> TerminalMaterial(terminal, bottomInnerPadding, isCurrentPage)
     }
+}
+
+/**
+ * 从「设置」入口进入的终端页：自建真终端会话（不依赖主界面常驻会话），
+ * 按需求不显示顶栏（返回由系统返回手势 / NavDisplay 处理）。
+ */
+@Composable
+fun TerminalRouteScreen(binPath: String, nativeDir: String?) {
+    val shellPath = remember(binPath) { NativeLibs.shellPath(binPath) }
+    val realTerminal = rememberRealTerminal(shellPath, binPath, nativeDir)
+    DisposableEffect(realTerminal) {
+        onDispose { realTerminal.session.finishIfRunning() }
+    }
+    TerminalPane(terminal = realTerminal, bottomInnerPadding = 0.dp, showTopBar = false)
 }

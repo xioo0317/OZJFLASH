@@ -8,6 +8,8 @@
     <string name="home">Inicio</string>
     <string name="tools">Herramientas</string>
     <string name="settings">Ajustes</string>
+    <string name="feature">Funciones</string>
+    <string name="empty_content">Sin contenido</string>
     <string name="about">Acerca de</string>
     <string name="cancel">Cancelar</string>
     <string name="confirm">Confirmar</string>
@@ -21,8 +23,6 @@
     <string name="terminal_stopped">shell finalizado</string>
 
     <!-- 工具 -->
-    <string name="tools_ready">Todas las herramientas integradas están listas</string>
-    <string name="tools_missing">Faltan algunas herramientas</string>
     <string name="tools_present">herramientas extraídas</string>
     <string name="tools_run_check">Ejecutar script de autocomprobación</string>
 
@@ -42,6 +42,7 @@
     <!-- 终端顶栏 -->
     <string name="terminal_clear">Limpiar pantalla</string>
     <string name="terminal_restart">Reiniciar sesión</string>
+    <string name="terminal_open_summary">Abrir la terminal integrada</string>
 
     <!-- 設定 -->
     <string name="settings_ui_mode">Estilo de interfaz</string>

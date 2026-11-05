@@ -8,6 +8,8 @@
     <string name="home">主頁</string>
     <string name="tools">工具</string>
     <string name="settings">設定</string>
+    <string name="feature">功能</string>
+    <string name="empty_content">暫無內容</string>
     <string name="about">關於</string>
     <string name="cancel">取消</string>
     <string name="confirm">確定</string>
@@ -21,8 +23,6 @@
     <string name="terminal_stopped">shell 已結束</string>
 
     <!-- 工具 -->
-    <string name="tools_ready">內建工具已齊備</string>
-    <string name="tools_missing">部分工具缺失</string>
     <string name="tools_present">個工具已釋放</string>
     <string name="tools_run_check">執行自我檢測腳本</string>
 
@@ -42,6 +42,7 @@
     <!-- 终端顶栏 -->
     <string name="terminal_clear">清除畫面</string>
     <string name="terminal_restart">重開工作階段</string>
+    <string name="terminal_open_summary">開啟內建終端</string>
 
     <!-- 設定 -->
     <string name="settings_ui_mode">介面風格</string>

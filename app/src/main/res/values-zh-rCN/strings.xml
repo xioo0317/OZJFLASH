@@ -7,6 +7,8 @@
     <string name="home">主页</string>
     <string name="tools">工具</string>
     <string name="settings">设置</string>
+    <string name="feature">功能</string>
+    <string name="empty_content">暂无内容</string>
     <string name="about">关于</string>
     <string name="cancel">取消</string>
     <string name="confirm">确定</string>
@@ -25,8 +27,6 @@
     <string name="flash_terminal_ready">终端已就绪，命令将在其中执行</string>
     <string name="flash_terminal_stopped">终端未运行</string>
 
-    <string name="tools_ready">内置工具齐备</string>
-    <string name="tools_missing">部分工具缺失</string>
     <string name="tools_present">个工具已释放</string>
     <string name="tools_run_check">运行自检脚本</string>
 
@@ -46,6 +46,7 @@
     <!-- 终端顶栏 -->
     <string name="terminal_clear">清屏</string>
     <string name="terminal_restart">重开会话</string>
+    <string name="terminal_open_summary">打开内置终端</string>
 
     <string name="settings_ui_mode">界面风格</string>
     <string name="settings_ui_mode_summary">选择应用的界面风格</string>

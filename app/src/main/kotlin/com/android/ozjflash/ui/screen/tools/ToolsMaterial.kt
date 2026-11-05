@@ -86,13 +86,6 @@ fun ToolsMaterial(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(13.dp),
         ) {
-            Text(
-                text = stringResource(
-                    if (state.missingCount == 0) R.string.tools_ready else R.string.tools_missing
-                ),
-                style = MaterialTheme.typography.titleSmall,
-                modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp),
-            )
             ToolCardMaterial(
                 navigator = navigator,
                 route = Route.Fastboot,
@@ -106,13 +99,6 @@ fun ToolsMaterial(
                 icon = Icons.Rounded.Android,
                 titleRes = R.string.tools_adb,
                 descRes = R.string.tools_adb_desc,
-            )
-            ToolCardMaterial(
-                navigator = navigator,
-                route = Route.Flash,
-                icon = Icons.Rounded.FlashOn,
-                titleRes = R.string.tools_flash,
-                descRes = R.string.tools_flash_desc,
             )
             Box(Modifier.height(bottomInnerPadding))
         }

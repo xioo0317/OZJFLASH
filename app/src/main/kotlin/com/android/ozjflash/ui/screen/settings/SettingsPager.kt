@@ -36,6 +36,8 @@ class SettingsActions internal constructor(
     fun setRootMode(enabled: Boolean) = FlashBridge.setRootMode(enabled)
     fun openAbout() = navigator.push(Route.About)
     fun openColorPalette() = navigator.push(Route.ColorPalette)
+    /** 由底栏移入设置页的终端入口 */
+    fun openTerminal() = navigator.push(Route.Terminal)
 }
 
 @Composable

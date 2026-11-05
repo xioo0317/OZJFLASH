@@ -39,9 +39,6 @@ fun rememberToolsState(binDir: String): ToolsState {
 internal fun toolIcon(present: Boolean): ImageVector =
     if (present) Icons.Rounded.CheckCircle else Icons.Rounded.ErrorOutline
 
-internal val toolMissingLabel: @Composable () -> String = { stringResource(R.string.tools_missing) }
-internal val toolReadyLabel: @Composable () -> String = { stringResource(R.string.tools_ready) }
-
 @Composable
 fun ToolsPager(
     console: TerminalConsole,

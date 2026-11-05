@@ -46,7 +46,6 @@ import com.android.ozjflash.CrashLogger
 import com.android.ozjflash.flash.NativeLibs
 import com.android.ozjflash.flash.UsbHost
 import com.android.ozjflash.terminal.TerminalEngine
-import com.android.ozjflash.terminal.rememberRealTerminal
 import com.android.ozjflash.ui.LocalMainPagerState
 import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
@@ -69,9 +68,11 @@ import com.android.ozjflash.ui.screen.terminal.TerminalPager
 import com.android.ozjflash.ui.screen.terminal.rememberTerminalConsole
 import com.android.ozjflash.ui.screen.tools.ToolsPager
 import com.android.ozjflash.ui.screen.tools.ToolKind
-import com.android.ozjflash.ui.screen.tools.ToolTerminalScreen
+import com.android.ozjflash.ui.screen.tools.ToolPageScreen
 import com.android.ozjflash.flash.FlashScreen
 import com.android.ozjflash.ui.screen.tools.rememberToolsState
+import com.android.ozjflash.ui.screen.feature.FeaturePager
+import com.android.ozjflash.ui.screen.terminal.TerminalRouteScreen
 import com.android.ozjflash.ui.theme.LocalColorMode
 import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.theme.LocalEnableFloatingBottomBar
@@ -187,8 +188,9 @@ class MainActivity : ComponentActivity() {
                             entry<Route.Main> { mainScreen() }
                             entry<Route.About> { AboutScreen(navigator) }
                             entry<Route.ColorPalette> { ColorPaletteScreen(viewModel, navigator) }
-                            entry<Route.Fastboot> { ToolTerminalScreen(navigator, ToolKind.FASTBOOT) }
-                            entry<Route.Adb> { ToolTerminalScreen(navigator, ToolKind.ADB) }
+                            entry<Route.Terminal> { TerminalRouteScreen(binPath, nativeDir) }
+                            entry<Route.Fastboot> { ToolPageScreen(navigator, ToolKind.FASTBOOT) }
+                            entry<Route.Adb> { ToolPageScreen(navigator, ToolKind.ADB) }
                             entry<Route.Flash> { FlashScreen() }
                         }
                     }
@@ -230,13 +232,6 @@ private fun MainScreen(
         TerminalEngine(scope, shellPath, NativeLibs.pathEnv(binPath, nativeDir))
     }
     val console = rememberTerminalConsole(engine, binPath)
-
-    // 终端页：Termux 上游真终端（libtermux.so PTY + ANSI 渲染）。
-    // 主界面期间保持同一会话，随主界面销毁才回收子进程。
-    val realTerminal = rememberRealTerminal(shellPath, binPath, nativeDir)
-    DisposableEffect(realTerminal) {
-        onDispose { realTerminal.session.finishIfRunning() }
-    }
 
     // 启动横幅：把工具链探测结果与上次崩溃摘要直接打进终端，
     // 用户不用翻 logcat 就能看出是工具没链接上、不可执行，还是别的问题
@@ -314,7 +309,7 @@ private fun MainScreen(
                     when (page) {
                         0 -> HomePager(binPath, bottomInnerPadding, true)
                         1 -> ToolsPager(console, binPath, bottomInnerPadding, true)
-                        2 -> TerminalPager(realTerminal, bottomInnerPadding, true)
+                        2 -> FeaturePager(bottomInnerPadding, true)
                         3 -> SettingPager(viewModel, navController, bottomInnerPadding, true)
                     }
                 }

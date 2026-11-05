@@ -75,11 +75,14 @@ fun TerminalMiuix(
  * 布局对齐 Termux 上游：顶部一条会话栏（粘贴 / 清屏 / 重开会话），
  * 中间吃满的终端视图，底部两行 extra-keys（Termux 默认键位）。
  * 顶栏统一使用各主体自带的 TopAppBar 组件（仿主页），终端为纯黑固定栏，不折叠。
+ *
+ * @param showTopBar 是否渲染顶栏；从「设置」入口进入的终端无独立顶栏（由系统返回手势退出）。
  */
 @Composable
 internal fun TerminalPane(
     terminal: RealTerminal,
     bottomInnerPadding: Dp,
+    showTopBar: Boolean = true,
 ) {
     Column(
         modifier = Modifier
@@ -87,7 +90,7 @@ internal fun TerminalPane(
             .background(TerminalBackground)
             .imePadding()
     ) {
-        TerminalTopBar(terminal)
+        if (showTopBar) TerminalTopBar(terminal)
 
         Box(
             modifier = Modifier

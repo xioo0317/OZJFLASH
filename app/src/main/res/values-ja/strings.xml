@@ -8,6 +8,8 @@
     <string name="home">ホーム</string>
     <string name="tools">ツール</string>
     <string name="settings">設定</string>
+    <string name="feature">機能</string>
+    <string name="empty_content">コンテンツなし</string>
     <string name="about">情報</string>
     <string name="cancel">キャンセル</string>
     <string name="confirm">決定</string>
@@ -21,8 +23,6 @@
     <string name="terminal_stopped">シェル終了</string>
 
     <!-- 工具 -->
-    <string name="tools_ready">すべての内蔵ツールが利用可能</string>
-    <string name="tools_missing">一部のツールが見つかりません</string>
     <string name="tools_present">個のツールを展開</string>
     <string name="tools_run_check">診断スクリプトを実行</string>
 
@@ -42,6 +42,7 @@
     <!-- 终端顶栏 -->
     <string name="terminal_clear">画面を消去</string>
     <string name="terminal_restart">セッションを再起動</string>
+    <string name="terminal_open_summary">内蔵端末を開く</string>
 
     <!-- 設定 -->
     <string name="settings_ui_mode">UI スタイル</string>

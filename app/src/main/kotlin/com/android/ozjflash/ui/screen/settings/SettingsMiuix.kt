@@ -24,6 +24,7 @@ import androidx.compose.material.icons.rounded.DisplaySettings
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Language
 import androidx.compose.material.icons.rounded.Palette
+import androidx.compose.material.icons.rounded.Terminal
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -204,6 +205,19 @@ fun SettingsMiuix(
 
                         // 诊断 / 其它
                         Card(modifier = Modifier.fillMaxWidth()) {
+                            ArrowPreference(
+                                title = stringResource(R.string.terminal),
+                                summary = stringResource(R.string.terminal_open_summary),
+                                startAction = {
+                                    Icon(
+                                        Icons.Rounded.Terminal,
+                                        modifier = Modifier.padding(end = 6.dp),
+                                        contentDescription = stringResource(R.string.terminal),
+                                        tint = colorScheme.onBackground,
+                                    )
+                                },
+                                onClick = actions::openTerminal,
+                            )
                             ArrowPreference(
                                 title = stringResource(R.string.settings_log),
                                 summary = stringResource(R.string.settings_log_summary),

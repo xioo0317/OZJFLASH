@@ -197,18 +197,22 @@ object NativeLibs {
     /**
      * 准备交互式 shell 的启动脚本。
      *
-     * - 我们自己维护一份 `.ozjflash.rc`（每次启动重写，仅做展示与提示符），不污染用户配置；
+     * - 我们自己维护一份 `.ozjflash.rc`（每次启动重写，仅设置提示符与初始目录），不污染用户配置；
      * - 在用户的 `.bashrc` / `.mkshrc` 末尾幂等地挂一行 source（带 marker，不重复追加）。
-     * - banner 由 shell 自己 print，不再把命令当按键注入 PTY，因此不会再出现「命令被回显」的情况。
+     * - 初始工作目录用 homeDir()（/data/local/tmp/<pkg>，祖先目录可无障碍遍历），保证 bash
+     *   启动做 getcwd() 不会因 /data/data 祖先目录无读权限而报
+     *   "shell-init: error retrieving current directory: getcwd: cannot access parent directories"。
+     *   随后在 rc 里 cd 到应用私有目录 /data/data/<pkg>，使 `ls` 默认落在应用私有目录、提示符显示
+     *   `:/data/data/<pkg> #`，同时不再打印任何横幅。
      */
     fun prepareShell(context: Context, binPath: String): File {
         val home = homeDir(context)
+        val dataDir = runCatching { context.dataDir?.absolutePath }.getOrDefault("/data/data/com.android.ozjflash")
         val rc = listOf(
             "# 由 OZJFLASH 自动生成，请勿手改",
             "case \"\$-\" in *i*) ;; *) return 0 2>/dev/null || exit 0 ;; esac",
-            "export PS1='\\[\\e[1;32m\\]ozjflash\\[\\e[0m\\]:\\[\\e[1;34m\\]\\w\\[\\e[0m\\]\\$ '",
-            "printf '\\n\\033[1;32m OZJFLASH\\033[0m \\033[2m· 终端就绪\\033[0m\\n'",
-            "printf '\\033[2m PATH %s\\033[0m\\n\\n' \"\$OZJ_BIN\"",
+            "export PS1=':\\w # '",
+            "cd '$dataDir' 2>/dev/null || true",
         ).joinToString("\n") + "\n"
         File(home, ".ozjflash.rc").writeText(rc)
 

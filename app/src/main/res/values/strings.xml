@@ -8,6 +8,8 @@
     <string name="home">Home</string>
     <string name="tools">Tools</string>
     <string name="settings">Settings</string>
+    <string name="feature">Features</string>
+    <string name="empty_content">No content yet</string>
     <string name="about">About</string>
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
@@ -29,8 +31,6 @@
     <string name="flash_terminal_stopped">Terminal not running</string>
 
     <!-- 工具箱 -->
-    <string name="tools_ready">All built-in tools present</string>
-    <string name="tools_missing">Some tools are missing</string>
     <string name="tools_present">tools extracted</string>
     <string name="tools_run_check">Run check script</string>
 
@@ -50,6 +50,7 @@
     <!-- 终端顶栏 -->
     <string name="terminal_clear">Clear screen</string>
     <string name="terminal_restart">Restart session</string>
+    <string name="terminal_open_summary">Open the built-in terminal</string>
 
     <!-- 设置 -->
     <string name="settings_ui_mode">UI Style</string>
@@ -162,7 +163,7 @@
 
     <!-- Termux terminal-view text selection -->
     <string name="paste_text">Paste</string>
-    <string name="copy_text">Copy</string>
+    <string name="copy_text">复制</string>
     <string name="text_selection_more">More…</string>
 
     <!-- 工具页 / USB 顶栏状态胶囊 -->

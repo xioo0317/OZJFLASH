@@ -15,7 +15,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowDropUp
-import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -48,8 +47,10 @@ import com.android.ozjflash.flash.UsbHost
 import com.android.ozjflash.flash.UsbMode
 import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
+import androidx.compose.ui.text.font.FontWeight
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.Card as MiuixCard
+import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Text as MiuixText
 import top.yukonga.miuix.kmp.basic.TextButton as MiuixTextButton
 import top.yukonga.miuix.kmp.theme.MiuixTheme
@@ -159,7 +160,7 @@ private fun modeColor(mode: UsbMode): Color = when (mode) {
     else -> Color(0xFF9AA0A6)
 }
 
-/** MIUI 风格下拉：Miuix Card + Popup，右对齐锚定在胶囊下方 */
+/** MIUI 风格下拉：浅色大圆角卡片，左对齐黑色文字、无图标，贴合参考图观感 */
 @Composable
 private fun MiuixDeviceDropdown(
     expanded: Boolean,
@@ -183,38 +184,44 @@ private fun MiuixDeviceDropdown(
             modifier = Modifier
                 .width(220.dp)
                 .padding(8.dp),
+            cornerRadius = 20.dp,
+            colors = CardDefaults.defaultColors(color = Color(0xFFF2F3F5)),
         ) {
-            Column(modifier = Modifier.padding(12.dp)) {
+            Column(modifier = Modifier.padding(14.dp)) {
                 if (devices.isEmpty()) {
                     MiuixText(
                         text = stringResource(R.string.usb_menu_no_device),
-                        fontSize = 13.sp,
-                        color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+                        fontSize = 14.sp,
+                        color = Color(0xFF616161),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
                     )
                 } else {
                     devices.forEach { info ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 6.dp),
+                                .padding(vertical = 8.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(10.dp),
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
                                 MiuixText(
                                     text = info.label,
-                                    fontSize = 13.sp,
-                                    fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color(0xFF1F1F1F),
                                 )
                                 MiuixText(
                                     text = info.vidPid,
-                                    fontSize = 11.sp,
-                                    color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+                                    fontSize = 12.sp,
+                                    color = Color(0xFF616161),
                                 )
                                 MiuixText(
                                     text = info.mode.label,
-                                    fontSize = 11.sp,
-                                    fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Medium,
                                     color = modeColor(info.mode),
                                 )
                             }
@@ -222,7 +229,7 @@ private fun MiuixDeviceDropdown(
                                 MiuixText(
                                     text = stringResource(R.string.usb_granted),
                                     fontSize = 12.sp,
-                                    color = MiuixTheme.colorScheme.primary,
+                                    color = Color(0xFF1F1F1F),
                                 )
                             } else {
                                 MiuixTextButton(
@@ -236,11 +243,11 @@ private fun MiuixDeviceDropdown(
                             }
                         }
                     }
+                    HorizontalDivider(
+                        modifier = Modifier.padding(vertical = 6.dp),
+                        color = Color(0xFFE0E0E0),
+                    )
                 }
-                HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 6.dp),
-                    color = MiuixTheme.colorScheme.onSurfaceVariantSummary.copy(alpha = 0.3f),
-                )
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -248,20 +255,13 @@ private fun MiuixDeviceDropdown(
                             UsbHost.refresh(context)
                             onDismiss()
                         }
-                        .padding(vertical = 6.dp),
+                        .padding(vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    Icon(
-                        Icons.Rounded.Refresh,
-                        contentDescription = null,
-                        tint = MiuixTheme.colorScheme.primary,
-                        modifier = Modifier.size(18.dp),
-                    )
                     MiuixText(
                         text = stringResource(R.string.usb_refresh_list),
-                        fontSize = 13.sp,
-                        color = MiuixTheme.colorScheme.primary,
+                        fontSize = 14.sp,
+                        color = Color(0xFF1F1F1F),
                     )
                 }
             }
@@ -280,6 +280,7 @@ private fun MaterialDeviceDropdown(
     DropdownMenu(
         expanded = expanded,
         onDismissRequest = onDismiss,
+        modifier = Modifier.width(220.dp),
     ) {
         if (devices.isEmpty()) {
             DropdownMenuItem(
@@ -314,7 +315,6 @@ private fun MaterialDeviceDropdown(
         }
         HorizontalDivider()
         DropdownMenuItem(
-            leadingIcon = { Icon(Icons.Rounded.Refresh, contentDescription = null) },
             text = { M3Text(stringResource(R.string.usb_refresh_list)) },
             onClick = {
                 UsbHost.refresh(context)

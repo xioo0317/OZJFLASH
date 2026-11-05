@@ -8,10 +8,10 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Extension
 import androidx.compose.material.icons.rounded.Handyman
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Settings
-import androidx.compose.material.icons.rounded.Terminal
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -135,7 +135,7 @@ enum class BottomBarDestination(
 ) {
     Home(R.string.home, Icons.Rounded.Home),
     Tools(R.string.tools, Icons.Rounded.Handyman),
-    Terminal(R.string.terminal, Icons.Rounded.Terminal),
+    Feature(R.string.feature, Icons.Rounded.Extension),
     Settings(R.string.settings, Icons.Rounded.Settings)
 }
 
