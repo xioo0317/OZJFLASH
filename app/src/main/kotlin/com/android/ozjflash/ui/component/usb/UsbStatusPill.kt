@@ -142,12 +142,19 @@ fun UsbStatusPill(dark: Boolean = false, modifier: Modifier = Modifier) {
 
     // 液态玻璃的「背景色」：跟随主题取色的真实页面背景（浅色白 / 深色黑 / 纯黑 /
     // 动态取色全部由 colorScheme 决定），与 MainActivity 页面级 backdrop 里
-    // drawRect(surfaceColor) 用的是同一套。之前这里用 surfaceVariant.copy(0.32f)
-    // 且采样层 alpha(0f) 是空的，backdrop 里没有任何实色或内容，玻璃采样后就是
-    // 一片空灰 —— 这正是「没取到背景颜色」的根因。
+    // drawRect(surfaceColor) 用的是同一套。
     val glassBase = if (dark) Color(0xFF101010) else when (uiMode) {
         UiMode.Miuix -> MiuixTheme.colorScheme.surface
         UiMode.Material -> MaterialTheme.colorScheme.surface
+    }
+    // 玻璃表面 tint：浅色背景下叠一层明显的白色 => 凸起白玻璃；深色 / 纯黑背景下
+    // 只叠极淡的白 => 深色玻璃。这样白 / 黑 / 动态取色都能跟随，且胶囊一定比页面
+    // 背景更亮一点，不会再「融进背景里看不见」。
+    val isDarkSurface = (glassBase.red + glassBase.green + glassBase.blue) < 1.5f
+    val glassTint = if (dark || isDarkSurface) {
+        Color.White.copy(alpha = 0.10f)
+    } else {
+        Color.White.copy(alpha = 0.58f)
     }
 
     val pillShape = RoundedCornerShape(50)
@@ -158,13 +165,15 @@ fun UsbStatusPill(dark: Boolean = false, modifier: Modifier = Modifier) {
     val glassEnabled = pillBlurEnabled && blurActive &&
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
 
-    // 液态玻璃的模糊源：先铺一层跟随主题取色的不透明页面背景色，再叠加被捕获层
-    // 的真实内容（见下方采样层）。这样 backdrop 里既有「背景颜色」、也有可供
-    // blur / lens 折射的内容纹理，玻璃才能真正取到背景，而不是一片空灰。
+    // 模糊源只提供一层「均匀的主题背景色」。
+    // 绝对不能在这里 drawContent()：v1.13.16 曾把胶囊自己的文字 / 圆点 / 箭头
+    // 一起放进 backdrop，lens 又把这份内容折射成波浪条纹，叠在上层清晰文字底下，
+    // 就是截图里那团「灰白波纹 + 虚线重影」的脏糊效果 —— 比没取到背景色更糟。
+    // 胶囊背后本来就是顶栏纯色，采样均匀色才是对的（参考 MainActivity 的
+    // rememberLayerBackdrop { drawRect(surfaceColor); drawContent() } 里的纯色兜底）。
     val glassBackdrop = if (glassEnabled) {
         rememberLayerBackdrop {
             drawRect(glassBase)
-            drawContent()
         }
     } else null
 
@@ -174,22 +183,15 @@ fun UsbStatusPill(dark: Boolean = false, modifier: Modifier = Modifier) {
     }
 
     Box(modifier = modifier) {
-        // 采样层：铺真实页面背景色、与胶囊同尺寸，注册为液态玻璃的模糊源。
-        // 关键：不能再 alpha(0f) —— 那样 layerBackdrop 捕获到的是完全透明的空层，
-        // drawContent() 什么都没有，玻璃就取不到背景（MainActivity 对 pager backdrop
-        // 的注释也写明「抓到空层会糊成一片」）。上层胶囊的半透明玻璃会盖住这一层，
-        // 只透出被 blur / lens 折射后的背景色与内容纹理。
+        // 采样层：只铺一层跟随主题取色的纯色，作为玻璃的模糊源。
+        // 这里刻意不画任何胶囊内容 —— 内容由上层 Surface 唯一绘制一次，
+        // 避免 backdrop 抓到自己的文字再被 lens 折射成重影 / 波纹。
         if (glassEnabled && glassBackdrop != null) {
             Box(
                 modifier = Modifier
                     .background(glassBase, pillShape)
                     .layerBackdrop(glassBackdrop),
-            ) {
-                when (uiMode) {
-                    UiMode.Miuix -> PillContentMiuix(statusText, dotColor, contentColor)
-                    UiMode.Material -> PillContentMaterial(statusText, dotColor, contentColor)
-                }
-            }
+            )
         }
 
         // 图二玻璃圆圈三要素：柔和投影(dropShadow) + 白色高光环(highlight) + 半透明玻璃底，
@@ -212,16 +214,18 @@ fun UsbStatusPill(dark: Boolean = false, modifier: Modifier = Modifier) {
                             effects = {
                                 padding = maxOf(padding, 26.dp.toPx())
                                 vibrancy()
-                                blur(6.dp.toPx(), 6.dp.toPx())
+                                blur(8.dp.toPx(), 8.dp.toPx())
+                                // 只保留温和的边缘折射：作用在均匀背景色上不会产生波浪条纹。
+                                // depthEffect / 大折射量是 v1.13.16 那团波纹的直接来源。
                                 lens(
-                                    refractionHeight = 20.dp.toPx(),
-                                    refractionAmount = 20.dp.toPx(),
-                                    depthEffect = true,
+                                    refractionHeight = 12.dp.toPx(),
+                                    refractionAmount = 12.dp.toPx(),
                                 )
                             },
                             highlight = { PillGlassHighlight },
-                            // 玻璃表面只留一层极薄 tint，别再把刚取到的背景色盖成灰
-                            onDrawSurface = { drawRect(glassBase.copy(alpha = 0.12f)) },
+                            // 玻璃表面铺一层跟随明暗主题的白色 tint：浅色 = 凸起白玻璃，
+                            // 深色 / 纯黑 = 深色玻璃。既取到了背景色，又不会透出脏纹理。
+                            onDrawSurface = { drawRect(glassTint) },
                         )
                 } else {
                     Modifier
