@@ -31,7 +31,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -45,6 +47,8 @@ import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.component.liquid.lens
 import com.android.ozjflash.ui.component.liquid.vibrancy
+import com.android.ozjflash.ui.theme.LocalBlurStyle
+import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.theme.LocalUsbPillBlur
 import top.yukonga.miuix.kmp.basic.DropdownDefaults
 import top.yukonga.miuix.kmp.basic.DropdownEntry
@@ -54,10 +58,38 @@ import top.yukonga.miuix.kmp.basic.Surface as MiuixSurface
 import top.yukonga.miuix.kmp.basic.Text as MiuixText
 import top.yukonga.miuix.kmp.blur.blur
 import top.yukonga.miuix.kmp.blur.drawBackdrop
+import top.yukonga.miuix.kmp.blur.highlight.BloomStroke
+import top.yukonga.miuix.kmp.blur.highlight.Highlight
+import top.yukonga.miuix.kmp.blur.highlight.LightPosition
+import top.yukonga.miuix.kmp.blur.highlight.LightSource
 import top.yukonga.miuix.kmp.blur.layerBackdrop
 import top.yukonga.miuix.kmp.blur.rememberLayerBackdrop
 import top.yukonga.miuix.kmp.popup.OverlayDropdownPopup
 import top.yukonga.miuix.kmp.theme.MiuixTheme
+
+/**
+ * 图二那种「玻璃圆圈」的白色高光环：BloomStroke 双峰光源，上缘主光 + 下缘副光，
+ * 沿胶囊轮廓勾一圈明亮描边，是液态玻璃观感最关键的一层。
+ */
+private val PillGlassHighlight = Highlight(
+    width = 1.2.dp,
+    alpha = 1f,
+    style = BloomStroke(
+        color = Color.White.copy(alpha = 0.38f),
+        innerBlurRadius = 2.dp,
+        primaryLight = LightSource(
+            position = LightPosition(0.5f, -0.3f, -0.05f),
+            color = Color.White,
+            intensity = 1f,
+        ),
+        secondaryLight = LightSource(
+            position = LightPosition(0.5f, 0.82f, -0.5f),
+            color = Color.White,
+            intensity = 0.5f,
+        ),
+        dualPeak = true,
+    ),
+)
 
 /**
  * 顶栏 USB 状态胶囊。
@@ -110,13 +142,18 @@ fun UsbStatusPill(dark: Boolean = false, modifier: Modifier = Modifier) {
     }
 
     val pillShape = RoundedCornerShape(50)
+    // 胶囊玻璃是「效果 = 渐变模糊」体系下的子选项：只有「模糊开启 + 效果选渐变 +
+    // 胶囊模糊开关」三者同时满足才生效（与主题设置页里该选项的显隐条件严格一致）。
+    val blurActive = LocalEnableBlur.current && LocalBlurStyle.current == "gradient"
     // RuntimeShader 需要 API 33；低版本不触碰 blur 链路，避免 NoClassDefFoundError
-    val glassEnabled = pillBlurEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+    val glassEnabled = pillBlurEnabled && blurActive &&
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
 
-    // 液态玻璃的模糊源：胶囊背后一层主题色，经 blur + lens + vibrancy 折射成玻璃质感
+    // 玻璃底层：不再铺不透明实色（那正是「实心白块」的根因），改用半透明主题色，
+    // 配合白色高光环 + 柔和投影 + 边缘折射，做出图二那种通透的玻璃圆圈质感。
     val glassBackdrop = if (glassEnabled) {
         rememberLayerBackdrop {
-            drawRect(containerColor)
+            drawRect(containerColor.copy(alpha = 0.32f))
             drawContent()
         }
     } else null
@@ -142,24 +179,36 @@ fun UsbStatusPill(dark: Boolean = false, modifier: Modifier = Modifier) {
             }
         }
 
+        // 图二玻璃圆圈三要素：柔和投影(dropShadow) + 白色高光环(highlight) + 半透明玻璃底，
+        // 再加 lens 边缘折射。Surface 本身设 Transparent，避免把 glass 层盖成实心色。
         val surfaceModifier = Modifier
-            .clip(pillShape)
             .then(
                 if (glassEnabled && glassBackdrop != null) {
-                    Modifier.drawBackdrop(
-                        backdrop = glassBackdrop,
-                        shape = { pillShape },
-                        effects = {
-                            padding = maxOf(padding, 20.dp.toPx())
-                            vibrancy()
-                            blur(5.dp.toPx(), 5.dp.toPx())
-                            lens(
-                                refractionHeight = 10.dp.toPx(),
-                                refractionAmount = 10.dp.toPx(),
-                            )
-                        },
-                        onDrawSurface = { drawRect(containerColor.copy(alpha = 0.28f)) },
-                    )
+                    Modifier
+                        .dropShadow(
+                            shape = pillShape,
+                            shadow = Shadow(
+                                radius = 9.dp,
+                                color = Color.Black,
+                                alpha = if (dark) 0.30f else 0.16f,
+                            ),
+                        )
+                        .drawBackdrop(
+                            backdrop = glassBackdrop,
+                            shape = { pillShape },
+                            effects = {
+                                padding = maxOf(padding, 26.dp.toPx())
+                                vibrancy()
+                                blur(6.dp.toPx(), 6.dp.toPx())
+                                lens(
+                                    refractionHeight = 20.dp.toPx(),
+                                    refractionAmount = 20.dp.toPx(),
+                                    depthEffect = true,
+                                )
+                            },
+                            highlight = { PillGlassHighlight },
+                            onDrawSurface = { drawRect(containerColor.copy(alpha = 0.22f)) },
+                        )
                 } else {
                     Modifier
                 },
