@@ -1,5 +1,10 @@
 package com.android.ozjflash.ui.screen.tools
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.hardware.usb.UsbManager
+import android.os.Build
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -39,6 +44,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -65,6 +71,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.ozjflash.R
 import com.android.ozjflash.flash.FlashBridge
 import com.android.ozjflash.flash.ToolConsole
+import com.android.ozjflash.flash.UsbFdSession
+import com.android.ozjflash.flash.UsbHost
 import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.component.material.ExpressiveScaffold
@@ -109,6 +117,58 @@ enum class ToolKind(@StringRes val titleRes: Int, val bin: String) {
  */
 @Composable
 fun ToolPageScreen(navigator: Navigator, tool: ToolKind) {
+    val context = LocalContext.current
+    val appContext = context.applicationContext
+    val rootMode by FlashBridge.rootMode.collectAsStateWithLifecycle()
+
+    /**
+     * 复刻 MOFLASH 的「打开页面就自动访问连接 USB」：
+     * 页面组合期注册权限广播，授权回调 / 设备插入后立刻 ensure 建立常驻 usbfs fd；
+     * 组合当下也立即试一次（已授权→直接 open，未授权→弹系统授权框）。
+     *
+     * 关键：页面销毁只注销广播，**不 release fd**。fd 常驻单例是免 root 下
+     * 连续执行多条命令、以及 fdpass 服务与句柄生命周期不错位的前提。
+     */
+    DisposableEffect(tool.bin, rootMode) {
+        var receiver: BroadcastReceiver? = null
+        if (!rootMode) {
+            receiver = object : BroadcastReceiver() {
+                override fun onReceive(ctx: Context, intent: Intent) {
+                    when (intent.action) {
+                        UsbHost.ACTION_USB_PERMISSION -> {
+                            if (!intent.getBooleanExtra(
+                                    UsbManager.EXTRA_PERMISSION_GRANTED, false,
+                                )
+                            ) return
+                        }
+                        UsbManager.ACTION_USB_DEVICE_ATTACHED -> Unit
+                        UsbManager.ACTION_USB_DEVICE_DETACHED -> {
+                            // 设备拔出/reboot 后旧句柄失效，清空会话，下次 ensure 重新 open
+                            UsbHost.refresh(ctx)
+                            UsbFdSession.release(keepFd = false)
+                            return
+                        }
+                        else -> return
+                    }
+                    UsbHost.refresh(ctx)
+                    UsbFdSession.ensure(ctx, tool.bin)
+                }
+            }
+            val filter = UsbHost.intentFilter()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                appContext.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED)
+            } else {
+                @Suppress("UnspecifiedRegisterReceiverFlag")
+                appContext.registerReceiver(receiver, filter)
+            }
+            UsbHost.refresh(appContext)
+            UsbFdSession.ensure(appContext, tool.bin)
+        }
+        onDispose {
+            receiver?.let { runCatching { appContext.unregisterReceiver(it) } }
+        }
+    }
+
     when (LocalUiMode.current) {
         UiMode.Miuix -> ToolPageMiuix(navigator, tool)
         UiMode.Material -> ToolPageMaterial(navigator, tool)
