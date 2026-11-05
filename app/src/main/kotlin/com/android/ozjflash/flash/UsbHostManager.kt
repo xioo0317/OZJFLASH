@@ -250,6 +250,32 @@ object UsbHost {
         return if (key.isNullOrEmpty()) null else key
     }
 
+    /**
+     * 命令行专用：按工具挑设备。
+     *
+     * 不能复用 pickTarget —— 后者把 EDL / BROM 也算「可刷写」，
+     * 一旦总线上一台下载模式设备，fastboot 就会去开一个根本不是 fastboot 的接口。
+     * fastboot 只认 FF/42/03，adb 只认 FF/42/01。
+     */
+    fun pickForTool(context: Context, tool: String): UsbDevice? {
+        val manager = context.getSystemService(Context.USB_SERVICE) as? UsbManager ?: return null
+        val want = if (tool == "adb") UsbMode.ADB else UsbMode.FASTBOOT
+        val candidates = manager.deviceList.values.filter { classifyDevice(it) == want }
+        if (candidates.isEmpty()) return null
+        val preferred = preferredKey(context)
+        return candidates.firstOrNull { it.deviceName == preferred }
+            ?: candidates.firstOrNull { manager.hasPermission(it) }
+            ?: candidates.firstOrNull()
+    }
+
+    /** 无目标设备时，把当前总线上有什么打出来，便于判断是不是没进对应模式 */
+    fun describeAll(context: Context): List<String> {
+        val manager = context.getSystemService(Context.USB_SERVICE) as? UsbManager ?: return emptyList()
+        return manager.deviceList.values.map { d ->
+            "%04X:%04X %s".format(d.vendorId, d.productId, classifyDevice(d).label)
+        }
+    }
+
     /** 在已枚举设备中挑出首选（记住的）或第一个已授权的可刷写设备 */
     fun pickTarget(context: Context): UsbDevice? {
         val manager = context.getSystemService(Context.USB_SERVICE) as? UsbManager ?: return null

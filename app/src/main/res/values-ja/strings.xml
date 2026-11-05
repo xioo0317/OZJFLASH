@@ -159,6 +159,8 @@
     <string name="tools_adb">ADB</string>
     <string name="tools_fastboot_desc">fastboot / fastbootd コマンドを実行し、フラッシュ、アンロック、ブートローダーの再起動を行います。</string>
     <string name="tools_adb_desc">adb コマンドを実行し、sideload、shell、バックアップ、デバイス管理を行います。</string>
+    <string name="tools_adb_cmd_desc">adb コマンドを直接実行します（例: devices、shell、reboot）。</string>
+    <string name="tools_adb_cmd_hint">例: devices / shell / logcat</string>
     <string name="tools_cmd_title">コマンドライン</string>
     <string name="tools_cmd_desc">fastboot コマンドを直接実行します（例: devices、getvar all、reboot bootloader）。</string>
     <string name="tools_cmd_hint">例: devices / getvar all</string>

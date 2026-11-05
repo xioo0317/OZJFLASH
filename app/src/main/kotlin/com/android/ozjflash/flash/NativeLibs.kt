@@ -38,8 +38,15 @@ object NativeLibs {
         "sqlite3", "etc1tool", "hprof-conv"
     )
 
-    /** 个别工具名与真实二进制不同：adb 本体就是 tadb（原包里的 adb 只是调用 tadb 的脚本） */
-    private val ALIAS = mapOf("adb" to "tadb")
+    /**
+     * 无别名：adb 直接用 libozj_adb.so。
+     *
+     * 原来的 libozj_tadb.so **不支持** MOMIUI_USB_SOCK，免 root 下无法接收
+     * 已授权的 USB fd，命令行永远是 `< waiting for any device >`；
+     * 现改用 MOFLASH 的魔改版 adb（libozj_adb.so），与 fastboot 同一套 fd 直通机制。
+     * tadb 仍保留在 TOOLS 中，供终端里普通使用。
+     */
+    private val ALIAS = emptyMap<String, String>()
 
     /** jniLibs 里以 .so 形式分发的辅助可执行（bash / 7z / grep / qdl） */
     private val EXEC_FROM_LIBS = mapOf(

@@ -2,7 +2,6 @@ package com.android.ozjflash.ui.screen.tools
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,7 +19,6 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -65,12 +63,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.ozjflash.R
-import com.android.ozjflash.flash.FastbootConsole
 import com.android.ozjflash.flash.FlashBridge
+import com.android.ozjflash.flash.ToolConsole
 import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.component.material.ExpressiveScaffold
 import com.android.ozjflash.ui.component.material.expressiveTopAppBarColors
+import com.android.ozjflash.ui.component.usb.UsbStatusPill
 import com.android.ozjflash.ui.navigation3.Navigator
 import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.util.BlurredBar
@@ -95,19 +94,18 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme.colorScheme
 import top.yukonga.miuix.kmp.utils.overScrollVertical
 import top.yukonga.miuix.kmp.utils.scrollEndHaptic
 
-/** 工具种类：仅保留标题资源，二级页按需渲染对应工具 */
-enum class ToolKind(@StringRes val titleRes: Int) {
-    FASTBOOT(R.string.tools_fastboot),
-    ADB(R.string.tools_adb),
+/** 工具种类：标题 + 对应的命令行二进制名 */
+enum class ToolKind(@StringRes val titleRes: Int, val bin: String) {
+    FASTBOOT(R.string.tools_fastboot, "fastboot"),
+    ADB(R.string.tools_adb, "adb"),
 }
 
 /**
  * 工具二级页入口：按当前 UI 主体分派到 Miuix / Material 两套外壳。
  *
- * - Fastboot：命令行执行页（输入框 + 执行 + 输出），命令以独立短命进程直接
- *   exec 内置 fastboot 二进制，不占用常驻 bash；
- * - ADB：暂为占位页，工具功能后续补齐。
- * 两套外壳的顶栏均随内容滚动而折叠。
+ * Fastboot 与 ADB 都是命令行执行页（输入框 + 执行 + 输出），顶栏右侧带
+ * USB 状态胶囊（与工具页/终端同一组件）；命令以独立短命进程执行，
+ * 不占用常驻 bash，免 root 时经 FdPass 注入已授权的 USB fd。
  */
 @Composable
 fun ToolPageScreen(navigator: Navigator, tool: ToolKind) {
@@ -150,6 +148,7 @@ private fun ToolPageMiuix(navigator: Navigator, tool: ToolKind) {
                             )
                         }
                     },
+                    actions = { UsbStatusPill() },
                     scrollBehavior = scrollBehavior,
                 )
             }
@@ -170,13 +169,7 @@ private fun ToolPageMiuix(navigator: Navigator, tool: ToolKind) {
                 contentPadding = innerPadding,
                 overscrollEffect = null,
             ) {
-                item {
-                    if (tool == ToolKind.FASTBOOT) {
-                        FastbootConsoleMiuix()
-                    } else {
-                        EmptyToolPlaceholder()
-                    }
-                }
+                item { ToolConsoleMiuix(tool.bin) }
                 item {
                     Spacer(
                         Modifier.height(
@@ -209,6 +202,7 @@ private fun ToolPageMaterial(navigator: Navigator, tool: ToolKind) {
                         )
                     }
                 },
+                actions = { UsbStatusPill() },
                 colors = expressiveTopAppBarColors(),
                 windowInsets = WindowInsets.systemBars
                     .add(WindowInsets.displayCutout)
@@ -226,53 +220,22 @@ private fun ToolPageMaterial(navigator: Navigator, tool: ToolKind) {
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
                 .padding(innerPadding),
         ) {
-            item {
-                if (tool == ToolKind.FASTBOOT) {
-                    FastbootConsoleMaterial()
-                } else {
-                    EmptyToolPlaceholder()
-                }
-            }
+            item { ToolConsoleMaterial(tool.bin) }
         }
     }
 }
 
-@Composable
-private fun EmptyToolPlaceholder() {
-    // 注意：Miuix 组件依赖 MiuixTheme，Material 模式下必须用 Material Text，否则会崩
-    val isMiuix = LocalUiMode.current == UiMode.Miuix
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-        if (isMiuix) {
-            MiuixText(
-                text = stringResource(R.string.empty_content),
-                fontSize = 16.sp,
-                color = Color.Gray,
-            )
-        } else {
-            Text(
-                text = stringResource(R.string.empty_content),
-                fontSize = 16.sp,
-                color = Color.Gray,
-            )
-        }
-    }
-}
-
-/* ------------------------------ Fastboot 命令行 ------------------------------ */
+/* ------------------------------ 命令行 ------------------------------ */
 
 /**
  * 命令行状态：输入 / 输出 / 执行中。
- * 每条命令由 FastbootConsole 以独立进程执行，执行完即退出，不占用终端会话。
+ * 每条命令由 ToolConsole 以独立进程执行，执行完即退出，不占用终端会话。
  */
 @Stable
-private class FastbootConsoleState(
+private class ToolConsoleState(
     private val context: android.content.Context,
     private val scope: CoroutineScope,
+    val bin: String,
 ) {
     var input by mutableStateOf("")
     var output by mutableStateOf("")
@@ -286,7 +249,7 @@ private class FastbootConsoleState(
         scope.launch {
             val sb = StringBuilder()
             val code = withContext(Dispatchers.IO) {
-                FastbootConsole.run(context, cmd, FlashBridge.rootMode.value) { line ->
+                ToolConsole.run(context, cmd, bin, FlashBridge.rootMode.value) { line ->
                     sb.appendLine(line)
                     // 逐行刷新（回调在 IO 线程，切主线程写 Compose 状态）
                     scope.launch(Dispatchers.Main.immediate) { output = sb.toString() }
@@ -303,17 +266,25 @@ private class FastbootConsoleState(
 }
 
 @Composable
-private fun rememberFastbootConsoleState(): FastbootConsoleState {
+private fun rememberToolConsoleState(bin: String): ToolConsoleState {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    return remember(context, scope) {
-        FastbootConsoleState(context.applicationContext, scope)
+    return remember(context, scope, bin) {
+        ToolConsoleState(context.applicationContext, scope, bin)
     }
 }
 
+@StringRes
+private fun descRes(bin: String): Int =
+    if (bin == "adb") R.string.tools_adb_cmd_desc else R.string.tools_cmd_desc
+
+@StringRes
+private fun hintRes(bin: String): Int =
+    if (bin == "adb") R.string.tools_adb_cmd_hint else R.string.tools_cmd_hint
+
 @Composable
-private fun FastbootConsoleMiuix() {
-    val state = rememberFastbootConsoleState()
+private fun ToolConsoleMiuix(bin: String) {
+    val state = rememberToolConsoleState(bin)
     val rootMode by FlashBridge.rootMode.collectAsStateWithLifecycle()
 
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -327,7 +298,7 @@ private fun FastbootConsoleMiuix() {
                 )
                 Spacer(Modifier.height(4.dp))
                 MiuixText(
-                    text = stringResource(R.string.tools_cmd_desc),
+                    text = stringResource(descRes(bin)),
                     fontSize = 12.sp,
                     color = colorScheme.onSurfaceVariantSummary,
                 )
@@ -357,7 +328,7 @@ private fun FastbootConsoleMiuix() {
                         ) {
                             if (state.input.isEmpty()) {
                                 MiuixText(
-                                    text = stringResource(R.string.tools_cmd_hint),
+                                    text = stringResource(hintRes(bin)),
                                     fontSize = 14.sp,
                                     color = Color.Gray,
                                 )
@@ -434,8 +405,8 @@ private fun FastbootConsoleMiuix() {
 }
 
 @Composable
-private fun FastbootConsoleMaterial() {
-    val state = rememberFastbootConsoleState()
+private fun ToolConsoleMaterial(bin: String) {
+    val state = rememberToolConsoleState(bin)
     val rootMode by FlashBridge.rootMode.collectAsStateWithLifecycle()
 
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
@@ -447,7 +418,7 @@ private fun FastbootConsoleMaterial() {
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = stringResource(R.string.tools_cmd_desc),
+                    text = stringResource(descRes(bin)),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -456,7 +427,7 @@ private fun FastbootConsoleMaterial() {
                     value = state.input,
                     onValueChange = { state.input = it },
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text(stringResource(R.string.tools_cmd_hint)) },
+                    placeholder = { Text(stringResource(hintRes(bin))) },
                     singleLine = true,
                     textStyle = TextStyle(
                         fontFamily = FontFamily.Monospace,
