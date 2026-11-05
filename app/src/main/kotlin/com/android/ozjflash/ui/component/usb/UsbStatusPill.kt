@@ -15,6 +15,7 @@ import androidx.compose.material.icons.rounded.ArrowDropUp
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text as M3Text
 import androidx.compose.material3.TextButton as M3TextButton
@@ -44,6 +45,7 @@ import top.yukonga.miuix.kmp.basic.DropdownEntry
 import top.yukonga.miuix.kmp.basic.DropdownItem
 import top.yukonga.miuix.kmp.basic.Text as MiuixText
 import top.yukonga.miuix.kmp.popup.OverlayDropdownPopup
+import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /**
  * 顶栏 USB 状态胶囊：右侧一个圆角胶囊按钮，内含状态灰点 + 文案 + 上箭头；
@@ -72,22 +74,29 @@ fun UsbStatusPill(dark: Boolean = false, modifier: Modifier = Modifier) {
     LaunchedEffect(Unit) { UsbHost.refresh(context) }
 
     val granted = devices.count { it.granted }
-    val (dotColor, statusText) = when {
-        devices.isEmpty() ->
-            (if (dark) Color(0xFF9AA0A6) else Color(0xFF9E9E9E)) to
-                stringResource(R.string.usb_status_none)
-        devices.size == 1 -> {
-            val t = modeShortType(devices[0].mode)
-            (if (granted > 0) Color(0xFF4CAF50) else Color(0xFFFFB300)) to
-                stringResource(R.string.usb_status_connected_type, t)
-        }
-        else ->
-            (if (granted > 0) Color(0xFF4CAF50) else Color(0xFFFFB300)) to
-                stringResource(R.string.usb_status_connected, devices.size)
+    val statusText = when {
+        devices.isEmpty() -> stringResource(R.string.usb_status_none)
+        devices.size == 1 -> stringResource(R.string.usb_status_connected_type, modeShortType(devices[0].mode))
+        else -> stringResource(R.string.usb_status_connected, devices.size)
     }
 
-    val pillBg = if (dark) Color(0xFF2A2A2A) else Color(0xFFE8EAED)
-    val textColor = if (dark) Color(0xFFE6E6E6) else Color(0xFF1F1F1F)
+    // 颜色一律取当前皮肤的主题色，跟随深色模式；不再写死浅灰，否则深色下胶囊会发白
+    // （dark = true 仅用于终端纯黑背景那条链路，保留一套硬编码深色）
+    val pillBg = when {
+        dark -> Color(0xFF2A2A2A)
+        uiMode == UiMode.Miuix -> MiuixTheme.colorScheme.surfaceContainer
+        else -> MaterialTheme.colorScheme.surfaceContainer
+    }
+    val textColor = when {
+        dark -> Color(0xFFE6E6E6)
+        uiMode == UiMode.Miuix -> MiuixTheme.colorScheme.onSurface
+        else -> MaterialTheme.colorScheme.onSurface
+    }
+    val dotColor = when {
+        devices.isEmpty() -> textColor.copy(alpha = 0.4f)
+        granted > 0 -> Color(0xFF4CAF50)
+        else -> Color(0xFFFFB300)
+    }
 
     val openInfo: (UsbDeviceInfo) -> Unit = {
         expanded = false
@@ -200,10 +209,10 @@ private fun MiuixDeviceDropdown(
     }
     val refreshItems = listOf(DropdownItem(text = refreshText, onClick = onRefresh))
 
+    // 单一分组：设备项 + 刷新列表连着排，中间不出现 Miuix 的分组分隔线
     OverlayDropdownPopup(
         entries = listOf(
-            DropdownEntry(items = deviceItems),
-            DropdownEntry(items = refreshItems),
+            DropdownEntry(items = deviceItems + refreshItems),
         ),
         show = expanded,
         onDismiss = onDismiss,
