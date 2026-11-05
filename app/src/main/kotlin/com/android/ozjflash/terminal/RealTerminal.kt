@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.SystemClock
+import java.io.File
 import android.view.HapticFeedbackConstants
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -281,9 +282,13 @@ fun rememberRealTerminal(shellPath: String, binPath: String, nativeDir: String?)
         val env = com.android.ozjflash.flash.NativeLibs.shellEnv(ozjApp, binPath, nativeDir)
             .map { (k, v) -> "$k=$v" }
             .toTypedArray()
-        val home = com.android.ozjflash.flash.NativeLibs.prepareShell(ozjApp, binPath)
-        val cwd = runCatching { if (home.isDirectory && home.canRead()) home.canonicalPath else "/" }
-            .getOrDefault("/")
+        // 写 .ozjflash.rc / .bashrc / .mkshrc（含 cd 进应用私有目录），副作用必须保留
+        com.android.ozjflash.flash.NativeLibs.prepareShell(ozjApp, binPath)
+        // 启动 cwd 必须整条路径对应用 UID 可遍历，否则 mksh 启动时 getcwd() 会在
+        // /data/data(0700) 或 /data/local(0751) 这类祖先目录吃 EACCES，报
+        //   shell-init: error retrieving current directory: getcwd: ... Permission denied
+        // 用 /data（或回溯的 /）做启动 cwd；rc 末尾会 cd 进应用私有目录，提示符仍显示私有目录，且不打印报错。
+        val cwd = if (File("/data").isDirectory) "/data" else "/"
         val session = TerminalSession(
             shellPath,
             cwd,

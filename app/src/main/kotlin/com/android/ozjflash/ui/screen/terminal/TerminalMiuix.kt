@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ContentPaste
@@ -96,6 +97,7 @@ internal fun TerminalPane(
                 .weight(1f)
                 .fillMaxWidth()
                 .background(TerminalBackground)
+                .then(if (!showTopBar) Modifier.statusBarsPadding() else Modifier)
         ) {
             RealTerminalView(terminal = terminal, modifier = Modifier.fillMaxSize())
         }
