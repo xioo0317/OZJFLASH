@@ -168,4 +168,21 @@
     <string name="tools_flash_desc">透過 fastboot / EDL / MTK / OTA payload 向裝置刷寫。</string>
     <string name="settings_root_mode">Root 模式</string>
     <string name="settings_root_mode_summary">直接執行工具</string>
+    <string name="usb_request_access">請求 USB 權限</string>
+    <string name="usb_info_title">裝置資訊</string>
+    <string name="usb_info_summary">USB 裝置的完整資訊</string>
+    <string name="usb_info_type">類型</string>
+    <string name="usb_info_vidpid">VID:PID</string>
+    <string name="usb_info_name">裝置名稱</string>
+    <string name="usb_info_serial">Serial</string>
+    <string name="usb_info_path">路徑</string>
+    <string name="usb_info_interfaces">介面數</string>
+    <string name="usb_info_class">類別/子類別/協定</string>
+    <string name="usb_info_connection">連線詳情</string>
+    <string name="usb_info_fd">fd 描述符</string>
+    <string name="usb_info_tool_state">工具連線狀態</string>
+    <string name="usb_info_opened">已開啟</string>
+    <string name="usb_info_yes">是</string>
+    <string name="usb_info_no">否</string>
+    <string name="usb_info_close">關閉</string>
 </resources>

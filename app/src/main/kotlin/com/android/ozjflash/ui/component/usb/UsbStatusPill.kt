@@ -4,13 +4,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -24,7 +21,6 @@ import androidx.compose.material3.TextButton as M3TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -33,13 +29,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Popup
-import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.ozjflash.R
 import com.android.ozjflash.flash.UsbDeviceInfo
@@ -47,20 +39,21 @@ import com.android.ozjflash.flash.UsbHost
 import com.android.ozjflash.flash.UsbMode
 import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
-import androidx.compose.ui.text.font.FontWeight
-import top.yukonga.miuix.kmp.basic.ButtonDefaults
-import top.yukonga.miuix.kmp.basic.Card as MiuixCard
-import top.yukonga.miuix.kmp.basic.CardDefaults
+import top.yukonga.miuix.kmp.basic.DropdownDefaults
+import top.yukonga.miuix.kmp.basic.DropdownEntry
+import top.yukonga.miuix.kmp.basic.DropdownItem
 import top.yukonga.miuix.kmp.basic.Text as MiuixText
-import top.yukonga.miuix.kmp.basic.TextButton as MiuixTextButton
-import top.yukonga.miuix.kmp.theme.MiuixTheme
+import top.yukonga.miuix.kmp.popup.OverlayDropdownPopup
 
 /**
  * 顶栏 USB 状态胶囊：右侧一个圆角胶囊按钮，内含状态灰点 + 文案 + 上箭头；
  * 点击弹出下拉（设备列表 / 请求授权 / 刷新列表）。
  *
- * - MIUI（Miuix）皮肤：下拉用 Miuix 组件（Card + Popup 自绘），契合 MIUI 视觉；
+ * - MIUI（Miuix）皮肤：下拉直接用 Miuix 的 [OverlayDropdownPopup]（与设置页
+ *   「界面风格」「语言」那套下拉是同一个组件），不再自绘卡片，观感与 MIUI 系统一致；
  * - M3（Material）皮肤：下拉用 Material3 的 DropdownMenu / DropdownMenuItem。
+ *
+ * 点设备条目 → 弹出 [UsbDeviceInfoDialog]（设备信息详情）。
  * 设备接入/拔出由 [UsbHost] 的广播接收器自动 refresh，这里挂载时再补一次枚举，
  * 做到「连接设备自动访问」。
  *
@@ -72,7 +65,8 @@ fun UsbStatusPill(dark: Boolean = false, modifier: Modifier = Modifier) {
     val uiMode = LocalUiMode.current
     val devices by UsbHost.devices.collectAsStateWithLifecycle()
     var expanded by remember { mutableStateOf(false) }
-    var pillHeight by remember { mutableIntStateOf(0) }
+    // 非空时显示设备信息弹窗
+    var infoDevice by remember { mutableStateOf<UsbDeviceInfo?>(null) }
 
     // 挂载即枚举一次，确保进入页面时立刻反映已接入的设备（自动访问）
     LaunchedEffect(Unit) { UsbHost.refresh(context) }
@@ -95,11 +89,15 @@ fun UsbStatusPill(dark: Boolean = false, modifier: Modifier = Modifier) {
     val pillBg = if (dark) Color(0xFF2A2A2A) else Color(0xFFE8EAED)
     val textColor = if (dark) Color(0xFFE6E6E6) else Color(0xFF1F1F1F)
 
+    val openInfo: (UsbDeviceInfo) -> Unit = {
+        expanded = false
+        infoDevice = it
+    }
+
     Box(modifier = modifier) {
         // 胶囊本体（外形两种皮肤一致，文案组件随皮肤切换）
         Row(
             modifier = Modifier
-                .onGloballyPositioned { pillHeight = it.size.height }
                 .clip(RoundedCornerShape(50))
                 .background(pillBg)
                 .clickable { expanded = !expanded }
@@ -125,21 +123,31 @@ fun UsbStatusPill(dark: Boolean = false, modifier: Modifier = Modifier) {
             )
         }
 
+        // 下拉挂在同一个 Box 里：Miuix 的 OverlayListPopup 以父布局边界为锚点，
+        // 这样弹层正好贴在胶囊下方、右边缘对齐
         when (uiMode) {
             UiMode.Miuix -> MiuixDeviceDropdown(
                 expanded = expanded,
                 onDismiss = { expanded = false },
                 devices = devices,
-                dark = dark,
-                pillHeight = pillHeight,
+                onDeviceClick = openInfo,
+                onRequest = { UsbHost.requestPermission(context, it.device) },
+                onRefresh = { UsbHost.refresh(context) },
             )
 
             UiMode.Material -> MaterialDeviceDropdown(
                 expanded = expanded,
                 onDismiss = { expanded = false },
                 devices = devices,
+                onDeviceClick = openInfo,
+                onRequest = { UsbHost.requestPermission(context, it.device) },
+                onRefresh = { UsbHost.refresh(context) },
             )
         }
+    }
+
+    infoDevice?.let { info ->
+        UsbDeviceInfoDialog(info = info, onDismiss = { infoDevice = null })
     }
 }
 
@@ -152,121 +160,59 @@ private fun modeShortType(mode: UsbMode): String = when (mode) {
     else -> "USB" // QUALCOMM / XIAOMI / OPPO / ONEPLUS / ANDROID_BRAND / NONE
 }
 
-/** 连接模式对应的标识颜色（MIUI 下拉复用） */
-private fun modeColor(mode: UsbMode): Color = when (mode) {
-    UsbMode.EDL, UsbMode.DLOAD, UsbMode.MTK_BROM -> Color(0xFFE5534B)
-    UsbMode.FASTBOOT, UsbMode.ADB -> Color(0xFF3DDC84)
-    UsbMode.QUALCOMM, UsbMode.XIAOMI, UsbMode.OPPO, UsbMode.ONEPLUS, UsbMode.ANDROID_BRAND -> Color(0xFF5B9BD5)
-    else -> Color(0xFF9AA0A6)
-}
+/** 下拉里一条设备项的文案：类型 + 小写 VID:PID，如「ADB 22d9:2769」 */
+private fun deviceItemText(info: UsbDeviceInfo): String =
+    "${modeShortType(info.mode)} ${info.vidPid.lowercase()}"
 
-/** MIUI 风格下拉：浅色大圆角卡片，左对齐黑色文字、无图标，贴合参考图观感 */
+/**
+ * MIUI 风格下拉：直接用 Miuix 的 [OverlayDropdownPopup]（设置页下拉同款组件）。
+ * 两组：设备（含「请求 USB 权限」动作）+ 「刷新列表」，与 MIUI 系统的分组下拉一致。
+ */
 @Composable
 private fun MiuixDeviceDropdown(
     expanded: Boolean,
     onDismiss: () -> Unit,
     devices: List<UsbDeviceInfo>,
-    dark: Boolean,
-    pillHeight: Int,
+    onDeviceClick: (UsbDeviceInfo) -> Unit,
+    onRequest: (UsbDeviceInfo) -> Unit,
+    onRefresh: () -> Unit,
 ) {
-    if (!expanded) return
-    val context = LocalContext.current
-    val density = LocalDensity.current
-    val offsetY = pillHeight + with(density) { 6.dp.roundToPx() }
+    val noDeviceText = stringResource(R.string.usb_menu_no_device)
+    val requestText = stringResource(R.string.usb_request_access)
+    val refreshText = stringResource(R.string.usb_refresh_list)
 
-    Popup(
-        alignment = Alignment.TopEnd,
-        offset = IntOffset(0, offsetY),
-        onDismissRequest = onDismiss,
-        properties = PopupProperties(focusable = true),
-    ) {
-        MiuixCard(
-            modifier = Modifier
-                .width(220.dp)
-                .padding(8.dp),
-            cornerRadius = 20.dp,
-            colors = CardDefaults.defaultColors(color = Color(0xFFF2F3F5)),
-        ) {
-            Column(modifier = Modifier.padding(14.dp)) {
-                if (devices.isEmpty()) {
-                    MiuixText(
-                        text = stringResource(R.string.usb_menu_no_device),
-                        fontSize = 14.sp,
-                        color = Color(0xFF616161),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp),
+    val deviceItems = buildList<DropdownItem> {
+        if (devices.isEmpty()) {
+            add(DropdownItem(text = noDeviceText, enabled = false))
+        } else {
+            devices.forEach { info ->
+                add(
+                    DropdownItem(
+                        text = deviceItemText(info),
+                        onClick = { onDeviceClick(info) },
                     )
-                } else {
-                    devices.forEach { info ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                MiuixText(
-                                    text = info.label,
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = Color(0xFF1F1F1F),
-                                )
-                                MiuixText(
-                                    text = info.vidPid,
-                                    fontSize = 12.sp,
-                                    color = Color(0xFF616161),
-                                )
-                                MiuixText(
-                                    text = info.mode.label,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = modeColor(info.mode),
-                                )
-                            }
-                            if (info.granted) {
-                                MiuixText(
-                                    text = stringResource(R.string.usb_granted),
-                                    fontSize = 12.sp,
-                                    color = Color(0xFF1F1F1F),
-                                )
-                            } else {
-                                MiuixTextButton(
-                                    text = stringResource(R.string.usb_request),
-                                    onClick = {
-                                        UsbHost.requestPermission(context, info.device)
-                                        onDismiss()
-                                    },
-                                    colors = ButtonDefaults.textButtonColorsPrimary(),
-                                )
-                            }
-                        }
-                    }
-                    HorizontalDivider(
-                        modifier = Modifier.padding(vertical = 6.dp),
-                        color = Color(0xFFE0E0E0),
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            UsbHost.refresh(context)
-                            onDismiss()
-                        }
-                        .padding(vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    MiuixText(
-                        text = stringResource(R.string.usb_refresh_list),
-                        fontSize = 14.sp,
-                        color = Color(0xFF1F1F1F),
-                    )
+                )
+                if (!info.granted) {
+                    add(DropdownItem(text = requestText, onClick = { onRequest(info) }))
                 }
             }
         }
     }
+    val refreshItems = listOf(DropdownItem(text = refreshText, onClick = onRefresh))
+
+    OverlayDropdownPopup(
+        entries = listOf(
+            DropdownEntry(items = deviceItems),
+            DropdownEntry(items = refreshItems),
+        ),
+        show = expanded,
+        onDismiss = onDismiss,
+        onDismissFinished = {},
+        maxHeight = null,
+        dropdownColors = DropdownDefaults.dropdownColors(),
+        renderInRootScaffold = true,
+        collapseOnSelection = true,
+    )
 }
 
 /** Material3 风格下拉：沿用 M3 DropdownMenu / DropdownMenuItem */
@@ -275,12 +221,14 @@ private fun MaterialDeviceDropdown(
     expanded: Boolean,
     onDismiss: () -> Unit,
     devices: List<UsbDeviceInfo>,
+    onDeviceClick: (UsbDeviceInfo) -> Unit,
+    onRequest: (UsbDeviceInfo) -> Unit,
+    onRefresh: () -> Unit,
 ) {
-    val context = LocalContext.current
     DropdownMenu(
         expanded = expanded,
         onDismissRequest = onDismiss,
-        modifier = Modifier.width(220.dp),
+        modifier = Modifier.width(240.dp),
     ) {
         if (devices.isEmpty()) {
             DropdownMenuItem(
@@ -291,7 +239,7 @@ private fun MaterialDeviceDropdown(
         } else {
             devices.forEach { info ->
                 DropdownMenuItem(
-                    text = { M3Text(info.label) },
+                    text = { M3Text(deviceItemText(info)) },
                     trailingIcon = {
                         if (info.granted) {
                             M3Text(
@@ -300,16 +248,12 @@ private fun MaterialDeviceDropdown(
                                 color = Color(0xFF4CAF50),
                             )
                         } else {
-                            M3TextButton(onClick = {
-                                UsbHost.requestPermission(context, info.device)
-                                onDismiss()
-                            }) { M3Text(stringResource(R.string.usb_request)) }
+                            M3TextButton(onClick = { onRequest(info) }) {
+                                M3Text(stringResource(R.string.usb_request))
+                            }
                         }
                     },
-                    onClick = {
-                        if (!info.granted) UsbHost.requestPermission(context, info.device)
-                        onDismiss()
-                    },
+                    onClick = { onDeviceClick(info) },
                 )
             }
         }
@@ -317,7 +261,7 @@ private fun MaterialDeviceDropdown(
         DropdownMenuItem(
             text = { M3Text(stringResource(R.string.usb_refresh_list)) },
             onClick = {
-                UsbHost.refresh(context)
+                onRefresh()
                 onDismiss()
             },
         )

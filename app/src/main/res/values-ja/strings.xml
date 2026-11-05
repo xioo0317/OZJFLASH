@@ -168,4 +168,21 @@
     <string name="tools_flash_desc">fastboot / EDL / MTK / OTA payload 経由でデバイスに書き込み。</string>
     <string name="settings_root_mode">Root モード</string>
     <string name="settings_root_mode_summary">ツールを直接実行</string>
+    <string name="usb_request_access">USB アクセスを要求</string>
+    <string name="usb_info_title">デバイス情報</string>
+    <string name="usb_info_summary">USB デバイスの詳細情報</string>
+    <string name="usb_info_type">種類</string>
+    <string name="usb_info_vidpid">VID:PID</string>
+    <string name="usb_info_name">デバイス名</string>
+    <string name="usb_info_serial">シリアル</string>
+    <string name="usb_info_path">パス</string>
+    <string name="usb_info_interfaces">インターフェース数</string>
+    <string name="usb_info_class">クラス/サブクラス/プロトコル</string>
+    <string name="usb_info_connection">接続詳細</string>
+    <string name="usb_info_fd">fd 記述子</string>
+    <string name="usb_info_tool_state">ツール接続状態</string>
+    <string name="usb_info_opened">開いています</string>
+    <string name="usb_info_yes">はい</string>
+    <string name="usb_info_no">いいえ</string>
+    <string name="usb_info_close">閉じる</string>
 </resources>

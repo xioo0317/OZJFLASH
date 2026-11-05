@@ -183,4 +183,21 @@
     <string name="tools_flash_desc">Flash fastboot / EDL / MTK / OTA payload to the device.</string>
     <string name="settings_root_mode">Root mode</string>
     <string name="settings_root_mode_summary">Run tools directly with su</string>
+    <string name="usb_request_access">Request USB access</string>
+    <string name="usb_info_title">Device info</string>
+    <string name="usb_info_summary">Full details of the USB device</string>
+    <string name="usb_info_type">Type</string>
+    <string name="usb_info_vidpid">VID:PID</string>
+    <string name="usb_info_name">Device name</string>
+    <string name="usb_info_serial">Serial</string>
+    <string name="usb_info_path">Path</string>
+    <string name="usb_info_interfaces">Interfaces</string>
+    <string name="usb_info_class">Class / Subclass / Protocol</string>
+    <string name="usb_info_connection">Connection</string>
+    <string name="usb_info_fd">fd descriptor</string>
+    <string name="usb_info_tool_state">Tool connection</string>
+    <string name="usb_info_opened">Opened</string>
+    <string name="usb_info_yes">Yes</string>
+    <string name="usb_info_no">No</string>
+    <string name="usb_info_close">Close</string>
 </resources>
