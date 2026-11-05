@@ -41,6 +41,7 @@ object FlashBridge {
             block(fd)
         } finally {
             runCatching { conn.close() }
+            runCatching { releaseFd(fd) }
         }
     }
 

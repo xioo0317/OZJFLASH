@@ -11,6 +11,7 @@ import android.hardware.usb.UsbDeviceConnection
 import android.hardware.usb.UsbManager
 import android.os.Build
 import android.os.ParcelFileDescriptor
+import android.system.Os
 import androidx.core.content.edit
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -148,16 +149,33 @@ fun classifyDevice(device: UsbDevice): UsbMode {
     }
 }
 
-/** 从 UsbDeviceConnection 反射取出文件描述符（不消费原始 fd），供进程内/进程间传递 */
+/**
+ * 从 UsbDeviceConnection 反射取出文件描述符（不消费原始 fd），供进程内/进程间传递。
+ *
+ * 这里必须**自己持有 dup 出来的 ParcelFileDescriptor 引用**：
+ * `ParcelFileDescriptor.dup(pfd.fileDescriptor).fd` 这种写法把 PFD 当临时对象，
+ * 表达式一结束对象就没人引用，GC 触发 finalize 会 close 掉那个 fd ——
+ * 表现出来就是「headless 跑得好好的，过一会儿就 `device offline` / 连不上」。
+ * 因此 dup 副本统一放进 [heldFds] 强引用，用完由调用方 [releaseFd] 显式释放。
+ */
 fun currentFd(connection: UsbDeviceConnection): Int {
     val pfd = reflectPfd(connection) ?: return -1
     return try {
-        // 复制出一份独立的 fd：底层协议库（fastboot/EDL/MTK）拿到的是 dup 出来的副本，
-        // 原始 UsbDeviceConnection 在 FlashBridge.withTargetFd 的 finally 中关闭时不会误伤它。
-        ParcelFileDescriptor.dup(pfd.fileDescriptor).fd
+        val copy = ParcelFileDescriptor.dup(pfd.fileDescriptor)
+        val value: Int = copy.fd
+        heldFds[value] = copy
+        value
     } catch (_: Throwable) {
-        pfd.fd
+        -1
     }
+}
+
+/** [currentFd] 产生的 dup 副本，按 fd 号持有，避免被 GC 提前关闭 */
+private val heldFds = java.util.concurrent.ConcurrentHashMap<Int, ParcelFileDescriptor>()
+
+/** 释放 [currentFd] 取到的副本（调用方用完必须调，否则泄漏一个 fd） */
+fun releaseFd(fd: Int) {
+    heldFds.remove(fd)?.let { runCatching { it.close() } }
 }
 
 private fun reflectPfd(c: UsbDeviceConnection): ParcelFileDescriptor? {

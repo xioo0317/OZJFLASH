@@ -1,26 +1,39 @@
 package com.android.ozjflash.flash
 
 import android.content.Context
-import android.os.ParcelFileDescriptor
 import com.Android.MoFlash.data.FdPass
 import java.io.File
 
 /**
  * 内置工具（fastboot / adb）命令行执行器。
  *
- * 执行模型（与 MOFLASH 一致）：
- *  - **root**：`su -c "<bin>/<tool> ..."`，由 su 提供设备访问能力；
- *  - **免 root**：`UsbManager.openDevice` 拿到已授权的 usbfs fd →
- *    `FdPass.serveFdLoop(fd, "@名字")` 起 Unix 抽象 socket 服务端 →
- *    exec 魔改版工具，环境变量 `MOMIUI_USB_SOCK="@名字"` →
- *    工具 connect 该 socket，用 SCM_RIGHTS 收取 fd，走 `/proc/self/fd/<n>` 直接通信。
+ * ## 免 root 链路（逆向 MOFLASH libfastboot.so 反汇编得到，逐条对应）
  *
- * 关键细节：
- *  - 环境变量是 **MOMIUI_USB_SOCK**（`@` 开头），不是 MOMIUI_USB_FD；
- *    MOMIUI_USB_FD 只是「同进程直传 fd 号」的退化路径，跨进程无效；
- *  - **不要 claimInterface**：usbfs 的 claim 跟着文件句柄走，App 先 claim，
- *    子进程再 claim 会 EBUSY，表现为 `< waiting for any device >`；
- *  - 每条命令一个独立短命进程，跑完即退，不占用常驻 bash / PTY。
+ * ```
+ * p = getenv("MOMIUI_USB_SOCK")            // 0x2989e8，主路径
+ * q = getenv("MOMIUI_USB_FD")              // 0x2989fc，退化路径
+ * if (p && p[0] == '@') {                  // 0x298a18  cmp w8, #0x40
+ *     s = socket(AF_UNIX, SOCK_STREAM, 0)  // 0x298a20
+ *     connect(s, sun_path = p + 1)         // 0x298a9c，失败重试 101 次 × 20ms
+ *     write(s, 1 byte)                     // 0x298afc
+ *     recvmsg(s, SCM_RIGHTS)               // 0x298b54
+ *     fd = cmsg->fd                        // 0x298b88
+ *     // 之后全部走 /proc/self/fd/<fd>
+ * } else if (q) { fd = strtol(q) }         // 0x298bc4，同进程直传才有效
+ * ```
+ *
+ * 服务端 [FdPass.serveFdLoop] 与之配对：
+ * `socket → bind(@名) → listen → accept → poll → read(1B) → dup(fd) → sendmsg(SCM_RIGHTS)`。
+ * 名字必须 `@` 开头（否则 native 直接返回 -2）。
+ *
+ * ## 三条硬约束（踩过的坑）
+ *
+ *  1. **不要 claimInterface**：usbfs 的 claim 跟着文件句柄走，App 先 claim，
+ *     子进程再 claim 会 EBUSY → `< waiting for any device >`。
+ *  2. **fd 不能是临时对象**：必须 `Os.dup()` 拿裸 int，用
+ *     `ParcelFileDescriptor.dup().fd` 会被 GC finalize 关掉。
+ *  3. **执行的是 nativeLibraryDir 里的真实 ELF**：Android 10+ 禁止 exec
+ *     应用私有目录下的文件，符号链接解析到 `/data/app/.../lib/arm64` 才允许。
  */
 object ToolConsole {
 
@@ -72,9 +85,10 @@ object ToolConsole {
         if (args.isEmpty()) return -1
 
         val binPath = File(context.filesDir, "bin").absolutePath
-        val exe = File(binPath, tool)
-        if (!exe.exists()) {
-            onLine("[错误] 内置 $tool 不存在：${exe.absolutePath}")
+        val nativeDir = context.applicationInfo.nativeLibraryDir
+        val exe = resolveExe(context, tool, binPath)
+        if (exe == null) {
+            onLine("[错误] 内置 $tool 不存在（lib/arm64 与 files/bin 均未找到）")
             return -1
         }
 
@@ -83,10 +97,11 @@ object ToolConsole {
                 "su", "-c",
                 exe.absolutePath + " " + args.joinToString(" ") { quote(it) },
             )
+            onLine("[诊断] root 模式，直接执行：${exe.absolutePath}")
             return exec(context, binPath, command, emptyMap(), onLine)
         }
 
-        // —— 免 root：都需要一个已授权的 USB fd ——
+        // —— 免 root：需要一个已授权的 USB fd ——
         val device = UsbHost.pickForTool(context, tool)
         if (device == null) {
             if (tool == "fastboot") {
@@ -123,28 +138,48 @@ object ToolConsole {
         }
         val (conn, fd) = pair
         onLine(UsbFdTracer.fd(fd))
+        onLine("[诊断] 可执行文件 = ${exe.absolutePath}")
 
-        val socketName = "@OZJ_USB_FD_${System.nanoTime()}"
+        val socketName = socketNameFor(tool)
         onLine(UsbFdTracer.socket(socketName))
+
+        // native 侧是否真的可用，必须在起线程前确认，否则失败会被静默吞掉
+        val nativeErr = probeFdPass()
+        if (nativeErr != null) {
+            onLine("[错误] libfdpass 不可用：$nativeErr")
+            runCatching { conn.close() }
+            runCatching { releaseFd(fd) }
+            return -1
+        }
+
+        val serverError = arrayOfNulls<String>(1)
         val server = Thread {
-            runCatching { FdPass().serveFdLoop(fd, socketName) }
+            try {
+                FdPass().serveFdLoop(fd, socketName)
+            } catch (t: Throwable) {
+                serverError[0] = "${t.javaClass.simpleName}: ${t.message}"
+            }
         }.apply {
             isDaemon = true
             start()
         }
 
         return try {
-            // 等 native 端完成 bind/listen（工具侧 connect 本身有 101 次 × 20ms 重试，这里只是省掉首轮空转）
-            Thread.sleep(120)
+            // 等服务端真正 bind+listen 完成（读 /proc/net/unix 轮询，比固定 sleep 可靠）
+            val ready = waitSocketReady(socketName, 1500)
+            if (!ready) {
+                onLine("[警告] 未在 1.5s 内观察到 socket 就绪，继续尝试（工具侧会自动重试 2s）")
+            }
             onLine("[诊断] 执行: $tool ${args.joinToString(" ")}")
+            onLine("[诊断] MOMIUI_USB_SOCK=$socketName  MOMIUI_USB_FD=$fd")
             exec(
                 context = context,
                 binPath = binPath,
                 command = listOf(exe.absolutePath) + args,
                 extraEnv = mapOf(
-                    // 魔改版优先读这个（@ 开头的抽象 socket 名）
+                    // 魔改版主路径：@ 开头的抽象 socket 名
                     "MOMIUI_USB_SOCK" to socketName,
-                    // 退化路径：同进程内可直接用 fd 号；跨进程时以 SOCK 为准
+                    // 退化路径：同进程内可直接用 fd 号；跨进程以 SOCK 为准
                     "MOMIUI_USB_FD" to fd.toString(),
                 ),
                 onLine = onLine,
@@ -153,8 +188,62 @@ object ToolConsole {
             runCatching { FdPass().stopServeLoop() }
             runCatching { server.interrupt() }
             runCatching { conn.close() }
-            runCatching { ParcelFileDescriptor.adoptFd(fd).close() }
+            runCatching { releaseFd(fd) }
+            serverError[0]?.let { onLine("[错误] fd 服务端异常：$it") }
         }
+    }
+
+    /**
+     * 解析要执行的二进制。
+     *
+     * 优先 symbol 链接（files/bin/<tool> → nativeLibraryDir/libozj_*.so），
+     * 链接不存在时直接退回 nativeLibraryDir 里的 libozj_*.so 全名 ——
+     * MOFLASH 日志里跑的就是 `/data/app/.../lib/arm64/libfastboot.so`。
+     */
+    private fun resolveExe(context: Context, tool: String, binPath: String): File? {
+        File(binPath, tool).takeIf { it.exists() }?.let { return it }
+        val nativeDir = context.applicationInfo.nativeLibraryDir ?: return null
+        val lib = File(nativeDir, NativeLibs.libName(tool))
+        return lib.takeIf { it.exists() }
+    }
+
+    /** MOFLASH 同款 socket 名前缀：fastboot 带随机后缀，adb 用固定名 */
+    private fun socketNameFor(tool: String): String =
+        if (tool == "adb") "@momiui_adb_fd" else "@momiui_fb_${System.nanoTime()}"
+
+    /** 尝试加载 fdpass，返回错误描述；可用时返回 null */
+    private fun probeFdPass(): String? = try {
+        // loadLibrary 幂等：已加载时是 no-op，加载失败会抛，正好用来探测
+        System.loadLibrary("fdpass")
+        // 再确认符号确实在（防止库在但被 strip / ABI 不匹配）
+        FdPass::class.java.getDeclaredMethod(
+            "serveFdLoop",
+            Int::class.javaPrimitiveType,
+            String::class.java,
+        )
+        null
+    } catch (t: Throwable) {
+        val cause = t.cause ?: t
+        "${cause.javaClass.simpleName}: ${cause.message}"
+    }
+
+    /** 抽象 socket 会出现在 /proc/net/unix 里，形如 `@名字`；读不到就退化为固定等待 */
+    private fun waitSocketReady(name: String, timeoutMs: Long): Boolean {
+        val key = "@" + name.removePrefix("@")
+        val deadline = System.currentTimeMillis() + timeoutMs
+        var readable = false
+        while (System.currentTimeMillis() < deadline) {
+            val hit = runCatching {
+                val lines = File("/proc/net/unix").readLines()
+                readable = true
+                lines.any { it.trim().endsWith(key) }
+            }.getOrDefault(false)
+            if (hit) return true
+            if (!readable) break
+            Thread.sleep(25)
+        }
+        if (!readable) Thread.sleep(200)
+        return false
     }
 
     private fun exec(

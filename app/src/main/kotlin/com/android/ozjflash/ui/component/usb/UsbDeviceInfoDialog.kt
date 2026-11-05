@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.android.ozjflash.R
 import com.android.ozjflash.flash.UsbDeviceInfo
 import com.android.ozjflash.flash.UsbHostManager
+import com.android.ozjflash.flash.releaseFd
 import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.component.material.ExpressiveDialog
@@ -68,6 +69,7 @@ private fun usbInfoRows(info: UsbDeviceInfo): List<UsbInfoRow> {
                 val manager = UsbHostManager(context)
                 manager.openWithFd(device)?.let { (conn, fdValue) ->
                     conn.close()
+                    releaseFd(fdValue)
                     fdValue
                 } ?: -1
             }.getOrDefault(-1)
