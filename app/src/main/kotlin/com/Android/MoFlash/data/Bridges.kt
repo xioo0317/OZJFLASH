@@ -42,8 +42,14 @@ class NativeCmd {
 
 class FdPass {
     companion object { init { try { System.loadLibrary("fdpass") } catch (_: Throwable) {} } }
-    external fun sendFd(fd: Int, targetPid: Int, targetFd: Int)
-    external fun serveFdLoop(fd: Int)
+
+    /**
+     * Unix 抽象 socket（SCM_RIGHTS）传 fd。
+     * 真实签名来自 dex：sendFd(int, String): int、serveFdLoop(int, String): int、stopServeLoop(): void。
+     * name 形如 "@MOMIUI_USB_FD"（abstract socket，首字符 '@'）。
+     */
+    external fun sendFd(fd: Int, name: String?): Int
+    external fun serveFdLoop(fd: Int, name: String?): Int
     external fun stopServeLoop()
 }
 
