@@ -29,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
@@ -141,6 +140,16 @@ fun UsbStatusPill(dark: Boolean = false, modifier: Modifier = Modifier) {
         else -> Color(0xFFFFB300)
     }
 
+    // 液态玻璃的「背景色」：跟随主题取色的真实页面背景（浅色白 / 深色黑 / 纯黑 /
+    // 动态取色全部由 colorScheme 决定），与 MainActivity 页面级 backdrop 里
+    // drawRect(surfaceColor) 用的是同一套。之前这里用 surfaceVariant.copy(0.32f)
+    // 且采样层 alpha(0f) 是空的，backdrop 里没有任何实色或内容，玻璃采样后就是
+    // 一片空灰 —— 这正是「没取到背景颜色」的根因。
+    val glassBase = if (dark) Color(0xFF101010) else when (uiMode) {
+        UiMode.Miuix -> MiuixTheme.colorScheme.surface
+        UiMode.Material -> MaterialTheme.colorScheme.surface
+    }
+
     val pillShape = RoundedCornerShape(50)
     // 胶囊玻璃是「效果 = 渐变模糊」体系下的子选项：只有「模糊开启 + 效果选渐变 +
     // 胶囊模糊开关」三者同时满足才生效（与主题设置页里该选项的显隐条件严格一致）。
@@ -149,11 +158,12 @@ fun UsbStatusPill(dark: Boolean = false, modifier: Modifier = Modifier) {
     val glassEnabled = pillBlurEnabled && blurActive &&
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
 
-    // 玻璃底层：不再铺不透明实色（那正是「实心白块」的根因），改用半透明主题色，
-    // 配合白色高光环 + 柔和投影 + 边缘折射，做出图二那种通透的玻璃圆圈质感。
+    // 液态玻璃的模糊源：先铺一层跟随主题取色的不透明页面背景色，再叠加被捕获层
+    // 的真实内容（见下方采样层）。这样 backdrop 里既有「背景颜色」、也有可供
+    // blur / lens 折射的内容纹理，玻璃才能真正取到背景，而不是一片空灰。
     val glassBackdrop = if (glassEnabled) {
         rememberLayerBackdrop {
-            drawRect(containerColor.copy(alpha = 0.32f))
+            drawRect(glassBase)
             drawContent()
         }
     } else null
@@ -164,12 +174,15 @@ fun UsbStatusPill(dark: Boolean = false, modifier: Modifier = Modifier) {
     }
 
     Box(modifier = modifier) {
-        // 采样层：与胶囊内容同尺寸的不可见镜像，注册为液态玻璃的模糊源
-        // （与悬浮底栏 alpha(0f) + layerBackdrop 同一套做法，无需 matchParentSize）
+        // 采样层：铺真实页面背景色、与胶囊同尺寸，注册为液态玻璃的模糊源。
+        // 关键：不能再 alpha(0f) —— 那样 layerBackdrop 捕获到的是完全透明的空层，
+        // drawContent() 什么都没有，玻璃就取不到背景（MainActivity 对 pager backdrop
+        // 的注释也写明「抓到空层会糊成一片」）。上层胶囊的半透明玻璃会盖住这一层，
+        // 只透出被 blur / lens 折射后的背景色与内容纹理。
         if (glassEnabled && glassBackdrop != null) {
             Box(
                 modifier = Modifier
-                    .alpha(0f)
+                    .background(glassBase, pillShape)
                     .layerBackdrop(glassBackdrop),
             ) {
                 when (uiMode) {
@@ -207,7 +220,8 @@ fun UsbStatusPill(dark: Boolean = false, modifier: Modifier = Modifier) {
                                 )
                             },
                             highlight = { PillGlassHighlight },
-                            onDrawSurface = { drawRect(containerColor.copy(alpha = 0.22f)) },
+                            // 玻璃表面只留一层极薄 tint，别再把刚取到的背景色盖成灰
+                            onDrawSurface = { drawRect(glassBase.copy(alpha = 0.12f)) },
                         )
                 } else {
                     Modifier
