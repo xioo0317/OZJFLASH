@@ -45,7 +45,7 @@ import androidx.compose.material.icons.rounded.Style
 import androidx.compose.material.icons.rounded.SwapHoriz
 import androidx.compose.material.icons.rounded.Wallpaper
 import androidx.compose.material.icons.rounded.WaterDrop
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -269,12 +269,13 @@ fun ColorPaletteScreenMiuix(
                         }
                     }
 
-                    Card(
-                        modifier = Modifier
-                            .padding(top = 12.dp)
-                            .fillMaxWidth(),
-                    ) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    // 模糊：单独一张卡片；开启后可在「效果」里选择高斯 / 渐变
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        Card(
+                            modifier = Modifier
+                                .padding(top = 12.dp)
+                                .fillMaxWidth(),
+                        ) {
                             SwitchPreference(
                                 title = stringResource(id = R.string.settings_enable_blur),
                                 summary = stringResource(id = R.string.settings_enable_blur_summary),
@@ -289,7 +290,36 @@ fun ColorPaletteScreenMiuix(
                                 checked = uiState.enableBlur,
                                 onCheckedChange = actions::setBlur,
                             )
+                            AnimatedVisibility(visible = uiState.enableBlur) {
+                                val effectItems = listOf(
+                                    stringResource(id = R.string.settings_blur_effect_gaussian),
+                                    stringResource(id = R.string.settings_blur_effect_gradient),
+                                )
+                                OverlayDropdownPreference(
+                                    title = stringResource(id = R.string.settings_blur_effect),
+                                    items = effectItems,
+                                    startAction = {
+                                        Icon(
+                                            Icons.Rounded.BlurOn,
+                                            modifier = Modifier.padding(end = 6.dp),
+                                            contentDescription = stringResource(id = R.string.settings_blur_effect),
+                                            tint = colorScheme.onBackground,
+                                        )
+                                    },
+                                    selectedIndex = if (uiState.blurStyle == "gradient") 1 else 0,
+                                    onSelectedIndexChange = { index ->
+                                        actions.setBlurStyle(if (index == 1) "gradient" else "gaussian")
+                                    },
+                                )
+                            }
                         }
+                    }
+
+                    Card(
+                        modifier = Modifier
+                            .padding(top = 12.dp)
+                            .fillMaxWidth(),
+                    ) {
                         SwitchPreference(
                             title = stringResource(id = R.string.settings_floating_bottom_bar),
                             summary = stringResource(id = R.string.settings_floating_bottom_bar_summary),
@@ -350,7 +380,7 @@ fun ColorPaletteScreenMiuix(
                                 summary = stringResource(id = R.string.settings_enable_predictive_back_summary),
                                 startAction = {
                                     Icon(
-                                        Icons.Filled.ArrowBack,
+                                        Icons.AutoMirrored.Filled.ArrowBack,
                                         modifier = Modifier.padding(end = 6.dp),
                                         contentDescription = stringResource(id = R.string.settings_enable_predictive_back),
                                         tint = colorScheme.onBackground,
@@ -466,7 +496,7 @@ private fun ThemePreviewCardMiuix(
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth(0.4f)
+                .fillMaxWidth(0.62f)
                 .aspectRatio(screenRatio)
                 .clip(RoundedCornerShape(20.dp))
                 .background(bgColor)

@@ -61,7 +61,7 @@
     <string name="settings_miuix_monet">Miuix ダイナミックカラー</string>
     <string name="settings_miuix_monet_summary">Miuix をシステムの壁紙から配色に追従させる</string>
     <string name="settings_color">アクセントカラー</string>
-    <string name="settings_color_dynamic">システム</string>
+    <string name="settings_color_dynamic">既定</string>
     <string name="settings_color_green">緑</string>
     <string name="settings_color_blue">青</string>
     <string name="settings_color_purple">紫</string>
@@ -70,8 +70,11 @@
     <string name="settings_color_custom">カスタム</string>
     <string name="settings_page_scale">ページ倍率</string>
     <string name="settings_others">その他</string>
-    <string name="settings_enable_blur">背景のぼかし</string>
-    <string name="settings_enable_blur_summary">バーとダイアログの背後に描画ベースのぼかしを有効化</string>
+    <string name="settings_enable_blur">ぼかし</string>
+    <string name="settings_enable_blur_summary">上部・下部バーの背後をぼかします</string>
+    <string name="settings_blur_effect">エフェクト</string>
+    <string name="settings_blur_effect_gaussian">ガウスぼかし</string>
+    <string name="settings_blur_effect_gradient">グラデーションぼかし</string>
     <string name="settings_enable_floating_bottom_bar">フローティングボトムバー</string>
     <string name="settings_enable_floating_bottom_bar_summary">貼り付けナビをフローティングピルバーに置き換え</string>
     <string name="settings_enable_floating_bottom_bar_blur">フローティングバーのぼかし</string>
@@ -117,7 +120,7 @@
     <string name="language_es">Español</string>
 
     <!-- ログ / 診斷 -->
-    <string name="settings_log">ログ</string>
+    <string name="settings_log">ログを送信</string>
     <string name="settings_log_summary">アプリのログを表示・書き出し（crash.log など）</string>
     <string name="log_empty">ログは記録されていません</string>
     <string name="log_copy">コピー</string>
@@ -146,8 +149,8 @@
     <string name="settings_navigation_badge">ナビゲーションバッジ</string>
     <string name="settings_navigation_badge_summary">ツール不足時にバッジを表示します</string>
     <string name="settings_page_scale_summary">画面全体の拡大率（80% - 110%）</string>
-    <string name="settings_pager_swipe">左右スワイプでページ切替</string>
-    <string name="settings_pager_swipe_summary">オフにすると下部バーのみでページを切り替えます（ターミナルの横操作と競合しません）</string>
+    <string name="settings_pager_swipe">スワイプでページ切替</string>
+    <string name="settings_pager_swipe_summary">左右スワイプでページを切り替え</string>
     <string name="settings_enable_predictive_back">予測型バックジェスチャー</string>
     <string name="settings_enable_predictive_back_summary">システムの予測型戻るジェスチャーを有効にします。</string>
 
@@ -163,6 +166,6 @@
     <string name="usb_refresh_list">リストを更新</string>
     <string name="tools_flash">刷写</string>
     <string name="tools_flash_desc">fastboot / EDL / MTK / OTA payload 経由でデバイスに書き込み。</string>
-    <string name="settings_root_mode">Root モード（su 実行）</string>
-    <string name="settings_root_mode_summary">オフ：USB Host ネイティブブリッジ経由で root 不要；オン：su で直接ツールを実行。</string>
+    <string name="settings_root_mode">Root モード</string>
+    <string name="settings_root_mode_summary">ツールを直接実行</string>
 </resources>

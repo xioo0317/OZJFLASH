@@ -20,6 +20,8 @@ interface SettingsRepository {
     var colorStyle: String
     var colorSpec: String
     var enableBlur: Boolean
+    /** 模糊风格：gaussian = 高斯模糊（默认）；gradient = 渐变模糊 */
+    var blurStyle: String
     var enableFloatingBottomBar: Boolean
     var enableFloatingBottomBarBlur: Boolean
     var enableNavigationBadge: Boolean
@@ -70,6 +72,10 @@ class SettingsRepositoryImpl : SettingsRepository {
     override var enableBlur: Boolean
         get() = prefs.getBoolean("enable_blur", false)
         set(value) = prefs.edit { putBoolean("enable_blur", value) }
+
+    override var blurStyle: String
+        get() = prefs.getString("blur_style", "gaussian") ?: "gaussian"
+        set(value) = prefs.edit { putString("blur_style", value) }
 
     override var enableFloatingBottomBar: Boolean
         get() = prefs.getBoolean("enable_floating_bottom_bar", true)

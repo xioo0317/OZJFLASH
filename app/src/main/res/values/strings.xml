@@ -69,7 +69,7 @@
     <string name="settings_miuix_monet">Miuix dynamic color</string>
     <string name="settings_miuix_monet_summary">Let Miuix follow the system wallpaper palette</string>
     <string name="settings_color">Accent color</string>
-    <string name="settings_color_dynamic">System</string>
+    <string name="settings_color_dynamic">Default</string>
     <string name="settings_color_green">Green</string>
     <string name="settings_color_blue">Blue</string>
     <string name="settings_color_purple">Purple</string>
@@ -78,8 +78,11 @@
     <string name="settings_color_custom">Custom</string>
     <string name="settings_page_scale">Page scale</string>
     <string name="settings_others">Other</string>
-    <string name="settings_enable_blur">Blur background</string>
-    <string name="settings_enable_blur_summary">Render effect based blur behind bars and dialogs</string>
+    <string name="settings_enable_blur">Blur</string>
+    <string name="settings_enable_blur_summary">Blur the top and bottom bars</string>
+    <string name="settings_blur_effect">Effect</string>
+    <string name="settings_blur_effect_gaussian">Gaussian blur</string>
+    <string name="settings_blur_effect_gradient">Gradient blur</string>
     <string name="settings_enable_floating_bottom_bar">Floating bottom bar</string>
     <string name="settings_enable_floating_bottom_bar_summary">Replace the dock with a floating pill bar</string>
     <string name="settings_enable_floating_bottom_bar_blur">Blur floating bar</string>
@@ -127,7 +130,7 @@
     <string name="language_es">Español</string>
 
     <!-- 日志 / 诊断 -->
-    <string name="settings_log">Log</string>
+    <string name="settings_log">Send logs</string>
     <string name="settings_log_summary">View and export app logs (crash.log, etc.)</string>
     <string name="log_empty">No logs</string>
     <string name="log_copy">Copy</string>
@@ -156,8 +159,8 @@
     <string name="settings_navigation_badge">Navigation badge</string>
     <string name="settings_navigation_badge_summary">Show a badge on the bottom bar when tools are missing</string>
     <string name="settings_page_scale_summary">Scale the whole interface (80% - 110%)</string>
-    <string name="settings_pager_swipe">Swipe to switch pages</string>
-    <string name="settings_pager_swipe_summary">Allow horizontal swiping between pages; turn off to switch via the dock only</string>
+    <string name="settings_pager_swipe">Swipe to switch</string>
+    <string name="settings_pager_swipe_summary">Swipe left/right to switch pages</string>
     <string name="settings_enable_predictive_back">Predictive back gesture</string>
     <string name="settings_enable_predictive_back_summary">Enable predictive back gesture support.</string>
 
@@ -178,6 +181,6 @@
     <string name="usb_refresh_list">Refresh list</string>
     <string name="tools_flash">Flash</string>
     <string name="tools_flash_desc">Flash fastboot / EDL / MTK / OTA payload to the device.</string>
-    <string name="settings_root_mode">Root mode (su execution)</string>
-    <string name="settings_root_mode_summary">Off: flash via USB Host native bridge (no root). On: run tools directly with su.</string>
+    <string name="settings_root_mode">Root mode</string>
+    <string name="settings_root_mode_summary">Run tools directly with su</string>
 </resources>

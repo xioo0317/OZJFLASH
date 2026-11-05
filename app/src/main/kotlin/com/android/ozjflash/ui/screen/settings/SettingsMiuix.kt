@@ -27,9 +27,6 @@ import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.Terminal
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -84,7 +81,6 @@ fun SettingsMiuix(
     val blurActive = backdrop != null
     val barColor = if (blurActive) Color.Transparent else colorScheme.surface
     val context = LocalContext.current
-    var showCrashLog by remember { mutableStateOf(false) }
     val rootMode by FlashBridge.rootMode.collectAsStateWithLifecycle()
 
     Scaffold(
@@ -186,6 +182,7 @@ fun SettingsMiuix(
                         }
 
                         // 刷写执行模式：false=免 root 走 USB 原生桥；true=Root 直接 su 执行工具
+                        // 终端入口并入同一张卡片
                         Card(modifier = Modifier.fillMaxWidth()) {
                             SwitchPreference(
                                 title = stringResource(R.string.settings_root_mode),
@@ -201,10 +198,6 @@ fun SettingsMiuix(
                                     )
                                 },
                             )
-                        }
-
-                        // 诊断 / 其它
-                        Card(modifier = Modifier.fillMaxWidth()) {
                             ArrowPreference(
                                 title = stringResource(R.string.terminal),
                                 summary = stringResource(R.string.terminal_open_summary),
@@ -218,9 +211,12 @@ fun SettingsMiuix(
                                 },
                                 onClick = actions::openTerminal,
                             )
+                        }
+
+                        // 诊断 / 其它
+                        Card(modifier = Modifier.fillMaxWidth()) {
                             ArrowPreference(
                                 title = stringResource(R.string.settings_log),
-                                summary = stringResource(R.string.settings_log_summary),
                                 startAction = {
                                     Icon(
                                         Icons.Rounded.BugReport,
@@ -229,7 +225,7 @@ fun SettingsMiuix(
                                         tint = colorScheme.onBackground,
                                     )
                                 },
-                                onClick = { showCrashLog = true },
+                                onClick = { shareLogsZip(context) },
                             )
                             ArrowPreference(
                                 title = stringResource(R.string.about),
@@ -250,9 +246,5 @@ fun SettingsMiuix(
                 }
             }
         }
-    }
-
-    if (showCrashLog) {
-        CrashLogDialog(onDismiss = { showCrashLog = false })
     }
 }

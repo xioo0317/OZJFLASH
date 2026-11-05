@@ -49,7 +49,7 @@ import androidx.compose.material.icons.filled.Brightness3
 import androidx.compose.material.icons.filled.Brightness4
 import androidx.compose.material.icons.filled.Brightness7
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Colorize
 import androidx.compose.material.icons.rounded.DesignServices
@@ -289,7 +289,7 @@ fun ColorPaletteScreenMaterial(
                         {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                                 SegmentedSwitchItem(
-                                    icon = Icons.Filled.ArrowBack,
+                                    icon = Icons.AutoMirrored.Filled.ArrowBack,
                                     title = stringResource(R.string.settings_enable_predictive_back),
                                     summary = stringResource(R.string.settings_enable_predictive_back_summary),
                                     checked = uiState.enablePredictiveBack,
@@ -384,7 +384,7 @@ private fun ThemePreviewCardMaterial(
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
         Surface(
             modifier = Modifier
-                .fillMaxWidth(0.4f)
+                .fillMaxWidth(0.62f)
                 .aspectRatio(screenRatio),
             color = previewScheme.surfaceContainer,
             shape = RoundedCornerShape(20.dp),

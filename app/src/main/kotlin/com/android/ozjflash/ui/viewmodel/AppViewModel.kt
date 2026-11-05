@@ -25,6 +25,7 @@ data class AppUiState(
     /** Miuix 主体下是否按系统壁纸生成配色（Material 主体恒由 Material You 决定） */
     val miuixMonet: Boolean = false,
     val enableBlur: Boolean = false,
+    val blurStyle: String = "gaussian",
     val enableFloatingBottomBar: Boolean = false,
     val enableFloatingBottomBarBlur: Boolean = false,
     val enableNavigationBadge: Boolean = true,
@@ -49,6 +50,7 @@ class AppViewModel(
             uiMode = UiMode.fromValue(repo.uiMode),
             miuixMonet = repo.miuixMonet,
             enableBlur = repo.enableBlur,
+            blurStyle = repo.blurStyle,
             enableFloatingBottomBar = repo.enableFloatingBottomBar,
             enableFloatingBottomBarBlur = repo.enableFloatingBottomBarBlur,
             enableNavigationBadge = repo.enableNavigationBadge,
@@ -104,6 +106,11 @@ class AppViewModel(
     fun setBlur(enabled: Boolean) {
         repo.enableBlur = enabled
         _uiState.value = _uiState.value.copy(enableBlur = enabled)
+    }
+
+    fun setBlurStyle(style: String) {
+        repo.blurStyle = style
+        _uiState.value = _uiState.value.copy(blurStyle = style)
     }
 
     fun setFloatingBottomBar(enabled: Boolean) {

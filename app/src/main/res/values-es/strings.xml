@@ -61,7 +61,7 @@
     <string name="settings_miuix_monet">Color dinámico de Miuix</string>
     <string name="settings_miuix_monet_summary">Hacer que Miuix siga la paleta del fondo del sistema</string>
     <string name="settings_color">Color de acento</string>
-    <string name="settings_color_dynamic">Sistema</string>
+    <string name="settings_color_dynamic">Predeterminado</string>
     <string name="settings_color_green">Verde</string>
     <string name="settings_color_blue">Azul</string>
     <string name="settings_color_purple">Púrpura</string>
@@ -70,8 +70,11 @@
     <string name="settings_color_custom">Personalizado</string>
     <string name="settings_page_scale">Escala de página</string>
     <string name="settings_others">Otros</string>
-    <string name="settings_enable_blur">Desenfoque de fondo</string>
-    <string name="settings_enable_blur_summary">Habilitar desenfoque basado en efecto de render detrás de barras y diálogos</string>
+    <string name="settings_enable_blur">Desenfoque</string>
+    <string name="settings_enable_blur_summary">Desenfoca las barras superior e inferior</string>
+    <string name="settings_blur_effect">Efecto</string>
+    <string name="settings_blur_effect_gaussian">Desenfoque gaussiano</string>
+    <string name="settings_blur_effect_gradient">Desenfoque degradado</string>
     <string name="settings_enable_floating_bottom_bar">Barra inferior flotante</string>
     <string name="settings_enable_floating_bottom_bar_summary">Reemplazar la barra acoplada por una píldora flotante</string>
     <string name="settings_enable_floating_bottom_bar_blur">Desenfoque de la barra flotante</string>
@@ -117,7 +120,7 @@
     <string name="language_es">Español</string>
 
     <!-- Registro / diagnóstico -->
-    <string name="settings_log">Registro</string>
+    <string name="settings_log">Enviar registros</string>
     <string name="settings_log_summary">Ver y exportar los registros de la app (crash.log, etc.)</string>
     <string name="log_empty">No hay registros</string>
     <string name="log_copy">Copiar</string>
@@ -146,8 +149,8 @@
     <string name="settings_navigation_badge">Insignia de navegación</string>
     <string name="settings_navigation_badge_summary">Muestra una insignia cuando faltan herramientas</string>
     <string name="settings_page_scale_summary">Escala de toda la interfaz (80% - 110%)</string>
-    <string name="settings_pager_swipe">Deslizar para cambiar de página</string>
-    <string name="settings_pager_swipe_summary">Permite deslizar horizontalmente entre páginas; desactívalo para cambiar solo desde la barra inferior</string>
+    <string name="settings_pager_swipe">Deslizar para cambiar</string>
+    <string name="settings_pager_swipe_summary">Desliza horizontalmente para cambiar de página</string>
     <string name="settings_enable_predictive_back">Gesto de retroceso predictivo</string>
     <string name="settings_enable_predictive_back_summary">Activa la vista previa del gesto de retroceso predictivo del sistema.</string>
 
@@ -163,6 +166,6 @@
     <string name="usb_refresh_list">Actualizar lista</string>
     <string name="tools_flash">Flash</string>
     <string name="tools_flash_desc">Flashea fastboot / EDL / MTK / OTA payload al dispositivo.</string>
-    <string name="settings_root_mode">Modo Root (ejecución su)</string>
-    <string name="settings_root_mode_summary">Desactivado: flashea vía puente nativo USB Host (sin root). Activado: ejecuta las herramientas directamente con su.</string>
+    <string name="settings_root_mode">Modo Root</string>
+    <string name="settings_root_mode_summary">Ejecuta las herramientas directamente</string>
 </resources>

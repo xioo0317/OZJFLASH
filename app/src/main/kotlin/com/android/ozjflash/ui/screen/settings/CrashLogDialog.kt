@@ -130,6 +130,23 @@ private fun copyToClipboard(context: Context, text: String) {
     Toast.makeText(context, R.string.log_copied, Toast.LENGTH_SHORT).show()
 }
 
+/** 把应用日志打包成 zip 并直接调起系统分享选择器（不再先弹查看对话框） */
+fun shareLogsZip(context: Context) {
+    val scope = kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO)
+    scope.launch {
+        val zip = LogPackager.packageLogs(context)
+        if (zip == null) {
+            kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                Toast.makeText(context, R.string.log_empty, Toast.LENGTH_SHORT).show()
+            }
+            return@launch
+        }
+        kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+            shareZip(context, zip)
+        }
+    }
+}
+
 private fun shareZip(context: Context, zip: java.io.File) {
     runCatching {
         val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", zip)

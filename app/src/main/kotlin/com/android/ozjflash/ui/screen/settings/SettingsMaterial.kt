@@ -27,9 +27,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -64,7 +61,6 @@ fun SettingsMaterial(
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val context = LocalContext.current
-    var showCrashLog by remember { mutableStateOf(false) }
     val rootMode by FlashBridge.rootMode.collectAsStateWithLifecycle()
 
     ExpressiveScaffold(
@@ -154,12 +150,6 @@ fun SettingsMaterial(
                             onCheckedChange = { actions.setRootMode(it) },
                         )
                     },
-                ),
-            )
-
-            SegmentedColumn(
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 13.dp),
-                content = listOf(
                     {
                         SegmentedListItem(
                             onClick = actions::openTerminal,
@@ -171,11 +161,16 @@ fun SettingsMaterial(
                             trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null) },
                         )
                     },
+                ),
+            )
+
+            SegmentedColumn(
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 13.dp),
+                content = listOf(
                     {
                         SegmentedListItem(
-                            onClick = { showCrashLog = true },
+                            onClick = { shareLogsZip(context) },
                             headlineContent = { Text(stringResource(R.string.settings_log)) },
-                            supportingContent = { Text(stringResource(R.string.settings_log_summary)) },
                             leadingContent = {
                                 Icon(Icons.Filled.BugReport, stringResource(R.string.settings_log))
                             },
@@ -194,9 +189,5 @@ fun SettingsMaterial(
             Spacer(modifier = Modifier.height(8.dp))
             Spacer(modifier = Modifier.height(bottomInnerPadding))
         }
-    }
-
-    if (showCrashLog) {
-        CrashLogDialog(onDismiss = { showCrashLog = false })
     }
 }

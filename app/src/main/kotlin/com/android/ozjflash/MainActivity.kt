@@ -75,6 +75,7 @@ import com.android.ozjflash.ui.screen.feature.FeaturePager
 import com.android.ozjflash.ui.screen.terminal.TerminalRouteScreen
 import com.android.ozjflash.ui.theme.LocalColorMode
 import com.android.ozjflash.ui.theme.LocalEnableBlur
+import com.android.ozjflash.ui.theme.LocalBlurStyle
 import com.android.ozjflash.ui.theme.LocalEnableFloatingBottomBar
 import com.android.ozjflash.ui.theme.LocalEnableFloatingBottomBarBlur
 import com.android.ozjflash.ui.theme.LocalEnableNavigationBadge
@@ -164,6 +165,7 @@ class MainActivity : ComponentActivity() {
                 LocalDensity provides density,
                 LocalColorMode provides appSettings.colorMode.value,
                 LocalEnableBlur provides uiState.enableBlur,
+                LocalBlurStyle provides uiState.blurStyle,
                 LocalEnableFloatingBottomBar provides uiState.enableFloatingBottomBar,
                 LocalEnableFloatingBottomBarBlur provides uiState.enableFloatingBottomBarBlur,
                 LocalEnableNavigationBadge provides uiState.enableNavigationBadge,

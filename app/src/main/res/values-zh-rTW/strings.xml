@@ -61,7 +61,7 @@
     <string name="settings_miuix_monet">Miuix 動態取色</string>
     <string name="settings_miuix_monet_summary">讓 Miuix 主題跟隨系統桌布生成配色</string>
     <string name="settings_color">主題色</string>
-    <string name="settings_color_dynamic">系統</string>
+    <string name="settings_color_dynamic">預設</string>
     <string name="settings_color_green">綠</string>
     <string name="settings_color_blue">藍</string>
     <string name="settings_color_purple">紫</string>
@@ -70,8 +70,11 @@
     <string name="settings_color_custom">自訂</string>
     <string name="settings_page_scale">介面縮放</string>
     <string name="settings_others">其它</string>
-    <string name="settings_enable_blur">背景模糊</string>
-    <string name="settings_enable_blur_summary">為頂欄、底欄與彈窗啟用渲染模糊</string>
+    <string name="settings_enable_blur">模糊</string>
+    <string name="settings_enable_blur_summary">啟用頂欄與底欄的模糊效果</string>
+    <string name="settings_blur_effect">效果</string>
+    <string name="settings_blur_effect_gaussian">高斯模糊</string>
+    <string name="settings_blur_effect_gradient">漸變模糊</string>
     <string name="settings_enable_floating_bottom_bar">懸浮底欄</string>
     <string name="settings_enable_floating_bottom_bar_summary">用懸浮膠囊條替代貼底導覽列</string>
     <string name="settings_enable_floating_bottom_bar_blur">懸浮底欄模糊</string>
@@ -117,7 +120,7 @@
     <string name="language_es">Español</string>
 
     <!-- 日誌 / 診斷 -->
-    <string name="settings_log">日誌</string>
+    <string name="settings_log">傳送日誌</string>
     <string name="settings_log_summary">查看並匯出應用日誌（crash.log 等）</string>
     <string name="log_empty">暫無日誌</string>
     <string name="log_copy">複製</string>
@@ -146,8 +149,8 @@
     <string name="settings_navigation_badge">導航欄角標</string>
     <string name="settings_navigation_badge_summary">工具缺失時在底欄顯示角標</string>
     <string name="settings_page_scale_summary">整體介面縮放（80% - 110%）</string>
-    <string name="settings_pager_swipe">允許左右滑動切換頁面</string>
-    <string name="settings_pager_swipe_summary">關閉後只能用底部列切換頁面，避免與終端等橫向手勢衝突</string>
+    <string name="settings_pager_swipe">橫滑切頁</string>
+    <string name="settings_pager_swipe_summary">開啟後可左右滑動切換頁面</string>
     <string name="settings_enable_predictive_back">預測性返回手勢</string>
     <string name="settings_enable_predictive_back_summary">開啟系統預測性返回手勢預覽。</string>
 
@@ -163,6 +166,6 @@
     <string name="usb_refresh_list">重新整理清單</string>
     <string name="tools_flash">刷寫</string>
     <string name="tools_flash_desc">透過 fastboot / EDL / MTK / OTA payload 向裝置刷寫。</string>
-    <string name="settings_root_mode">Root 模式（su 執行）</string>
-    <string name="settings_root_mode_summary">關閉：經 USB Host 原生橋免 root 刷寫；開啟：直接用 su 執行工具。</string>
+    <string name="settings_root_mode">Root 模式</string>
+    <string name="settings_root_mode_summary">直接執行工具</string>
 </resources>
