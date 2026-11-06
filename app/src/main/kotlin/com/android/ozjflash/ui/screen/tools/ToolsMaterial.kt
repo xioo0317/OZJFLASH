@@ -117,7 +117,6 @@ private fun ToolCardMaterial(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 6.dp)
             .clickable { navigator.push(route) },
         shape = MaterialTheme.shapes.large,
         color = colorScheme.surfaceContainerHigh,
@@ -125,13 +124,13 @@ private fun ToolCardMaterial(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(14.dp),
+                .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             Box(
                 modifier = Modifier
-                    .size(44.dp)
+                    .size(32.dp)
                     .clip(CircleShape)
                     .background(colorScheme.primaryContainer),
                 contentAlignment = Alignment.Center,
@@ -140,7 +139,7 @@ private fun ToolCardMaterial(
                     imageVector = icon,
                     contentDescription = null,
                     tint = colorScheme.onPrimaryContainer,
-                    modifier = Modifier.size(24.dp),
+                    modifier = Modifier.size(20.dp),
                 )
             }
             Column(modifier = Modifier.weight(1f)) {
@@ -158,6 +157,7 @@ private fun ToolCardMaterial(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null,
                 tint = colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(20.dp),
             )
         }
     }

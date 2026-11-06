@@ -1,5 +1,7 @@
 package com.android.ozjflash.ui.component.usb
 
+import android.content.Context
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -10,13 +12,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowDropUp
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface as M3Surface
 import androidx.compose.material3.Text as M3Text
@@ -51,7 +49,6 @@ import com.android.ozjflash.ui.theme.LocalUsbPillBlur
 import top.yukonga.miuix.kmp.basic.DropdownDefaults
 import top.yukonga.miuix.kmp.basic.DropdownEntry
 import top.yukonga.miuix.kmp.basic.DropdownItem
-import top.yukonga.miuix.kmp.basic.Icon as MiuixIcon
 import top.yukonga.miuix.kmp.basic.Surface as MiuixSurface
 import top.yukonga.miuix.kmp.basic.Text as MiuixText
 import top.yukonga.miuix.kmp.popup.OverlayDropdownPopup
@@ -61,15 +58,12 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  * 顶栏 USB 状态胶囊。
  *
  * - **风格对应组件**：MIUI 主体用 Miuix [MiuixSurface]，M3 主体用 Material3 [M3Surface]，
- *   点击反馈由各自组件自带；文字 / 图标也分别用 MiuixText + MiuixIcon 与 M3Text + Icon。
+ *   点击反馈由各自组件自带；文字也分别用 MiuixText 与 M3Text。
  * - **主题取色**：容器与文字颜色全部取自当前 colorScheme（浅色=白、深色/纯黑=黑、
- *   动态取色时自动带主题色），不再硬编码灰底黑字。胶囊文案统一为「已连接设备」，
- *   避免在可折叠顶栏收起时挤占小标题；设备详情点击胶囊在下拉里查看。
- * - **液态玻璃**：主题设置「胶囊模糊」开启后，用「半透明渐变玻璃底 + 白色高光环 +
- *   柔和投影」直接手绘。刻意不走 backdrop / blur / lens —— 胶囊背后是顶栏纯色，
- *   而 backdrop 层尺寸恰好等于胶囊，lens 折射会采样到层外的透明像素（黑），
- *   再被 blur 扩散，整块玻璃就会糊成中灰（v1.13.17 截图里的灰胶囊即此故）。
- *   手绘不依赖 RuntimeShader，低版本同样生效，颜色跟随白 / 黑 / 动态取色。
+ *   动态取色时自动带主题色）。胶囊文案统一为「已连接设备」，设备详情点击下拉里的
+ *   设备条目查看。胶囊右端不再画展开小三角，尺寸更省。
+ * - **液态玻璃（仅 Miuix）**：主题设置「胶囊模糊」开启后，用「半透明渐变玻璃底 +
+ *   白色高光环 + 柔和投影」手绘。M3 主体按需求取消液态玻璃实现，回退为普通纯色胶囊。
  *
  * [dark] 为终端页纯黑背景的专属配色开关（避免黑底上出现一块亮色胶囊）。
  */
@@ -119,7 +113,6 @@ fun UsbStatusPill(dark: Boolean = false, modifier: Modifier = Modifier) {
     val darkGlass = dark || isDarkSurface
 
     // 玻璃底：上缘亮、中部略暗、下缘回亮的半透明渐变，模拟球面玻璃受光。
-    // 浅色主题 => 明显比页面背景更白的凸起玻璃；深色 / 纯黑 => 深色玻璃带一层淡白。
     val glassFill = if (darkGlass) {
         Brush.verticalGradient(
             listOf(
@@ -137,7 +130,7 @@ fun UsbStatusPill(dark: Boolean = false, modifier: Modifier = Modifier) {
             )
         )
     }
-    // 白色高光环：上缘最亮、下缘淡、底缘回亮，勾出图二那种玻璃圆圈的轮廓
+    // 白色高光环：上缘最亮、下缘淡、底缘回亮
     val rimBrush = Brush.verticalGradient(
         listOf(
             Color.White.copy(alpha = 0.95f),
@@ -148,9 +141,9 @@ fun UsbStatusPill(dark: Boolean = false, modifier: Modifier = Modifier) {
 
     val pillShape = RoundedCornerShape(50)
     // 与主题设置页里「USB 胶囊模糊」选项的显隐条件严格一致：模糊开启 + 效果=渐变。
-    // 手绘玻璃不依赖 RuntimeShader，因此不再限制 API >= 33。
+    // M3 主体按需求取消液态玻璃实现，只保留 Miuix 主体的手绘玻璃。
     val blurActive = LocalEnableBlur.current && LocalBlurStyle.current == "gradient"
-    val glassEnabled = pillBlurEnabled && blurActive
+    val glassEnabled = pillBlurEnabled && blurActive && uiMode == UiMode.Miuix
 
     val openInfo: (UsbDeviceInfo) -> Unit = {
         expanded = false
@@ -158,9 +151,7 @@ fun UsbStatusPill(dark: Boolean = false, modifier: Modifier = Modifier) {
     }
 
     Box(modifier = modifier) {
-        // 图二玻璃圆圈三要素全部手绘：柔和投影 + 半透明渐变玻璃底 + 白色高光环。
-        // Surface 本身设 Transparent，避免把玻璃层盖成实心色；内容只绘制一次。
-        // 不再有 backdrop 采样层，也就不会有折射越界 / 波纹 / 重影 / 整体发灰。
+        // Miuix 玻璃三要素手绘；M3 / 未开启时为普通纯色 Surface。
         val surfaceModifier = if (glassEnabled) {
             Modifier
                 .dropShadow(
@@ -227,6 +218,20 @@ fun UsbStatusPill(dark: Boolean = false, modifier: Modifier = Modifier) {
     }
 }
 
+/** 设备类型的本地化名称：adb 设备 / Fast boot 设备 / EDL 设备 / MTK 设备 / USB 设备 */
+@StringRes
+internal fun usbModeLabelRes(mode: UsbMode): Int = when (mode) {
+    UsbMode.ADB -> R.string.usb_mode_adb
+    UsbMode.FASTBOOT -> R.string.usb_mode_fastboot
+    UsbMode.EDL, UsbMode.DLOAD -> R.string.usb_mode_edl
+    UsbMode.MTK_BROM -> R.string.usb_mode_mtk
+    else -> R.string.usb_mode_usb
+}
+
+/** 下拉里一条设备项的文案：本地化设备类型名，如「adb 设备」「Fast boot 设备」 */
+private fun deviceItemText(context: Context, info: UsbDeviceInfo): String =
+    context.getString(usbModeLabelRes(info.mode))
+
 @Composable
 private fun PillContentMiuix(text: String, dotColor: Color, contentColor: Color) {
     Row(
@@ -241,12 +246,6 @@ private fun PillContentMiuix(text: String, dotColor: Color, contentColor: Color)
                 .background(dotColor),
         )
         MiuixText(text, color = contentColor, fontSize = 13.sp, maxLines = 1)
-        MiuixIcon(
-            imageVector = Icons.Rounded.ArrowDropUp,
-            contentDescription = null,
-            tint = contentColor,
-            modifier = Modifier.size(18.dp),
-        )
     }
 }
 
@@ -264,31 +263,12 @@ private fun PillContentMaterial(text: String, dotColor: Color, contentColor: Col
                 .background(dotColor),
         )
         M3Text(text, color = contentColor, fontSize = 13.sp, maxLines = 1)
-        Icon(
-            Icons.Rounded.ArrowDropUp,
-            contentDescription = null,
-            tint = contentColor,
-            modifier = Modifier.size(18.dp),
-        )
     }
 }
 
-/** 按连接模式给出用于下拉项的短类型名 */
-private fun modeShortType(mode: UsbMode): String = when (mode) {
-    UsbMode.ADB -> "ADB"
-    UsbMode.FASTBOOT -> "Fastboot"
-    UsbMode.EDL, UsbMode.DLOAD -> "EDL"
-    UsbMode.MTK_BROM -> "MTK"
-    else -> "USB" // QUALCOMM / XIAOMI / OPPO / ONEPLUS / ANDROID_BRAND / NONE
-}
-
-/** 下拉里一条设备项的文案：类型 + 小写 VID:PID，如「ADB 22d9:2769」 */
-private fun deviceItemText(info: UsbDeviceInfo): String =
-    "${modeShortType(info.mode)} ${info.vidPid.lowercase()}"
-
 /**
  * MIUI 风格下拉：直接用 Miuix 的 [OverlayDropdownPopup]（设置页下拉同款组件）。
- * 两组：设备（含「请求 USB 权限」动作）+ 「刷新列表」，与 MIUI 系统的分组下拉一致。
+ * 设备与「刷新列表」合并为同一分组，去掉设备中间的分组横线。
  */
 @Composable
 private fun MiuixDeviceDropdown(
@@ -299,18 +279,19 @@ private fun MiuixDeviceDropdown(
     onRequest: (UsbDeviceInfo) -> Unit,
     onRefresh: () -> Unit,
 ) {
+    val context = LocalContext.current
     val noDeviceText = stringResource(R.string.usb_menu_no_device)
     val requestText = stringResource(R.string.usb_request_access)
     val refreshText = stringResource(R.string.usb_refresh_list)
 
-    val deviceItems = buildList<DropdownItem> {
+    val entries = buildList<DropdownItem> {
         if (devices.isEmpty()) {
             add(DropdownItem(text = noDeviceText, enabled = false))
         } else {
             devices.forEach { info ->
                 add(
                     DropdownItem(
-                        text = deviceItemText(info),
+                        text = deviceItemText(context, info),
                         onClick = { onDeviceClick(info) },
                     )
                 )
@@ -319,14 +300,11 @@ private fun MiuixDeviceDropdown(
                 }
             }
         }
+        add(DropdownItem(text = refreshText, onClick = onRefresh))
     }
-    val refreshItems = listOf(DropdownItem(text = refreshText, onClick = onRefresh))
 
     OverlayDropdownPopup(
-        entries = listOf(
-            DropdownEntry(items = deviceItems),
-            DropdownEntry(items = refreshItems),
-        ),
+        entries = listOf(DropdownEntry(items = entries)),
         show = expanded,
         onDismiss = onDismiss,
         onDismissFinished = {},
@@ -337,7 +315,7 @@ private fun MiuixDeviceDropdown(
     )
 }
 
-/** Material3 风格下拉：沿用 M3 DropdownMenu / DropdownMenuItem */
+/** Material3 风格下拉：沿用 M3 DropdownMenu / DropdownMenuItem，设备中间不画横线 */
 @Composable
 private fun MaterialDeviceDropdown(
     expanded: Boolean,
@@ -347,6 +325,7 @@ private fun MaterialDeviceDropdown(
     onRequest: (UsbDeviceInfo) -> Unit,
     onRefresh: () -> Unit,
 ) {
+    val context = LocalContext.current
     DropdownMenu(
         expanded = expanded,
         onDismissRequest = onDismiss,
@@ -361,7 +340,7 @@ private fun MaterialDeviceDropdown(
         } else {
             devices.forEach { info ->
                 DropdownMenuItem(
-                    text = { M3Text(deviceItemText(info)) },
+                    text = { M3Text(deviceItemText(context, info)) },
                     trailingIcon = {
                         if (info.granted) {
                             M3Text(
@@ -379,7 +358,6 @@ private fun MaterialDeviceDropdown(
                 )
             }
         }
-        HorizontalDivider()
         DropdownMenuItem(
             text = { M3Text(stringResource(R.string.usb_refresh_list)) },
             onClick = {

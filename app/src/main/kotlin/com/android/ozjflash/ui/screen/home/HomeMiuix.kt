@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.ozjflash.R
+import com.android.ozjflash.ui.component.usb.UsbStatusPill
 import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.theme.isInDarkTheme
 import com.android.ozjflash.ui.util.BlurredBar
@@ -132,6 +133,7 @@ private fun TopBar(
         TopAppBar(
             color = barColor,
             title = stringResource(R.string.app_name),
+            actions = { UsbStatusPill() },
             scrollBehavior = scrollBehavior,
         )
     }

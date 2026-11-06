@@ -171,6 +171,11 @@
     <string name="tools_cmd_running">执行中…</string>
     <string name="tools_cmd_output">输出</string>
     <string name="tools_cmd_empty">暂无输出</string>
+    <string name="usb_mode_adb">adb设备</string>
+    <string name="usb_mode_fastboot">Fast boot设备</string>
+    <string name="usb_mode_edl">EDL设备</string>
+    <string name="usb_mode_mtk">MTK设备</string>
+    <string name="usb_mode_usb">USB设备</string>
     <string name="usb_status_none">未连接设备</string>
     <string name="usb_status_connected_device">已连接设备</string>
     <string name="usb_status_connected">已连接 %1$d 台设备</string>
@@ -201,7 +206,7 @@
 
     <!-- 功能页 / 解压 -->
     <string name="feature_7z">7z 解压</string>
-    <string name="feature_7z_desc">解压 7z/ZIP/RAR/TAR/ISO/DMG 等格式</string>
+    <string name="feature_7z_desc">解压 ZIP/TAR 等格式</string>
     <string name="feature_payload">payload.bin 解压</string>
     <string name="feature_payload_desc">解压 payload.bin 中的分区镜像</string>
     <string name="extract_hint">选择压缩包或 payload.bin，解压结果保存在应用外部文件目录中。</string>

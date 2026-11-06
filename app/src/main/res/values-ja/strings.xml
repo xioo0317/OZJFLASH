@@ -170,6 +170,11 @@
     <string name="tools_cmd_running">実行中…</string>
     <string name="tools_cmd_output">出力</string>
     <string name="tools_cmd_empty">出力はまだありません</string>
+    <string name="usb_mode_adb">adb デバイス</string>
+    <string name="usb_mode_fastboot">Fast boot デバイス</string>
+    <string name="usb_mode_edl">EDL デバイス</string>
+    <string name="usb_mode_mtk">MTK デバイス</string>
+    <string name="usb_mode_usb">USB デバイス</string>
     <string name="usb_status_none">デバイス未接続</string>
     <string name="usb_status_connected_device">デバイス接続済み</string>
     <string name="usb_status_connected">%1$d 台のデバイスが接続されています</string>
@@ -200,7 +205,7 @@
 
     <!-- 機能ページ / 展開 -->
     <string name="feature_7z">7z 展開</string>
-    <string name="feature_7z_desc">7z/ZIP/RAR/TAR/ISO/DMG などの書庫を展開</string>
+    <string name="feature_7z_desc">ZIP / TAR などの形式を展開</string>
     <string name="feature_payload">payload.bin 展開</string>
     <string name="feature_payload_desc">payload.bin からパーティションイメージを展開</string>
     <string name="extract_hint">書庫または payload.bin を選択してください。展開結果はアプリの外部ファイルディレクトリに保存されます。</string>

@@ -185,6 +185,11 @@
     <string name="tools_cmd_running">Running…</string>
     <string name="tools_cmd_output">Output</string>
     <string name="tools_cmd_empty">No output yet</string>
+    <string name="usb_mode_adb">adb device</string>
+    <string name="usb_mode_fastboot">Fast boot device</string>
+    <string name="usb_mode_edl">EDL device</string>
+    <string name="usb_mode_mtk">MTK device</string>
+    <string name="usb_mode_usb">USB device</string>
     <string name="usb_status_none">No device connected</string>
     <string name="usb_status_connected_device">Device connected</string>
     <string name="usb_status_connected">%1$d device(s) connected</string>
@@ -215,7 +220,7 @@
 
     <!-- 功能页 / 解压 -->
     <string name="feature_7z">7z extract</string>
-    <string name="feature_7z_desc">Extract 7z / ZIP / RAR / TAR / ISO / DMG archives</string>
+    <string name="feature_7z_desc">Extract ZIP / TAR and other formats</string>
     <string name="feature_payload">payload.bin extract</string>
     <string name="feature_payload_desc">Extract partition images from payload.bin</string>
     <string name="extract_hint">Pick an archive or payload.bin; extracted files are written to the external files directory of the app.</string>

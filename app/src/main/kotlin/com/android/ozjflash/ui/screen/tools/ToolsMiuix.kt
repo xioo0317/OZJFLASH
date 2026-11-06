@@ -147,19 +147,18 @@ private fun ToolCardMiuix(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 6.dp)
             .clickable { navigator.push(route) }
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(14.dp),
+                .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             Box(
                 modifier = Modifier
-                    .size(44.dp)
+                    .size(32.dp)
                     .clip(CircleShape)
                     .background(colorScheme.primary.copy(alpha = 0.12f)),
                 contentAlignment = Alignment.Center,
@@ -168,18 +167,18 @@ private fun ToolCardMiuix(
                     imageVector = icon,
                     contentDescription = null,
                     tint = colorScheme.primary,
-                    modifier = Modifier.size(24.dp),
+                    modifier = Modifier.size(20.dp),
                 )
             }
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = stringResource(titleRes),
-                    fontSize = 15.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
                 )
                 Text(
                     text = stringResource(descRes),
-                    fontSize = 12.sp,
+                    fontSize = 13.sp,
                     color = colorScheme.onSurfaceVariantSummary,
                 )
             }
@@ -187,6 +186,7 @@ private fun ToolCardMiuix(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null,
                 tint = colorScheme.onSurfaceVariantSummary,
+                modifier = Modifier.size(20.dp),
             )
         }
     }

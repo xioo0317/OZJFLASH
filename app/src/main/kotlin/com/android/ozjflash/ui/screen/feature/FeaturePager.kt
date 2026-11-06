@@ -5,7 +5,6 @@ import androidx.annotation.StringRes
 import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -42,6 +41,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -53,6 +53,7 @@ import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.component.material.ExpressiveScaffold
 import com.android.ozjflash.ui.component.material.expressiveTopAppBarColors
+import com.android.ozjflash.ui.component.usb.UsbStatusPill
 import com.android.ozjflash.ui.navigation3.LocalNavigator
 import com.android.ozjflash.ui.navigation3.Navigator
 import com.android.ozjflash.ui.navigation3.Route
@@ -70,11 +71,11 @@ import top.yukonga.miuix.kmp.blur.layerBackdrop
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /**
- * 底栏「功能」页：解压工具入口。
+ * 底栏「功能」页：解压工具入口 + 顶栏 USB 状态胶囊。
  *
- * 一张卡片内放两个选项（与参考图一致）：7z 解压 / payload.bin 解压，
- * 行间用细分隔线，左侧蓝色实心图标，右侧灰色箭头。分别按 Miuix / Material
- * 主体渲染成各自风格的卡片组件，点击后 push 到对应的解压执行页。
+ * 一张卡片内放两个选项：7z 解压 / payload.bin 解压，行间无分隔线，
+ * 左侧图标用主题 onSurface 着色（浅色黑、深色白的黑白配），右侧灰色箭头。
+ * 分别按 Miuix / Material 主体渲染成各自风格的卡片组件，点击后 push 到解压执行页。
  */
 @Composable
 fun FeaturePager(bottomInnerPadding: Dp, isCurrentPage: Boolean) {
@@ -103,6 +104,7 @@ private fun FeatureMiuix(bottomInnerPadding: Dp) {
                 TopAppBar(
                     color = barColor,
                     title = stringResource(R.string.feature),
+                    actions = { UsbStatusPill() },
                     scrollBehavior = scrollBehavior,
                 )
             }
@@ -143,6 +145,7 @@ private fun FeatureMaterial(bottomInnerPadding: Dp) {
                     WindowInsetsSides.Top + WindowInsetsSides.Horizontal
                 ),
                 scrollBehavior = scrollBehavior,
+                actions = { UsbStatusPill() },
             )
         },
         contentWindowInsets = WindowInsets.safeDrawing.only(
@@ -191,16 +194,7 @@ private val FEATURE_ITEMS = listOf(
 private fun FeatureCardMiuix(navigator: Navigator) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column {
-            FEATURE_ITEMS.forEachIndexed { index, item ->
-                if (index > 0) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                            .height(1.dp)
-                            .background(MiuixTheme.colorScheme.onSurface.copy(alpha = 0.10f)),
-                    )
-                }
+            FEATURE_ITEMS.forEach { item ->
                 FeatureRowMiuix(item) { navigator.push(item.route) }
             }
         }
@@ -220,6 +214,7 @@ private fun FeatureRowMiuix(item: FeatureItem, onClick: () -> Unit) {
         Image(
             painter = painterResource(item.iconRes),
             contentDescription = null,
+            colorFilter = ColorFilter.tint(MiuixTheme.colorScheme.onSurface),
             modifier = Modifier.size(32.dp),
         )
         Column(modifier = Modifier.weight(1f)) {
@@ -251,16 +246,7 @@ private fun FeatureCardMaterial(navigator: Navigator) {
         color = MaterialTheme.colorScheme.surfaceContainerHigh,
     ) {
         Column {
-            FEATURE_ITEMS.forEachIndexed { index, item ->
-                if (index > 0) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                            .height(1.dp)
-                            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.10f)),
-                    )
-                }
+            FEATURE_ITEMS.forEach { item ->
                 FeatureRowMaterial(item) { navigator.push(item.route) }
             }
         }
@@ -280,6 +266,7 @@ private fun FeatureRowMaterial(item: FeatureItem, onClick: () -> Unit) {
         Image(
             painter = painterResource(item.iconRes),
             contentDescription = null,
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
             modifier = Modifier.size(32.dp),
         )
         Column(modifier = Modifier.weight(1f)) {

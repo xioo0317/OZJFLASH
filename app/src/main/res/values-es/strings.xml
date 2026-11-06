@@ -170,6 +170,11 @@
     <string name="tools_cmd_running">Ejecutando…</string>
     <string name="tools_cmd_output">Salida</string>
     <string name="tools_cmd_empty">Aún sin salida</string>
+    <string name="usb_mode_adb">dispositivo adb</string>
+    <string name="usb_mode_fastboot">dispositivo Fast boot</string>
+    <string name="usb_mode_edl">dispositivo EDL</string>
+    <string name="usb_mode_mtk">dispositivo MTK</string>
+    <string name="usb_mode_usb">dispositivo USB</string>
     <string name="usb_status_none">Ningún dispositivo conectado</string>
     <string name="usb_status_connected_device">Dispositivo conectado</string>
     <string name="usb_status_connected">%1$d dispositivo(s) conectado(s)</string>
@@ -200,7 +205,7 @@
 
     <!-- Página de funciones / extracción -->
     <string name="feature_7z">Extraer 7z</string>
-    <string name="feature_7z_desc">Extraer archivos 7z / ZIP / RAR / TAR / ISO / DMG</string>
+    <string name="feature_7z_desc">Extraer ZIP / TAR y otros formatos</string>
     <string name="feature_payload">Extraer payload.bin</string>
     <string name="feature_payload_desc">Extraer imágenes de partición de payload.bin</string>
     <string name="extract_hint">Elige un archivo comprimido o payload.bin; el resultado se guarda en el directorio externo de la app.</string>

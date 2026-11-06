@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.android.ozjflash.R
 import com.android.ozjflash.ui.component.material.ExpressiveScaffold
+import com.android.ozjflash.ui.component.usb.UsbStatusPill
 import com.android.ozjflash.ui.component.material.SegmentedColumn
 import com.android.ozjflash.ui.component.material.SegmentedListItem
 import com.android.ozjflash.ui.component.material.expressiveTopAppBarColors
@@ -72,6 +73,7 @@ fun HomePagerMaterial(
                     WindowInsetsSides.Top + WindowInsetsSides.Horizontal
                 ),
                 scrollBehavior = scrollBehavior,
+                actions = { UsbStatusPill() },
             )
         },
         contentWindowInsets = WindowInsets.safeDrawing.only(

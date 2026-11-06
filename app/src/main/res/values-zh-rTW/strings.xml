@@ -170,6 +170,11 @@
     <string name="tools_cmd_running">執行中…</string>
     <string name="tools_cmd_output">輸出</string>
     <string name="tools_cmd_empty">尚無輸出</string>
+    <string name="usb_mode_adb">adb 裝置</string>
+    <string name="usb_mode_fastboot">Fast boot 裝置</string>
+    <string name="usb_mode_edl">EDL 裝置</string>
+    <string name="usb_mode_mtk">MTK 裝置</string>
+    <string name="usb_mode_usb">USB 裝置</string>
     <string name="usb_status_none">未連接裝置</string>
     <string name="usb_status_connected_device">已連接裝置</string>
     <string name="usb_status_connected">已連接 %1$d 台裝置</string>
@@ -200,7 +205,7 @@
 
     <!-- 功能頁 / 解壓 -->
     <string name="feature_7z">7z 解壓</string>
-    <string name="feature_7z_desc">解壓 7z/ZIP/RAR/TAR/ISO/DMG 等格式</string>
+    <string name="feature_7z_desc">解壓 ZIP/TAR 等格式</string>
     <string name="feature_payload">payload.bin 解壓</string>
     <string name="feature_payload_desc">解壓 payload.bin 中的分割區映像</string>
     <string name="extract_hint">選擇壓縮檔或 payload.bin，解壓結果儲存於應用程式外部檔案目錄。</string>

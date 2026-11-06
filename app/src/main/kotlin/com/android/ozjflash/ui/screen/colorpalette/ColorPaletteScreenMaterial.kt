@@ -50,7 +50,6 @@ import androidx.compose.material.icons.filled.Brightness4
 import androidx.compose.material.icons.filled.Brightness7
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.rounded.BlurOn
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Colorize
 import androidx.compose.material.icons.rounded.DesignServices
@@ -303,50 +302,6 @@ fun ColorPaletteScreenMaterial(
                         },
                     ),
                 )
-            }
-
-            // 模糊设置组（与 MIUI 主体对齐）：模糊总开关 → 效果(高斯/渐变) →
-            // 仅「效果 = 渐变模糊」时才弹出 USB 胶囊模糊子选项
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                item {
-                    SegmentedColumn(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                    ) {
-                        item {
-                            SegmentedSwitchItem(
-                                icon = Icons.Rounded.BlurOn,
-                                title = stringResource(R.string.settings_enable_blur),
-                                summary = stringResource(R.string.settings_enable_blur_summary),
-                                checked = uiState.enableBlur,
-                                onCheckedChange = actions::setBlur,
-                            )
-                        }
-                        item(visible = uiState.enableBlur) {
-                            val effectItems = listOf(
-                                stringResource(R.string.settings_blur_effect_gaussian),
-                                stringResource(R.string.settings_blur_effect_gradient),
-                            )
-                            SegmentedDropdownItem(
-                                icon = Icons.Rounded.Style,
-                                title = stringResource(R.string.settings_blur_effect),
-                                items = effectItems,
-                                selectedIndex = if (uiState.blurStyle == "gradient") 1 else 0,
-                                onItemSelected = { index ->
-                                    actions.setBlurStyle(if (index == 1) "gradient" else "gaussian")
-                                },
-                            )
-                        }
-                        item(visible = uiState.enableBlur && uiState.blurStyle == "gradient") {
-                            SegmentedSwitchItem(
-                                icon = Icons.Rounded.BlurOn,
-                                title = stringResource(R.string.settings_usb_pill_blur),
-                                summary = stringResource(R.string.settings_usb_pill_blur_summary),
-                                checked = uiState.usbPillBlur,
-                                onCheckedChange = actions::setUsbPillBlur,
-                            )
-                        }
-                    }
-                }
             }
 
             item {

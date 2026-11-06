@@ -85,7 +85,7 @@ private fun usbInfoRows(info: UsbDeviceInfo): List<UsbInfoRow> {
     val connectionState = if (info.granted) "device" else "unauthorized"
 
     return listOf(
-        UsbInfoRow(stringResource(R.string.usb_info_type), info.mode.label),
+        UsbInfoRow(stringResource(R.string.usb_info_type), stringResource(usbModeLabelRes(info.mode))),
         UsbInfoRow(stringResource(R.string.usb_info_vidpid), info.vidPid),
         UsbInfoRow(stringResource(R.string.usb_info_name), productName),
         UsbInfoRow(stringResource(R.string.usb_info_serial), serial),
