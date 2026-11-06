@@ -197,4 +197,20 @@
     <string name="usb_info_yes">はい</string>
     <string name="usb_info_no">いいえ</string>
     <string name="usb_info_close">閉じる</string>
+
+    <!-- 機能ページ / 展開 -->
+    <string name="feature_7z">7z 展開</string>
+    <string name="feature_7z_desc">7z/ZIP/RAR/TAR/ISO/DMG などの書庫を展開</string>
+    <string name="feature_payload">payload.bin 展開</string>
+    <string name="feature_payload_desc">payload.bin からパーティションイメージを展開</string>
+    <string name="extract_hint">書庫または payload.bin を選択してください。展開結果はアプリの外部ファイルディレクトリに保存されます。</string>
+    <string name="extract_pick_file">ファイルを選択</string>
+    <string name="extract_no_file">ファイル未選択</string>
+    <string name="extract_start">展開を開始</string>
+    <string name="extract_running">展開中…</string>
+    <string name="extract_output">出力</string>
+    <string name="extract_output_empty">出力はまだありません</string>
+    <string name="extract_output_dir">出力先：%1$s</string>
+    <string name="extract_preparing">ファイルを準備中…</string>
+    <string name="extract_missing_binary">内蔵ツールがありません：%1$s</string>
 </resources>

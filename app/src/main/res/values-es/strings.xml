@@ -197,4 +197,20 @@
     <string name="usb_info_yes">Sí</string>
     <string name="usb_info_no">No</string>
     <string name="usb_info_close">Cerrar</string>
+
+    <!-- Página de funciones / extracción -->
+    <string name="feature_7z">Extraer 7z</string>
+    <string name="feature_7z_desc">Extraer archivos 7z / ZIP / RAR / TAR / ISO / DMG</string>
+    <string name="feature_payload">Extraer payload.bin</string>
+    <string name="feature_payload_desc">Extraer imágenes de partición de payload.bin</string>
+    <string name="extract_hint">Elige un archivo comprimido o payload.bin; el resultado se guarda en el directorio externo de la app.</string>
+    <string name="extract_pick_file">Elegir archivo</string>
+    <string name="extract_no_file">Ningún archivo seleccionado</string>
+    <string name="extract_start">Extraer</string>
+    <string name="extract_running">Extrayendo…</string>
+    <string name="extract_output">Salida</string>
+    <string name="extract_output_empty">Sin salida todavía</string>
+    <string name="extract_output_dir">Directorio de salida: %1$s</string>
+    <string name="extract_preparing">Preparando archivo…</string>
+    <string name="extract_missing_binary">Falta la herramienta integrada: %1$s</string>
 </resources>

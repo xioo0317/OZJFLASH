@@ -197,4 +197,20 @@
     <string name="usb_info_yes">是</string>
     <string name="usb_info_no">否</string>
     <string name="usb_info_close">關閉</string>
+
+    <!-- 功能頁 / 解壓 -->
+    <string name="feature_7z">7z 解壓</string>
+    <string name="feature_7z_desc">解壓 7z/ZIP/RAR/TAR/ISO/DMG 等格式</string>
+    <string name="feature_payload">payload.bin 解壓</string>
+    <string name="feature_payload_desc">解壓 payload.bin 中的分割區映像</string>
+    <string name="extract_hint">選擇壓縮檔或 payload.bin，解壓結果儲存於應用程式外部檔案目錄。</string>
+    <string name="extract_pick_file">選擇檔案</string>
+    <string name="extract_no_file">未選擇檔案</string>
+    <string name="extract_start">開始解壓</string>
+    <string name="extract_running">解壓中…</string>
+    <string name="extract_output">輸出</string>
+    <string name="extract_output_empty">暫無輸出</string>
+    <string name="extract_output_dir">輸出目錄：%1$s</string>
+    <string name="extract_preparing">正在準備檔案…</string>
+    <string name="extract_missing_binary">內建工具不存在：%1$s</string>
 </resources>

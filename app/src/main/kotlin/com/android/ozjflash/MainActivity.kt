@@ -71,6 +71,8 @@ import com.android.ozjflash.ui.screen.tools.ToolKind
 import com.android.ozjflash.ui.screen.tools.ToolPageScreen
 import com.android.ozjflash.flash.FlashScreen
 import com.android.ozjflash.ui.screen.tools.rememberToolsState
+import com.android.ozjflash.ui.screen.feature.ExtractKind
+import com.android.ozjflash.ui.screen.feature.FeatureExtractScreen
 import com.android.ozjflash.ui.screen.feature.FeaturePager
 import com.android.ozjflash.ui.screen.terminal.TerminalRouteScreen
 import com.android.ozjflash.ui.theme.LocalColorMode
@@ -195,6 +197,8 @@ class MainActivity : ComponentActivity() {
                             entry<Route.Terminal> { TerminalRouteScreen(binPath, nativeDir) }
                             entry<Route.Fastboot> { ToolPageScreen(navigator, ToolKind.FASTBOOT) }
                             entry<Route.Adb> { ToolPageScreen(navigator, ToolKind.ADB) }
+                            entry<Route.Extract7z> { FeatureExtractScreen(navigator, ExtractKind.SEVEN_Z) }
+                            entry<Route.ExtractPayload> { FeatureExtractScreen(navigator, ExtractKind.PAYLOAD) }
                             entry<Route.Flash> { FlashScreen() }
                         }
                     }

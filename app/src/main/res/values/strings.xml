@@ -212,4 +212,20 @@
     <string name="usb_info_yes">Yes</string>
     <string name="usb_info_no">No</string>
     <string name="usb_info_close">Close</string>
+
+    <!-- 功能页 / 解压 -->
+    <string name="feature_7z">7z extract</string>
+    <string name="feature_7z_desc">Extract 7z / ZIP / RAR / TAR / ISO / DMG archives</string>
+    <string name="feature_payload">payload.bin extract</string>
+    <string name="feature_payload_desc">Extract partition images from payload.bin</string>
+    <string name="extract_hint">Pick an archive or payload.bin; extracted files are written to the external files directory of the app.</string>
+    <string name="extract_pick_file">Choose file</string>
+    <string name="extract_no_file">No file selected</string>
+    <string name="extract_start">Extract</string>
+    <string name="extract_running">Extracting…</string>
+    <string name="extract_output">Output</string>
+    <string name="extract_output_empty">No output yet</string>
+    <string name="extract_output_dir">Output dir: %1$s</string>
+    <string name="extract_preparing">Preparing file…</string>
+    <string name="extract_missing_binary">Bundled tool missing: %1$s</string>
 </resources>

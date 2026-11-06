@@ -20,7 +20,7 @@ import java.nio.file.Files
  *      （adb / fastboot ...）。execve 解析链接后按目标路径做权限检查，
  *      目标在 nativeLibraryDir，因此可以正常执行；
  *   3. PATH 同时纳入 filesDir/bin 与 nativeLibraryDir：万一某个 ROM 上
- *      符号链接被拒，仍可用 libozj_xxx.so 全名调用。
+ *      符号链接被拒，仍可用 libxxx.so 全名调用。
  *
  * 另外 prepare() 只建链接、不再复制几十 MB 资产，启动不再卡主线程；
  * probeExec() 做一次真实执行探测，结果写入 files/env.log，便于在设备上
@@ -39,11 +39,11 @@ object NativeLibs {
     )
 
     /**
-     * 无别名：adb 直接用 libozj_adb.so。
+     * 无别名：adb 直接用 libadb.so。
      *
-     * 原来的 libozj_tadb.so **不支持** MOMIUI_USB_SOCK，免 root 下无法接收
+     * 原来的 libtadb.so **不支持** MOMIUI_USB_SOCK，免 root 下无法接收
      * 已授权的 USB fd，命令行永远是 `< waiting for any device >`；
-     * 现改用 MOFLASH 的魔改版 adb（libozj_adb.so），与 fastboot 同一套 fd 直通机制。
+     * 现改用 MOFLASH 的魔改版 adb（libadb.so），与 fastboot 同一套 fd 直通机制。
      * tadb 仍保留在 TOOLS 中，供终端里普通使用。
      */
     private val ALIAS = emptyMap<String, String>()
@@ -62,8 +62,17 @@ object NativeLibs {
         "cmdgen", "secrets", "antumbra", "patch_sn", "opscrypto"
     )
 
-    /** 工具名 -> jniLibs 中的文件名 */
-    fun libName(tool: String): String = "libozj_${tool.replace('-', '_')}.so"
+    /**
+     * 工具名 -> jniLibs 中的文件名。
+     *
+     * 统一采用「命令名格式」：`lib<工具名>.so`，不再带 `ozj_` 厂商前缀
+     * （libmagiskboot.so / libfastboot.so / libpayload_dumper_go.so …）。
+     * 工具名本身已以 lib 开头时（如 libksud）不重复拼前缀，保持 libksud.so。
+     */
+    fun libName(tool: String): String {
+        val name = tool.replace('-', '_')
+        return if (name.startsWith("lib")) "$name.so" else "lib$name.so"
+    }
 
     /** 建立工具链接，返回 bin 目录绝对路径 */
     fun prepare(context: Context): String {
@@ -149,7 +158,7 @@ object NativeLibs {
         }
     }
 
-    /** PATH：filesDir/bin（干净工具名）→ nativeLibraryDir（libozj_*.so）→ 系统路径 */
+    /** PATH：filesDir/bin（干净工具名）→ nativeLibraryDir（lib*.so）→ 系统路径 */
     fun pathEnv(binPath: String, nativeDir: String? = null): String {
         val sys = System.getenv("PATH")
         val sysPath = if (sys.isNullOrEmpty())

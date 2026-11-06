@@ -58,4 +58,14 @@ sealed interface Route : NavKey, Parcelable {
     @Serializable
     @Parcelize
     data object Adb : Route
+
+    /** 功能页 → 7z 解压执行页 */
+    @Serializable
+    @Parcelize
+    data object Extract7z : Route
+
+    /** 功能页 → payload.bin 解压执行页 */
+    @Serializable
+    @Parcelize
+    data object ExtractPayload : Route
 }
