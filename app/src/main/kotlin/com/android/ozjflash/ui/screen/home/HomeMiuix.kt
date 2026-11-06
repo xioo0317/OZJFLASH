@@ -43,8 +43,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.ozjflash.R
-import com.android.ozjflash.ui.component.usb.UsbStatusPill
-import com.android.ozjflash.ui.component.usb.rememberUsbPillCollapseModifier
+import com.android.ozjflash.ui.component.usb.UsbPillCollapseActions
 import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.theme.isInDarkTheme
 import com.android.ozjflash.ui.util.BlurredBar
@@ -135,9 +134,9 @@ private fun TopBar(
             color = barColor,
             title = stringResource(R.string.app_name),
             actions = {
-                // 与功能页 / ADB 二级页共用同一套折叠联动：展开对齐大标题并随其渐出，
-                // 折叠落回小标题行并恢复显示。
-                UsbStatusPill(modifier = rememberUsbPillCollapseModifier(scrollBehavior))
+                // 与功能页 / ADB 二级页共用同一套折叠联动：按 Miuix 大小标题切换机制，
+                // 两个胶囊在各自固定位置交叉接管，展开随大标题渐出、折叠渐入归位。
+                UsbPillCollapseActions(scrollBehavior)
             },
             scrollBehavior = scrollBehavior,
         )

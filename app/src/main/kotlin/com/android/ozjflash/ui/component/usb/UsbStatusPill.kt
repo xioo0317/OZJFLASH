@@ -21,6 +21,7 @@ import androidx.compose.material3.Text as M3Text
 import androidx.compose.material3.TextButton as M3TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,7 +42,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.ozjflash.R
-import kotlin.math.abs
 import kotlin.math.roundToInt
 import com.android.ozjflash.flash.UsbDeviceInfo
 import com.android.ozjflash.flash.UsbHost
@@ -255,48 +255,81 @@ private fun modeShortType(mode: UsbMode): String = when (mode) {
 }
 
 /**
- * USB 胶囊跟随 Miuix 可折叠顶栏的通用修饰（主页 / 功能页 / ADB 二级页共用）。
+ * 顶栏 USB 胶囊 + 可选「?」说明书圆钮，完全对齐 Miuix TopAppBar 的大小标题切换。
  *
- * - **位置**：展开态下移到大标题文字中心（与大标题同行，即截图红圈处），
- *   折叠态回到 actions 原位（与折叠小标题同行）；按 collapsedFraction 线性过渡。
- * - **透明度**：滑动中随大标题一起渐出（最低 0.3，不再一直实心不透明），
- *   完全折叠后随小标题恢复为不透明，保证收回小标题时胶囊始终可见。
+ * Miuix 0.9.4 的真实机制（TopAppBar.kt）：
+ * - 大标题 `alpha = 1 - (collapsedFraction * 3).coerceIn(0,1)`，折叠前 1/3 就淡完，
+ *   并 `translationY = heightOffset` 随内容一起上移；
+ * - 小标题在 `collapsedFraction * 3 >= 1` 之后才 spring 淡入（alpha 0→1、translationY 20→0）。
+ * 即 Miuix 是**两个实例在各自固定位置交叉接管**，而不是一个实例来回移动。
  *
- * 位移用 [offset] 而非 graphicsLayer，让下拉菜单锚点跟着胶囊一起移动；
- * alpha 用 graphicsLayer 在 draw 阶段订阅折叠状态，滚动时只重绘不重组。
- * heightOffsetLimit 由 Miuix 测量大标题后写入（负的大标题行高，px），
- * 首帧是 -Float.MAX_VALUE 哨兵值，用 Title1(32.sp) 默认行高兜底避免跳变。
+ * 之前用「单个胶囊 + V 形 alpha + 线性位移」：滑到一半 alpha≈0.3 几乎消失、两端又恢复，
+ * 且会被顶栏 clipToBounds 裁切后突然跳回大标题行，与标题切换完全脱节。
+ * 现在改为两个胶囊在**各自固定位置**交叉接管，切换点取 `frac = 1/3`（此时两者 alpha
+ * 都为 0），因此不会「淡化一半消失」，也不会有任何位置跳变。
+ *
+ * - **展开态**：胶囊下移对齐大标题行，随大标题一起上移并按同一曲线渐出；
+ *   「?」钮留在顶栏右上原位，与胶囊垂直错开、互不遮挡。
+ * - **折叠态**：胶囊回到 actions 原位，从切换点渐入并上滑 20dp 归位；「?」钮隐藏让位。
+ * - 两者放进同一个 [Box] 的同一位置交替，避免 actions 的 Row 并排把「?」挤到屏幕中间。
+ *
+ * 位移用 [offset] 而非 graphicsLayer，下拉菜单锚点会跟着胶囊一起移动；
+ * alpha / translationY 在 graphicsLayer 的 draw 阶段订阅折叠状态，滚动时只重绘不重组。
+ * heightOffsetLimit 由 Miuix 测量大标题后写入（负的大标题行高，px），首帧是
+ * -Float.MAX_VALUE 哨兵值，用 Title1(32.sp) 默认行高兜底避免跳变。
  */
 @Composable
-fun rememberUsbPillCollapseModifier(scrollBehavior: ScrollBehavior): Modifier {
+fun UsbPillCollapseActions(
+    scrollBehavior: ScrollBehavior,
+    help: (@Composable (Modifier) -> Unit)? = null,
+) {
     val density = LocalDensity.current
+    val state = scrollBehavior.state
     val collapsedCenterPx = with(density) { TopAppBarDefaults.CollapsedHeight.toPx() / 2f }
     val fallbackExpansionPx = with(density) { 32.sp.toPx() * 1.2f }
-    return Modifier
+    val smallTitleSlidePx = with(density) { 20.dp.toPx() }
+
+    // 只在跨越切换点时重组一次（与 Miuix smallTitleVisible 同源），动画本身走 draw 阶段。
+    val collapsedActive by remember(state) {
+        derivedStateOf { state.collapsedFraction * 3f >= 1f }
+    }
+
+    // 展开态胶囊：对齐大标题行 + 随大标题上移，alpha 与 Miuix largeTitleAlpha 完全一致。
+    val expandedModifier = Modifier
         .offset {
-            val limit = scrollBehavior.state.heightOffsetLimit
+            val limit = state.heightOffsetLimit
             val expansion = if (limit < -1f && limit > -10_000f) -limit else fallbackExpansionPx
-            val fraction = scrollBehavior.state.collapsedFraction.coerceIn(0f, 1f)
-            IntOffset(
-                x = 0,
-                y = ((collapsedCenterPx + expansion / 2f) * (1f - fraction)).roundToInt(),
-            )
+            IntOffset(0, (collapsedCenterPx + expansion / 2f + state.heightOffset).roundToInt())
         }
         .graphicsLayer {
-            val fraction = scrollBehavior.state.collapsedFraction.coerceIn(0f, 1f)
-            alpha = 0.3f + 0.7f * abs(2f * fraction - 1f)
+            val frac = state.collapsedFraction.coerceIn(0f, 1f)
+            alpha = 1f - (frac * 3f).coerceIn(0f, 1f)
         }
-}
 
-/**
- * ADB 页顶栏「?」说明书圆钮的显隐：大标题展开时显示，收起成小标题时淡出，
- * 把顶栏右侧让位给折叠后回落的 USB 胶囊（展开时胶囊已下移，两者不遮挡）。
- */
-fun usbHelpCollapseModifier(scrollBehavior: ScrollBehavior): Modifier =
-    Modifier.graphicsLayer {
-        val fraction = scrollBehavior.state.collapsedFraction.coerceIn(0f, 1f)
-        alpha = (1f - fraction * 2f).coerceIn(0f, 1f)
+    // 折叠态胶囊：固定在 actions 原位，从切换点渐入 + 20dp 上滑归位（Miuix 小标题同款）。
+    val collapsedModifier = Modifier.graphicsLayer {
+        val frac = state.collapsedFraction.coerceIn(0f, 1f)
+        val a = ((frac * 3f - 1f) * 2f).coerceIn(0f, 1f)
+        alpha = a
+        translationY = smallTitleSlidePx * (1f - a)
     }
+
+    Box(contentAlignment = Alignment.CenterEnd) {
+        if (collapsedActive) {
+            UsbStatusPill(modifier = collapsedModifier)
+        } else {
+            UsbStatusPill(modifier = expandedModifier)
+            if (help != null) {
+                help(
+                    Modifier.graphicsLayer {
+                        val frac = state.collapsedFraction.coerceIn(0f, 1f)
+                        alpha = 1f - (frac * 3f).coerceIn(0f, 1f)
+                    }
+                )
+            }
+        }
+    }
+}
 
 @Composable
 private fun PillContentMiuix(text: String, dotColor: Color, contentColor: Color) {

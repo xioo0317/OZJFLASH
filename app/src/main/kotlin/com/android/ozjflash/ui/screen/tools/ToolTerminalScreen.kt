@@ -75,9 +75,8 @@ import com.android.ozjflash.ui.component.GlassBackButton
 import com.android.ozjflash.ui.component.GlassHelpButton
 import com.android.ozjflash.ui.component.material.ExpressiveScaffold
 import com.android.ozjflash.ui.component.material.expressiveTopAppBarColors
+import com.android.ozjflash.ui.component.usb.UsbPillCollapseActions
 import com.android.ozjflash.ui.component.usb.UsbStatusPill
-import com.android.ozjflash.ui.component.usb.rememberUsbPillCollapseModifier
-import com.android.ozjflash.ui.component.usb.usbHelpCollapseModifier
 import com.android.ozjflash.ui.navigation3.Navigator
 import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.util.BlurredBar
@@ -179,23 +178,29 @@ fun ToolPageScreen(navigator: Navigator, tool: ToolKind) {
  * 不再按「有没有设备」切换胶囊与 ? 号：USB 胶囊在 ADB / Fastboot 页都常驻，
  * ADB 页额外保留一个 [GlassHelpButton] 说明书入口。
  *
- * Miuix 页把 [MiuixScrollBehavior] 传进来做折叠联动：胶囊展开时下移到大标题行、
- * 随大标题渐出，折叠后回落小标题行并恢复显示；? 号只在展开态显示，
- * 折叠态淡出让位给胶囊（展开时胶囊已下移，两者不遮挡）。
- * M3 页不传，胶囊与 ? 号都常驻。
+ * Miuix 页传入 [scrollBehavior] 做折叠联动，交给 [UsbPillCollapseActions] 按 Miuix
+ * 大小标题切换机制处理：展开态胶囊下移对齐大标题并随其渐出、? 号留在右上原位；
+ * 折叠态胶囊渐入归位、? 号隐藏让位。两者在同一位置交替，不会互相挤位。
+ * M3 页不传，胶囊与 ? 号都常驻（并排）。
  */
 @Composable
 private fun ToolPageActions(
     tool: ToolKind,
-    pillModifier: Modifier = Modifier,
-    helpModifier: Modifier = Modifier,
+    scrollBehavior: top.yukonga.miuix.kmp.basic.ScrollBehavior? = null,
 ) {
     var showManual by remember { mutableStateOf(false) }
-
-    if (tool == ToolKind.ADB) {
-        GlassHelpButton(onClick = { showManual = true }, modifier = helpModifier)
+    val help: (@Composable (Modifier) -> Unit)? = if (tool == ToolKind.ADB) {
+        { mod -> GlassHelpButton(onClick = { showManual = true }, modifier = mod) }
+    } else {
+        null
     }
-    UsbStatusPill(modifier = pillModifier)
+
+    if (scrollBehavior != null) {
+        UsbPillCollapseActions(scrollBehavior = scrollBehavior, help = help)
+    } else {
+        if (help != null) help(Modifier)
+        UsbStatusPill()
+    }
 
     if (showManual) {
         AdbManualDialog(onDismiss = { showManual = false })
@@ -230,11 +235,7 @@ private fun ToolPageMiuix(navigator: Navigator, tool: ToolKind) {
                         )
                     },
                     actions = {
-                        ToolPageActions(
-                            tool = tool,
-                            pillModifier = rememberUsbPillCollapseModifier(scrollBehavior),
-                            helpModifier = usbHelpCollapseModifier(scrollBehavior),
-                        )
+                        ToolPageActions(tool = tool, scrollBehavior = scrollBehavior)
                     },
                     scrollBehavior = scrollBehavior,
                 )

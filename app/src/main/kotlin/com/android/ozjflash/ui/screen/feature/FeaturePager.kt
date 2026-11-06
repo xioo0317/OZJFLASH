@@ -53,8 +53,8 @@ import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.component.material.ExpressiveScaffold
 import com.android.ozjflash.ui.component.material.expressiveTopAppBarColors
+import com.android.ozjflash.ui.component.usb.UsbPillCollapseActions
 import com.android.ozjflash.ui.component.usb.UsbStatusPill
-import com.android.ozjflash.ui.component.usb.rememberUsbPillCollapseModifier
 import com.android.ozjflash.ui.navigation3.LocalNavigator
 import com.android.ozjflash.ui.navigation3.Navigator
 import com.android.ozjflash.ui.navigation3.Route
@@ -105,7 +105,7 @@ private fun FeatureMiuix(bottomInnerPadding: Dp) {
                 TopAppBar(
                     color = barColor,
                     title = stringResource(R.string.feature),
-                    actions = { UsbStatusPill(modifier = rememberUsbPillCollapseModifier(scrollBehavior)) },
+                    actions = { UsbPillCollapseActions(scrollBehavior) },
                     scrollBehavior = scrollBehavior,
                 )
             }
