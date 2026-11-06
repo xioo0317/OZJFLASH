@@ -35,14 +35,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.roundToInt
 import com.android.ozjflash.R
 import com.android.ozjflash.ui.component.usb.UsbStatusPill
 import com.android.ozjflash.ui.theme.LocalEnableBlur
@@ -55,6 +57,7 @@ import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
 import top.yukonga.miuix.kmp.basic.Scaffold
 import top.yukonga.miuix.kmp.basic.ScrollBehavior
+import top.yukonga.miuix.kmp.basic.TopAppBarDefaults
 import top.yukonga.miuix.kmp.basic.rememberTopAppBarState
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TopAppBar
@@ -130,19 +133,36 @@ private fun TopBar(
     backdrop: top.yukonga.miuix.kmp.blur.LayerBackdrop?,
     barColor: Color,
 ) {
+    val density = LocalDensity.current
+    // Miuix TopAppBar 的 actions 恒定落在「折叠标题行」的垂直中心（CollapsedHeight / 2）；
+    // 展开态大标题从 CollapsedHeight 起排，其文字中心 = CollapsedHeight + 大标题行高 / 2。
+    // 因此胶囊展开时需向下平移 (折叠行中心 + 大标题行高/2)，折叠后回到 0，正好对齐折叠标题。
+    val collapsedCenterPx = with(density) { TopAppBarDefaults.CollapsedHeight.toPx() / 2f }
+    // heightOffsetLimit 由 Miuix 测量大标题后写入（负的大标题行高，px）；
+    // 首帧是 -Float.MAX_VALUE 哨兵值，用 Title1(32.sp) 默认行高估算兜底，避免跳变。
+    val fallbackExpansionPx = with(density) { 32.sp.toPx() * 1.2f }
     BlurredBar(backdrop) {
         TopAppBar(
             color = barColor,
             title = stringResource(R.string.app_name),
             actions = {
-                // 胶囊跟随可折叠顶栏：与 Miuix 官方 largeTitle 同源读取
-                // heightOffset / collapsedFraction（在 graphicsLayer 的 draw 阶段订阅，
-                // 滚动时只重绘、不重组整棵子树），胶囊随大标题一起上移、淡出。
+                // 胶囊随折叠顶栏移动：展开时对齐大标题（红圈处），折叠后落回折叠标题行。
+                // 不再随大标题上移淡出，也不会被顶栏 clipToBounds 裁掉，全程可见。
+                // 用 offset 而非 graphicsLayer，保证下拉菜单锚点跟着胶囊一起移动。
                 UsbStatusPill(
-                    modifier = Modifier.graphicsLayer {
-                        translationY = scrollBehavior.state.heightOffset
-                        alpha = 1f - (scrollBehavior.state.collapsedFraction * 1.35f)
-                            .coerceIn(0f, 0.92f)
+                    modifier = Modifier.offset {
+                        val limit = scrollBehavior.state.heightOffsetLimit
+                        val expansion = if (limit < -1f && limit > -10_000f) {
+                            -limit
+                        } else {
+                            fallbackExpansionPx
+                        }
+                        val fraction = scrollBehavior.state.collapsedFraction.coerceIn(0f, 1f)
+                        IntOffset(
+                            x = 0,
+                            y = ((collapsedCenterPx + expansion / 2f) * (1f - fraction))
+                                .roundToInt(),
+                        )
                     }
                 )
             },
