@@ -76,6 +76,8 @@ import com.android.ozjflash.ui.component.GlassHelpButton
 import com.android.ozjflash.ui.component.material.ExpressiveScaffold
 import com.android.ozjflash.ui.component.material.expressiveTopAppBarColors
 import com.android.ozjflash.ui.component.usb.UsbStatusPill
+import com.android.ozjflash.ui.component.usb.rememberUsbPillCollapseModifier
+import com.android.ozjflash.ui.component.usb.usbHelpCollapseModifier
 import com.android.ozjflash.ui.navigation3.Navigator
 import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.util.BlurredBar
@@ -174,25 +176,26 @@ fun ToolPageScreen(navigator: Navigator, tool: ToolKind) {
 /**
  * 工具二级页顶栏右侧动作。
  *
- * 按需求「在 adb 页先加一个试一下」：**仅 ADB 页**启用「无设备 → ? 液态玻璃圆钮」逻辑：
- * 没有设备连接时隐藏 USB 胶囊，改显示 [GlassHelpButton]，点击弹出 [AdbManualDialog] 说明书；
- * 一旦有设备接入，自动变回常驻 [UsbStatusPill]。Fastboot 页、主页、功能页、工具列表页
- * 都不套用此逻辑，胶囊保持常驻（「在功能页主页这种倒不需要」）。
+ * 不再按「有没有设备」切换胶囊与 ? 号：USB 胶囊在 ADB / Fastboot 页都常驻，
+ * ADB 页额外保留一个 [GlassHelpButton] 说明书入口。
+ *
+ * Miuix 页把 [MiuixScrollBehavior] 传进来做折叠联动：胶囊展开时下移到大标题行、
+ * 随大标题渐出，折叠后回落小标题行并恢复显示；? 号只在展开态显示，
+ * 折叠态淡出让位给胶囊（展开时胶囊已下移，两者不遮挡）。
+ * M3 页不传，胶囊与 ? 号都常驻。
  */
 @Composable
-private fun ToolPageActions(tool: ToolKind) {
-    if (tool != ToolKind.ADB) {
-        UsbStatusPill()
-        return
-    }
-    val devices by UsbHost.devices.collectAsStateWithLifecycle()
+private fun ToolPageActions(
+    tool: ToolKind,
+    pillModifier: Modifier = Modifier,
+    helpModifier: Modifier = Modifier,
+) {
     var showManual by remember { mutableStateOf(false) }
 
-    if (devices.isEmpty()) {
-        GlassHelpButton(onClick = { showManual = true })
-    } else {
-        UsbStatusPill()
+    if (tool == ToolKind.ADB) {
+        GlassHelpButton(onClick = { showManual = true }, modifier = helpModifier)
     }
+    UsbStatusPill(modifier = pillModifier)
 
     if (showManual) {
         AdbManualDialog(onDismiss = { showManual = false })
@@ -226,7 +229,13 @@ private fun ToolPageMiuix(navigator: Navigator, tool: ToolKind) {
                             mirrorForRtl = true,
                         )
                     },
-                    actions = { ToolPageActions(tool) },
+                    actions = {
+                        ToolPageActions(
+                            tool = tool,
+                            pillModifier = rememberUsbPillCollapseModifier(scrollBehavior),
+                            helpModifier = usbHelpCollapseModifier(scrollBehavior),
+                        )
+                    },
                     scrollBehavior = scrollBehavior,
                 )
             }

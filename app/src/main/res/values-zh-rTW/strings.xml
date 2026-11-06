@@ -222,7 +222,7 @@
     <string name="adb_manual_title">ADB 使用說明</string>
     <string name="adb_manual_summary">連線方式、指令輸入與免 Root 說明</string>
     <string name="adb_manual_s1_title">1. 連接裝置</string>
-    <string name="adb_manual_s1_body">用傳輸線連接目標裝置並開啟 USB 偵錯；系統跳出授權框時點「允許」。連線成功後，頂欄的 ? 按鈕會自動變回裝置狀態膠囊。</string>
+    <string name="adb_manual_s1_body">用傳輸線連接目標裝置並開啟 USB 偵錯；系統跳出授權框時點「允許」。頂欄 ? 按鈕在大標題展開時顯示，收起為小標題後讓位給裝置狀態膠囊；膠囊會顯示目前接入的裝置類型。</string>
     <string name="adb_manual_s2_title">2. 輸入指令</string>
     <string name="adb_manual_s2_body">在輸入框填寫 adb 子指令（會自動補 adb 前綴），例如 devices 或 shell getprop ro.product.model，點「執行」。輸出逐行列印，末尾顯示結束碼。</string>
     <string name="adb_manual_s3_title">3. 常用指令</string>

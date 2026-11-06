@@ -223,7 +223,7 @@
     <string name="adb_manual_title">ADB 使用说明</string>
     <string name="adb_manual_summary">连接方式、命令输入与免 Root 说明</string>
     <string name="adb_manual_s1_title">1. 连接设备</string>
-    <string name="adb_manual_s1_body">用数据线连接目标设备并开启 USB 调试；系统弹出授权框时点「允许」。连接成功后，顶栏的 ? 按钮会自动变回设备状态胶囊。</string>
+    <string name="adb_manual_s1_body">用数据线连接目标设备并开启 USB 调试；系统弹出授权框时点「允许」。顶栏 ? 按钮在大标题展开时显示，收起为小标题后让位给设备状态胶囊；胶囊文字会显示当前接入的设备类型。</string>
     <string name="adb_manual_s2_title">2. 输入命令</string>
     <string name="adb_manual_s2_body">在输入框填写 adb 子命令（会自动补 adb 前缀），例如 devices 或 shell getprop ro.product.model，点「执行」。输出逐行打印，末尾显示退出码。</string>
     <string name="adb_manual_s3_title">3. 常用命令</string>

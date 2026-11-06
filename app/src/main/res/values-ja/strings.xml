@@ -222,7 +222,7 @@
     <string name="adb_manual_title">ADB 使い方</string>
     <string name="adb_manual_summary">接続・コマンド入力・Root 不要の仕組み</string>
     <string name="adb_manual_s1_title">1. デバイスを接続</string>
-    <string name="adb_manual_s1_body">USB ケーブルで対象端末を接続し、USB デバッグを有効にします。システムの許可ダイアログが出たら「許可」をタップ。接続後、上部の ? ボタンは自動的にデバイス状態カプセルに戻ります。</string>
+    <string name="adb_manual_s1_body">USB ケーブルで対象端末を接続し、USB デバッグを有効にします。システムの許可ダイアログが出たら「許可」をタップ。? ボタンは大タイトル表示中に表示され、折りたたむとデバイス状態カプセルに切り替わります。カプセルには接続中のデバイス種別が表示されます。</string>
     <string name="adb_manual_s2_title">2. コマンドを入力</string>
     <string name="adb_manual_s2_body">入力欄に adb サブコマンドを入力します（adb 接頭辞は自動付加）。例：devices、shell getprop ro.product.model。「実行」をタップすると出力が行ごとに表示され、末尾に終了コードが出ます。</string>
     <string name="adb_manual_s3_title">3. よく使うコマンド</string>
