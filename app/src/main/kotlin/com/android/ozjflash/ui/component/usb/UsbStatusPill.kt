@@ -33,9 +33,11 @@ import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -48,7 +50,6 @@ import kotlin.math.roundToInt
 import com.android.ozjflash.flash.UsbDeviceInfo
 import com.android.ozjflash.flash.UsbHost
 import com.android.ozjflash.flash.UsbMode
-import com.android.ozjflash.ui.component.softGlassShadow
 import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.theme.LocalBlurStyle
@@ -170,8 +171,14 @@ fun UsbStatusPill(dark: Boolean = false, modifier: Modifier = Modifier) {
         // Miuix 玻璃三要素手绘；M3 / 未开启时为普通纯色 Surface。
         val surfaceModifier = if (glassEnabled) {
             Modifier
-                // 手绘圆角投影：不经过合成层，淡化(alpha)时不会退化成直角长方形阴影。
-                .softGlassShadow(if (dark) 0.30f else 0.12f)
+                .dropShadow(
+                    shape = pillShape,
+                    shadow = Shadow(
+                        radius = 9.dp,
+                        color = Color.Black,
+                        alpha = if (dark) 0.30f else 0.12f,
+                    ),
+                )
                 .background(glassFill, pillShape)
                 .border(width = 1.1.dp, brush = rimBrush, shape = pillShape)
         } else {
