@@ -35,8 +35,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -55,16 +53,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -75,6 +70,9 @@ import com.android.ozjflash.flash.UsbFdSession
 import com.android.ozjflash.flash.UsbHost
 import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
+import com.android.ozjflash.ui.component.AdbManualDialog
+import com.android.ozjflash.ui.component.GlassBackButton
+import com.android.ozjflash.ui.component.GlassHelpButton
 import com.android.ozjflash.ui.component.material.ExpressiveScaffold
 import com.android.ozjflash.ui.component.material.expressiveTopAppBarColors
 import com.android.ozjflash.ui.component.usb.UsbStatusPill
@@ -88,8 +86,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import top.yukonga.miuix.kmp.basic.Button as MiuixButton
 import top.yukonga.miuix.kmp.basic.Card as MiuixCard
-import top.yukonga.miuix.kmp.basic.Icon as MiuixIcon
-import top.yukonga.miuix.kmp.basic.IconButton as MiuixIconButton
 import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
 import top.yukonga.miuix.kmp.basic.Scaffold as MiuixScaffold
 import top.yukonga.miuix.kmp.basic.Text as MiuixText
@@ -175,6 +171,34 @@ fun ToolPageScreen(navigator: Navigator, tool: ToolKind) {
     }
 }
 
+/**
+ * 工具二级页顶栏右侧动作。
+ *
+ * 按需求「在 adb 页先加一个试一下」：**仅 ADB 页**启用「无设备 → ? 液态玻璃圆钮」逻辑：
+ * 没有设备连接时隐藏 USB 胶囊，改显示 [GlassHelpButton]，点击弹出 [AdbManualDialog] 说明书；
+ * 一旦有设备接入，自动变回常驻 [UsbStatusPill]。Fastboot 页、主页、功能页、工具列表页
+ * 都不套用此逻辑，胶囊保持常驻（「在功能页主页这种倒不需要」）。
+ */
+@Composable
+private fun ToolPageActions(tool: ToolKind) {
+    if (tool != ToolKind.ADB) {
+        UsbStatusPill()
+        return
+    }
+    val devices by UsbHost.devices.collectAsStateWithLifecycle()
+    var showManual by remember { mutableStateOf(false) }
+
+    if (devices.isEmpty()) {
+        GlassHelpButton(onClick = { showManual = true })
+    } else {
+        UsbStatusPill()
+    }
+
+    if (showManual) {
+        AdbManualDialog(onDismiss = { showManual = false })
+    }
+}
+
 @Composable
 private fun ToolPageMiuix(navigator: Navigator, tool: ToolKind) {
     val title = stringResource(tool.titleRes)
@@ -188,7 +212,6 @@ private fun ToolPageMiuix(navigator: Navigator, tool: ToolKind) {
     val backdrop = rememberBlurBackdrop(enableBlur)
     val blurActive = backdrop != null
     val barColor = if (blurActive) Color.Transparent else colorScheme.surface
-    val layoutDirection = LocalLayoutDirection.current
 
     MiuixScaffold(
         topBar = {
@@ -197,18 +220,13 @@ private fun ToolPageMiuix(navigator: Navigator, tool: ToolKind) {
                     color = barColor,
                     title = title,
                     navigationIcon = {
-                        MiuixIconButton(onClick = { navigator.pop() }) {
-                            MiuixIcon(
-                                modifier = Modifier.graphicsLayer {
-                                    if (layoutDirection == LayoutDirection.Rtl) scaleX = -1f
-                                },
-                                imageVector = MiuixIcons.Back,
-                                contentDescription = null,
-                                tint = colorScheme.onBackground,
-                            )
-                        }
+                        GlassBackButton(
+                            imageVector = MiuixIcons.Back,
+                            onClick = { navigator.pop() },
+                            mirrorForRtl = true,
+                        )
                     },
-                    actions = { UsbStatusPill() },
+                    actions = { ToolPageActions(tool) },
                     scrollBehavior = scrollBehavior,
                 )
             }
@@ -255,14 +273,12 @@ private fun ToolPageMaterial(navigator: Navigator, tool: ToolKind) {
             LargeFlexibleTopAppBar(
                 title = { Text(title) },
                 navigationIcon = {
-                    IconButton(onClick = { navigator.pop() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null,
-                        )
-                    }
+                    GlassBackButton(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        onClick = { navigator.pop() },
+                    )
                 },
-                actions = { UsbStatusPill() },
+                actions = { ToolPageActions(tool) },
                 colors = expressiveTopAppBarColors(),
                 windowInsets = WindowInsets.systemBars
                     .add(WindowInsets.displayCutout)

@@ -16,11 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.ozjflash.R
+import com.android.ozjflash.ui.component.GlassBackButton
 import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.component.material.ExpressiveScaffold
@@ -127,13 +124,11 @@ fun AboutMiuix(navigator: Navigator) {
             top.yukonga.miuix.kmp.basic.SmallTopAppBar(
                 title = stringResource(R.string.about),
                 navigationIcon = {
-                    top.yukonga.miuix.kmp.basic.IconButton(onClick = { navigator.pop() }) {
-                        top.yukonga.miuix.kmp.basic.Icon(
-                            imageVector = top.yukonga.miuix.kmp.icon.MiuixIcons.Back,
-                            contentDescription = null,
-                            tint = top.yukonga.miuix.kmp.theme.MiuixTheme.colorScheme.onBackground
-                        )
-                    }
+                    GlassBackButton(
+                        imageVector = top.yukonga.miuix.kmp.icon.MiuixIcons.Back,
+                        onClick = { navigator.pop() },
+                        mirrorForRtl = true,
+                    )
                 },
             )
         }

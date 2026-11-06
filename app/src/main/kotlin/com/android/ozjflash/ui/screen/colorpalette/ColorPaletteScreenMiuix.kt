@@ -57,15 +57,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.ozjflash.R
+import com.android.ozjflash.ui.component.GlassBackButton
 import com.android.ozjflash.ui.component.bottombar.useNavigationRail
 import com.android.ozjflash.ui.component.miuix.ScaleDialog
 import com.android.ozjflash.ui.theme.LocalEnableBlur
@@ -76,7 +74,6 @@ import com.materialkolor.dynamiccolor.ColorSpec
 import com.materialkolor.rememberDynamicColorScheme
 import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.Icon
-import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
 import top.yukonga.miuix.kmp.basic.Scaffold
 import top.yukonga.miuix.kmp.basic.Slider
@@ -123,17 +120,11 @@ fun ColorPaletteScreenMiuix(
                     color = barColor,
                     title = stringResource(R.string.settings_theme),
                     navigationIcon = {
-                        IconButton(onClick = actions::back) {
-                            val layoutDirection = LocalLayoutDirection.current
-                            Icon(
-                                modifier = Modifier.graphicsLayer {
-                                    if (layoutDirection == LayoutDirection.Rtl) scaleX = -1f
-                                },
-                                imageVector = MiuixIcons.Back,
-                                contentDescription = null,
-                                tint = colorScheme.onBackground,
-                            )
-                        }
+                        GlassBackButton(
+                            imageVector = MiuixIcons.Back,
+                            onClick = actions::back,
+                            mirrorForRtl = true,
+                        )
                     },
                     scrollBehavior = scrollBehavior,
                 )

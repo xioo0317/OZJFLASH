@@ -233,4 +233,18 @@
     <string name="extract_output_dir">Output dir: %1$s</string>
     <string name="extract_preparing">Preparing file…</string>
     <string name="extract_missing_binary">Bundled tool missing: %1$s</string>
+    <!-- ADB 说明书（无设备时顶栏 ? 圆钮弹出） -->
+    <string name="adb_manual_title">ADB Guide</string>
+    <string name="adb_manual_summary">Connection, commands and root-free notes</string>
+    <string name="adb_manual_s1_title">1. Connect a device</string>
+    <string name="adb_manual_s1_body">Use a USB cable to connect the target device and enable USB debugging. When the system permission dialog appears, tap Allow. Once connected, the ? button in the top bar changes back to the device status pill.</string>
+    <string name="adb_manual_s2_title">2. Enter a command</string>
+    <string name="adb_manual_s2_body">Type an adb subcommand in the input box (the adb prefix is added automatically), e.g. devices or shell getprop ro.product.model, then tap Run. Output is printed line by line with an exit code at the end.</string>
+    <string name="adb_manual_s3_title">3. Common commands</string>
+    <string name="adb_manual_s3_body">devices — list connected devices; reboot / reboot bootloader — restart; shell getprop — read a property; install xxx.apk — install an app; push / pull — copy files; shell pm list packages — list packages.</string>
+    <string name="adb_manual_s4_title">4. About root-free mode</string>
+    <string name="adb_manual_s4_body">With USB access granted, the app opens the device via UsbManager and passes the usbfs file descriptor to the bundled adb through an FD-passing channel over an abstract Unix socket. No root or system adbd is required.</string>
+    <string name="adb_manual_s5_title">5. If the interface is busy</string>
+    <string name="adb_manual_s5_body">If the log shows LIBUSB_ERROR_BUSY, an earlier adb server still holds the interface. Run kill-server, then unplug and reconnect the USB cable to release the stale claim, and try again.</string>
+    <string name="adb_manual_close">Close</string>
 </resources>

@@ -218,4 +218,18 @@
     <string name="extract_output_dir">輸出目錄：%1$s</string>
     <string name="extract_preparing">正在準備檔案…</string>
     <string name="extract_missing_binary">內建工具不存在：%1$s</string>
+    <!-- ADB 說明書（無裝置時頂欄 ? 圓鈕彈出） -->
+    <string name="adb_manual_title">ADB 使用說明</string>
+    <string name="adb_manual_summary">連線方式、指令輸入與免 Root 說明</string>
+    <string name="adb_manual_s1_title">1. 連接裝置</string>
+    <string name="adb_manual_s1_body">用傳輸線連接目標裝置並開啟 USB 偵錯；系統跳出授權框時點「允許」。連線成功後，頂欄的 ? 按鈕會自動變回裝置狀態膠囊。</string>
+    <string name="adb_manual_s2_title">2. 輸入指令</string>
+    <string name="adb_manual_s2_body">在輸入框填寫 adb 子指令（會自動補 adb 前綴），例如 devices 或 shell getprop ro.product.model，點「執行」。輸出逐行列印，末尾顯示結束碼。</string>
+    <string name="adb_manual_s3_title">3. 常用指令</string>
+    <string name="adb_manual_s3_body">devices 列出裝置；reboot / reboot bootloader 重啟；shell getprop 讀取屬性；install xxx.apk 安裝應用；push / pull 傳檔案；shell pm list packages 列出套件名。</string>
+    <string name="adb_manual_s4_title">4. 免 Root 原理</string>
+    <string name="adb_manual_s4_body">取得 USB 授權後，應用透過 UsbManager 開啟裝置，再經 abstract Unix 套接字以 FD 傳遞方式把 usbfs 句柄交給內建 adb，全程無需 root，也不依賴系統 adbd。</string>
+    <string name="adb_manual_s5_title">5. 介面被佔用時</string>
+    <string name="adb_manual_s5_body">若日誌出現 LIBUSB_ERROR_BUSY，表示上一個 adb server 仍佔著介面。執行 kill-server，再重新插拔一次傳輸線釋放殘留佔用，然後重試。</string>
+    <string name="adb_manual_close">知道了</string>
 </resources>

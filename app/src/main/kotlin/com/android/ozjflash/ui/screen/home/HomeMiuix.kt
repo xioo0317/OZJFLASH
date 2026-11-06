@@ -35,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
@@ -133,7 +134,18 @@ private fun TopBar(
         TopAppBar(
             color = barColor,
             title = stringResource(R.string.app_name),
-            actions = { UsbStatusPill() },
+            actions = {
+                // 胶囊跟随可折叠顶栏：与 Miuix 官方 largeTitle 同源读取
+                // heightOffset / collapsedFraction（在 graphicsLayer 的 draw 阶段订阅，
+                // 滚动时只重绘、不重组整棵子树），胶囊随大标题一起上移、淡出。
+                UsbStatusPill(
+                    modifier = Modifier.graphicsLayer {
+                        translationY = scrollBehavior.state.heightOffset
+                        alpha = 1f - (scrollBehavior.state.collapsedFraction * 1.35f)
+                            .coerceIn(0f, 0.92f)
+                    }
+                )
+            },
             scrollBehavior = scrollBehavior,
         )
     }

@@ -218,4 +218,18 @@
     <string name="extract_output_dir">出力先：%1$s</string>
     <string name="extract_preparing">ファイルを準備中…</string>
     <string name="extract_missing_binary">内蔵ツールがありません：%1$s</string>
+    <!-- ADB 説明書（デバイス未接続時に ? ボタンから表示） -->
+    <string name="adb_manual_title">ADB 使い方</string>
+    <string name="adb_manual_summary">接続・コマンド入力・Root 不要の仕組み</string>
+    <string name="adb_manual_s1_title">1. デバイスを接続</string>
+    <string name="adb_manual_s1_body">USB ケーブルで対象端末を接続し、USB デバッグを有効にします。システムの許可ダイアログが出たら「許可」をタップ。接続後、上部の ? ボタンは自動的にデバイス状態カプセルに戻ります。</string>
+    <string name="adb_manual_s2_title">2. コマンドを入力</string>
+    <string name="adb_manual_s2_body">入力欄に adb サブコマンドを入力します（adb 接頭辞は自動付加）。例：devices、shell getprop ro.product.model。「実行」をタップすると出力が行ごとに表示され、末尾に終了コードが出ます。</string>
+    <string name="adb_manual_s3_title">3. よく使うコマンド</string>
+    <string name="adb_manual_s3_body">devices でデバイス一覧；reboot / reboot bootloader で再起動；shell getprop でプロパティ取得；install xxx.apk でアプリ導入；push / pull でファイル転送；shell pm list packages でパッケージ一覧。</string>
+    <string name="adb_manual_s4_title">4. Root 不要の仕組み</string>
+    <string name="adb_manual_s4_body">USB 許可を得ると、アプリは UsbManager でデバイスを開き、abstract Unix ソケット経由の FD 受け渡しで usbfs ハンドルを内蔵 adb に渡します。root もシステム adbd も不要です。</string>
+    <string name="adb_manual_s5_title">5. インターフェースが使用中の場合</string>
+    <string name="adb_manual_s5_body">ログに LIBUSB_ERROR_BUSY が出た場合、前の adb server がインターフェースを保持しています。kill-server を実行し、USB ケーブルを抜き差しして残留を解放してから再試行してください。</string>
+    <string name="adb_manual_close">閉じる</string>
 </resources>
