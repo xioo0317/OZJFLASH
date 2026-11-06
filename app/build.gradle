@@ -16,8 +16,8 @@ android {
         applicationId 'com.android.ozjflash'
         minSdk 26
         targetSdk 34
-        versionCode 34
-        versionName '1.13.20'
+        versionCode 35
+        versionName '1.13.21'
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         ndk {
