@@ -82,7 +82,11 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UsbStatusPill(dark: Boolean = false, modifier: Modifier = Modifier) {
+fun UsbStatusPill(
+    dark: Boolean = false,
+    modifier: Modifier = Modifier,
+    showShadow: Boolean = true,
+) {
     val context = LocalContext.current
     val uiMode = LocalUiMode.current
     val devices by UsbHost.devices.collectAsStateWithLifecycle()
@@ -168,17 +172,24 @@ fun UsbStatusPill(dark: Boolean = false, modifier: Modifier = Modifier) {
     }
 
     Box(modifier = modifier) {
+        // 阴影只在静止态绘制：折叠顶栏淡化时外层 graphicsLayer 的 alpha < 1，
+        // dropShadow 的模糊阴影会随半透明合成层按矩形 bounds 铺开，露出直角长方形块。
+        // 由调用方在滑动/切换动画期间传 showShadow = false 直接取消阴影。
+        val shadowModifier = if (showShadow) {
+            Modifier.dropShadow(
+                shape = pillShape,
+                shadow = Shadow(
+                    radius = 9.dp,
+                    color = Color.Black,
+                    alpha = if (dark) 0.30f else 0.12f,
+                ),
+            )
+        } else {
+            Modifier
+        }
         // Miuix 玻璃三要素手绘；M3 / 未开启时为普通纯色 Surface。
         val surfaceModifier = if (glassEnabled) {
-            Modifier
-                .dropShadow(
-                    shape = pillShape,
-                    shadow = Shadow(
-                        radius = 9.dp,
-                        color = Color.Black,
-                        alpha = if (dark) 0.30f else 0.12f,
-                    ),
-                )
+            shadowModifier
                 .background(glassFill, pillShape)
                 .border(width = 1.1.dp, brush = rimBrush, shape = pillShape)
         } else {
@@ -337,11 +348,22 @@ fun UsbPillCollapseActions(
         translationY = collapsedSlide.value
     }
 
+    // 滑动/切换动画期间胶囊处于半透明合成层（alpha < 1），dropShadow 的模糊阴影会
+    // 按合成层矩形 bounds 铺开露出直角阴影块。因此只在「静止态」绘制阴影：
+    // 完全展开（frac≈0）或完全折叠且 spring 已到位（alpha≈1）；滑动中直接取消。
+    // derivedStateOf 把逐帧变化的 fraction/alpha 折叠成布尔，只在端点跨越时重组一次。
+    val showShadow by remember(state) {
+        derivedStateOf {
+            val frac = state.collapsedFraction
+            frac <= 0.001f || (frac >= 0.999f && collapsedAlpha.value >= 0.999f)
+        }
+    }
+
     Box(contentAlignment = Alignment.CenterEnd) {
         if (collapsedActive) {
-            UsbStatusPill(modifier = collapsedModifier)
+            UsbStatusPill(modifier = collapsedModifier, showShadow = showShadow)
         } else {
-            UsbStatusPill(modifier = expandedModifier)
+            UsbStatusPill(modifier = expandedModifier, showShadow = showShadow)
             if (help != null) {
                 help(
                     Modifier.graphicsLayer {
