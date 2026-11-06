@@ -1,6 +1,9 @@
 package com.android.ozjflash.ui.component.usb
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -26,14 +29,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -46,6 +48,7 @@ import kotlin.math.roundToInt
 import com.android.ozjflash.flash.UsbDeviceInfo
 import com.android.ozjflash.flash.UsbHost
 import com.android.ozjflash.flash.UsbMode
+import com.android.ozjflash.ui.component.softGlassShadow
 import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.theme.LocalBlurStyle
@@ -167,14 +170,8 @@ fun UsbStatusPill(dark: Boolean = false, modifier: Modifier = Modifier) {
         // Miuix 玻璃三要素手绘；M3 / 未开启时为普通纯色 Surface。
         val surfaceModifier = if (glassEnabled) {
             Modifier
-                .dropShadow(
-                    shape = pillShape,
-                    shadow = Shadow(
-                        radius = 9.dp,
-                        color = Color.Black,
-                        alpha = if (dark) 0.30f else 0.12f,
-                    ),
-                )
+                // 手绘圆角投影：不经过合成层，淡化(alpha)时不会退化成直角长方形阴影。
+                .softGlassShadow(if (dark) 0.30f else 0.12f)
                 .background(glassFill, pillShape)
                 .border(width = 1.1.dp, brush = rimBrush, shape = pillShape)
         } else {
@@ -260,21 +257,23 @@ private fun modeShortType(mode: UsbMode): String = when (mode) {
  * Miuix 0.9.4 的真实机制（TopAppBar.kt）：
  * - 大标题 `alpha = 1 - (collapsedFraction * 3).coerceIn(0,1)`，折叠前 1/3 就淡完，
  *   并 `translationY = heightOffset` 随内容一起上移；
- * - 小标题在 `collapsedFraction * 3 >= 1` 之后才 spring 淡入（alpha 0→1、translationY 20→0）。
- * 即 Miuix 是**两个实例在各自固定位置交叉接管**，而不是一个实例来回移动。
+ * - 小标题：在 `collapsedFraction * 3 >= 1` 处由 [derivedStateOf] 布尔**离散触发**，
+ *   用 spring（`folmeSpring damping=1.0, response=0.3/0.15`）把 alpha 0→1、
+ *   translationY 20→0 **一次性 animateTo 快速到位**——不是逐帧读 fraction 线性插值。
+ * 即 Miuix 是**两个实例在各自固定位置交叉接管**，小标题是「快速到位」而非「渐入渐出」。
  *
  * 之前用「单个胶囊 + V 形 alpha + 线性位移」：滑到一半 alpha≈0.3 几乎消失、两端又恢复，
  * 且会被顶栏 clipToBounds 裁切后突然跳回大标题行，与标题切换完全脱节。
- * 现在改为两个胶囊在**各自固定位置**交叉接管，切换点取 `frac = 1/3`（此时两者 alpha
- * 都为 0），因此不会「淡化一半消失」，也不会有任何位置跳变。
+ * 现在改为两个胶囊在**各自固定位置**交叉接管，切换点取 `frac = 1/3`。
  *
  * - **展开态**：胶囊下移对齐大标题行，随大标题一起上移并按同一曲线渐出；
  *   「?」钮留在顶栏右上原位，与胶囊垂直错开、互不遮挡。
- * - **折叠态**：胶囊回到 actions 原位，从切换点渐入并上滑 20dp 归位；「?」钮隐藏让位。
+ * - **折叠态**：胶囊回到 actions 原位，按 Miuix 小标题的方式离散触发 + spring
+ *   快速到位（alpha/slide 用 [Animatable] 一次性 animateTo，不逐帧跟随 fraction 淡化）；
+ *   「?」钮隐藏让位。收回小标题时不再有拖长的渐入渐出，直接快速落位。
  * - 两者放进同一个 [Box] 的同一位置交替，避免 actions 的 Row 并排把「?」挤到屏幕中间。
  *
  * 位移用 [offset] 而非 graphicsLayer，下拉菜单锚点会跟着胶囊一起移动；
- * alpha / translationY 在 graphicsLayer 的 draw 阶段订阅折叠状态，滚动时只重绘不重组。
  * heightOffsetLimit 由 Miuix 测量大标题后写入（负的大标题行高，px），首帧是
  * -Float.MAX_VALUE 哨兵值，用 Title1(32.sp) 默认行高兜底避免跳变。
  */
@@ -306,12 +305,29 @@ fun UsbPillCollapseActions(
             alpha = 1f - (frac * 3f).coerceIn(0f, 1f)
         }
 
-    // 折叠态胶囊：固定在 actions 原位，从切换点渐入 + 20dp 上滑归位（Miuix 小标题同款）。
+    // 折叠态胶囊：完全照 Miuix 小标题——离散布尔触发 + spring 一次性 animateTo 快速到位。
+    // alpha / 位移不逐帧跟随 collapsedFraction 线性淡化，而是越过切换点后由 spring
+    // 在固定时长内一次跑完；收回小标题时表现为「快速落位」，没有拖长的渐入渐出。
+    val collapsedAlpha = remember { Animatable(0f) }
+    val collapsedSlide = remember { Animatable(smallTitleSlidePx) }
+    LaunchedEffect(collapsedActive) {
+        // folmeSpring(damping=1.0, response≈0.3) 在 Compose 里对应
+        // 无回弹、中等刚度 spring；show 稍缓、hide 更快，与 Miuix 一致。
+        val spec = spring<Float>(
+            dampingRatio = Spring.DampingRatioNoBouncy,
+            stiffness = Spring.StiffnessMedium,
+        )
+        if (collapsedActive) {
+            launch { collapsedAlpha.animateTo(1f, spec) }
+            launch { collapsedSlide.animateTo(0f, spec) }
+        } else {
+            launch { collapsedAlpha.animateTo(0f, spec) }
+            launch { collapsedSlide.animateTo(smallTitleSlidePx, spec) }
+        }
+    }
     val collapsedModifier = Modifier.graphicsLayer {
-        val frac = state.collapsedFraction.coerceIn(0f, 1f)
-        val a = ((frac * 3f - 1f) * 2f).coerceIn(0f, 1f)
-        alpha = a
-        translationY = smallTitleSlidePx * (1f - a)
+        alpha = collapsedAlpha.value
+        translationY = collapsedSlide.value
     }
 
     Box(contentAlignment = Alignment.CenterEnd) {

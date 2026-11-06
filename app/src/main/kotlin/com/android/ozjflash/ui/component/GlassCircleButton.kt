@@ -14,11 +14,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.dropShadow
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
@@ -29,6 +31,31 @@ import androidx.compose.ui.unit.sp
 import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
 import top.yukonga.miuix.kmp.theme.MiuixTheme
+
+/**
+ * 手绘柔和圆角投影，替代 [androidx.compose.ui.draw.dropShadow]。
+ *
+ * `dropShadow` 的阴影由合成层模糊生成，一旦外层叠加 [graphicsLayer] 的 alpha 渐变
+ * （胶囊/圆钮随折叠顶栏淡化时），阴影会按合成层的**矩形 bounds** 铺开，在圆角
+ * 本体背后露出一个直角长方形阴影块。这里改为纯 [drawBehind] 指令画若干层同心
+ * 圆角矩形：形状永远是圆角、不参与合成层，因此无论 alpha 怎么变化都不会退化成矩形。
+ *
+ * [strength] 为阴影浓度（浅色玻璃约 0.12、深色/纯黑约 0.30）。
+ */
+internal fun Modifier.softGlassShadow(strength: Float): Modifier = drawBehind {
+    val radius = size.height / 2f
+    val layers = 8
+    for (i in layers downTo 1) {
+        val t = i.toFloat() / layers
+        val spread = 1.dp.toPx() + t * 5.dp.toPx()
+        drawRoundRect(
+            color = Color.Black.copy(alpha = strength * (1f - t) * 0.14f),
+            topLeft = Offset(-spread, spread * 0.5f + 2.dp.toPx()),
+            size = Size(size.width + spread * 2f, size.height + spread * 2f),
+            cornerRadius = CornerRadius(radius + spread),
+        )
+    }
+}
 
 /**
  * 顶栏「圆形液态玻璃」按钮 —— 复刻 HyperOS 二级页那种白色圆钮：
@@ -113,10 +140,7 @@ fun GlassCircleButton(
     Box(
         modifier = modifier
             .size(size)
-            .dropShadow(
-                shape = CircleShape,
-                shadow = Shadow(radius = 9.dp, color = Color.Black, alpha = palette.shadowAlpha),
-            )
+            .softGlassShadow(palette.shadowAlpha)
             .background(palette.fill, CircleShape)
             .background(palette.highlight, CircleShape)
             .border(width = 1.dp, brush = palette.rim, shape = CircleShape)
