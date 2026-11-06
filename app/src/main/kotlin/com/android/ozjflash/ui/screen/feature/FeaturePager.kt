@@ -213,24 +213,24 @@ private fun FeatureRowMiuix(item: FeatureItem, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 18.dp),
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         Image(
             painter = painterResource(item.iconRes),
             contentDescription = null,
-            modifier = Modifier.size(40.dp),
+            modifier = Modifier.size(32.dp),
         )
         Column(modifier = Modifier.weight(1f)) {
             MiuixText(
                 text = stringResource(item.titleRes),
-                fontSize = 20.sp,
+                fontSize = 16.sp,
                 color = MiuixTheme.colorScheme.onSurface,
             )
             MiuixText(
                 text = stringResource(item.descRes),
-                fontSize = 15.sp,
+                fontSize = 13.sp,
                 color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
             )
         }
@@ -238,7 +238,7 @@ private fun FeatureRowMiuix(item: FeatureItem, onClick: () -> Unit) {
             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = null,
             tint = Color.Gray,
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier.size(20.dp),
         )
     }
 }
@@ -247,7 +247,7 @@ private fun FeatureRowMiuix(item: FeatureItem, onClick: () -> Unit) {
 private fun FeatureCardMaterial(navigator: Navigator) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(18.dp),
         color = MaterialTheme.colorScheme.surfaceContainerHigh,
     ) {
         Column {
@@ -273,24 +273,24 @@ private fun FeatureRowMaterial(item: FeatureItem, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 18.dp),
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         Image(
             painter = painterResource(item.iconRes),
             contentDescription = null,
-            modifier = Modifier.size(40.dp),
+            modifier = Modifier.size(32.dp),
         )
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = stringResource(item.titleRes),
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
                 text = stringResource(item.descRes),
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
@@ -298,7 +298,7 @@ private fun FeatureRowMaterial(item: FeatureItem, onClick: () -> Unit) {
             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier.size(20.dp),
         )
     }
 }
