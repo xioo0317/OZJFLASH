@@ -1,11 +1,7 @@
 package com.android.ozjflash.ui.component.usb
 
 import androidx.annotation.StringRes
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -29,15 +25,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.dropShadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -52,6 +44,7 @@ import com.android.ozjflash.flash.UsbHost
 import com.android.ozjflash.flash.UsbMode
 import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
+import com.android.ozjflash.ui.component.liquid.liquidGlassChip
 import com.android.ozjflash.ui.theme.LocalBlurStyle
 import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.theme.LocalUsbPillBlur
@@ -125,40 +118,13 @@ fun UsbStatusPill(
         else -> Color(0xFFFFB300)
     }
 
-    // 取当前页面背景色判断明暗，决定玻璃是「透亮白」还是「深色带淡白」
+    // 取当前页面背景色判断明暗，供真折射芯片的降级配色 / 阴影强度使用。
     val glassBase = if (dark) Color(0xFF101010) else when (uiMode) {
         UiMode.Miuix -> MiuixTheme.colorScheme.surface
         UiMode.Material -> MaterialTheme.colorScheme.surface
     }
     val isDarkSurface = (glassBase.red + glassBase.green + glassBase.blue) < 1.5f
     val darkGlass = dark || isDarkSurface
-
-    // 玻璃底：上缘亮、中部略暗、下缘回亮的半透明渐变，模拟球面玻璃受光。
-    val glassFill = if (darkGlass) {
-        Brush.verticalGradient(
-            listOf(
-                Color.White.copy(alpha = 0.22f),
-                Color.White.copy(alpha = 0.07f),
-                Color.White.copy(alpha = 0.14f),
-            )
-        )
-    } else {
-        Brush.verticalGradient(
-            listOf(
-                Color.White.copy(alpha = 0.68f),
-                Color.White.copy(alpha = 0.40f),
-                Color.White.copy(alpha = 0.56f),
-            )
-        )
-    }
-    // 白色高光环：上缘最亮、下缘淡、底缘回亮
-    val rimBrush = Brush.verticalGradient(
-        listOf(
-            Color.White.copy(alpha = 0.95f),
-            Color.White.copy(alpha = 0.22f),
-            Color.White.copy(alpha = 0.60f),
-        )
-    )
 
     val pillShape = RoundedCornerShape(50)
     // 与主题设置页里「USB 胶囊模糊」选项的显隐条件严格一致：模糊开启 + 效果=渐变。
@@ -171,30 +137,18 @@ fun UsbStatusPill(
         infoDevice = it
     }
 
+    // 悬浮底栏同款真折射：取背景内容做 vibrancy / blur / lens 折射，边缘为细描边 +
+    // 内阴影，深色下不再有厚白高光环。backdrop 为空（M3 / 低版本 / 关闭模糊）时
+    // 芯片自动回退为克制玻璃底。淡化期间 showShadow = false 取消外阴影，避免矩形块。
+    val chipModifier = Modifier.liquidGlassChip(
+        shape = pillShape,
+        dark = darkGlass,
+        showShadow = showShadow,
+    )
+
     Box(modifier = modifier) {
-        // 阴影只在静止态绘制：折叠顶栏淡化时外层 graphicsLayer 的 alpha < 1，
-        // dropShadow 的模糊阴影会随半透明合成层按矩形 bounds 铺开，露出直角长方形块。
-        // 由调用方在滑动/切换动画期间传 showShadow = false 直接取消阴影。
-        val shadowModifier = if (showShadow) {
-            Modifier.dropShadow(
-                shape = pillShape,
-                shadow = Shadow(
-                    radius = 9.dp,
-                    color = Color.Black,
-                    alpha = if (dark) 0.30f else 0.12f,
-                ),
-            )
-        } else {
-            Modifier
-        }
-        // Miuix 玻璃三要素手绘；M3 / 未开启时为普通纯色 Surface。
-        val surfaceModifier = if (glassEnabled) {
-            shadowModifier
-                .background(glassFill, pillShape)
-                .border(width = 1.1.dp, brush = rimBrush, shape = pillShape)
-        } else {
-            Modifier
-        }
+        // 玻璃开启时套真折射芯片；M3 / 未开启时为普通纯色 Surface。
+        val surfaceModifier = if (glassEnabled) chipModifier else Modifier
 
         when (uiMode) {
             UiMode.Miuix -> MiuixSurface(
@@ -286,9 +240,9 @@ private fun modeShortType(mode: UsbMode): String = when (mode) {
  *
  * - **展开态**：胶囊下移对齐大标题行，随大标题一起上移并按同一曲线渐出；
  *   「?」钮留在顶栏右上原位，与胶囊垂直错开、互不遮挡。
- * - **折叠态**：胶囊回到 actions 原位，按 Miuix 小标题的方式离散触发 + spring
- *   快速到位（alpha/slide 用 [Animatable] 一次性 animateTo，不逐帧跟随 fraction 淡化）；
- *   「?」钮隐藏让位。收回小标题时不再有拖长的渐入渐出，直接快速落位。
+ * - **折叠态**：胶囊回到 actions 原位，「直接跳到目标位置」——越过切换点后
+ *   以 alpha=1、位移 0 立即出现，不做 spring 快速到位动画、不逐帧淡化；
+ *   「?」钮隐藏让位。收回小标题时同样直接切换，没有拖尾。
  * - 两者放进同一个 [Box] 的同一位置交替，避免 actions 的 Row 并排把「?」挤到屏幕中间。
  *
  * 位移用 [offset] 而非 graphicsLayer，下拉菜单锚点会跟着胶囊一起移动；
@@ -304,7 +258,6 @@ fun UsbPillCollapseActions(
     val state = scrollBehavior.state
     val collapsedCenterPx = with(density) { TopAppBarDefaults.CollapsedHeight.toPx() / 2f }
     val fallbackExpansionPx = with(density) { 32.sp.toPx() * 1.2f }
-    val smallTitleSlidePx = with(density) { 20.dp.toPx() }
 
     // 只在跨越切换点时重组一次（与 Miuix smallTitleVisible 同源），动画本身走 draw 阶段。
     val collapsedActive by remember(state) {
@@ -323,39 +276,19 @@ fun UsbPillCollapseActions(
             alpha = 1f - (frac * 3f).coerceIn(0f, 1f)
         }
 
-    // 折叠态胶囊：完全照 Miuix 小标题——离散布尔触发 + spring 一次性 animateTo 快速到位。
-    // alpha / 位移不逐帧跟随 collapsedFraction 线性淡化，而是越过切换点后由 spring
-    // 在固定时长内一次跑完；收回小标题时表现为「快速落位」，没有拖长的渐入渐出。
-    val collapsedAlpha = remember { Animatable(0f) }
-    val collapsedSlide = remember { Animatable(smallTitleSlidePx) }
-    LaunchedEffect(collapsedActive) {
-        // folmeSpring(damping=1.0, response≈0.3) 在 Compose 里对应
-        // 无回弹、中等刚度 spring；show 稍缓、hide 更快，与 Miuix 一致。
-        val spec = spring<Float>(
-            dampingRatio = Spring.DampingRatioNoBouncy,
-            stiffness = Spring.StiffnessMedium,
-        )
-        if (collapsedActive) {
-            launch { collapsedAlpha.animateTo(1f, spec) }
-            launch { collapsedSlide.animateTo(0f, spec) }
-        } else {
-            launch { collapsedAlpha.animateTo(0f, spec) }
-            launch { collapsedSlide.animateTo(smallTitleSlidePx, spec) }
-        }
-    }
-    val collapsedModifier = Modifier.graphicsLayer {
-        alpha = collapsedAlpha.value
-        translationY = collapsedSlide.value
-    }
+    // 折叠态胶囊：从大标题切到小标题时「直接跳到目标位置」——不做 spring 快速到位
+    // 动画，也不逐帧淡化。开关由 collapsedActive 布尔离散触发：越过切换点后胶囊
+    // 立即以 alpha=1、位移 0 出现在小标题行原位；收回时直接消失、没有拖尾。
+    val collapsedModifier = Modifier
 
-    // 滑动/切换动画期间胶囊处于半透明合成层（alpha < 1），dropShadow 的模糊阴影会
-    // 按合成层矩形 bounds 铺开露出直角阴影块。因此只在「静止态」绘制阴影：
-    // 完全展开（frac≈0）或完全折叠且 spring 已到位（alpha≈1）；滑动中直接取消。
-    // derivedStateOf 把逐帧变化的 fraction/alpha 折叠成布尔，只在端点跨越时重组一次。
+    // 阴影只在两端静止态绘制：完全展开（frac≈0）或完全折叠（frac≈1）。
+    // 滑动 / 切换动画期间外层 graphicsLayer 的 alpha < 1，dropShadow 的模糊阴影会
+    // 按合成层矩形 bounds 铺开露出直角阴影块，因此中间过程直接取消。
+    // derivedStateOf 把逐帧变化的 fraction 折叠成布尔，只在端点跨越时重组一次。
     val showShadow by remember(state) {
         derivedStateOf {
             val frac = state.collapsedFraction
-            frac <= 0.001f || (frac >= 0.999f && collapsedAlpha.value >= 0.999f)
+            frac <= 0.001f || frac >= 0.999f
         }
     }
 
