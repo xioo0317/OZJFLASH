@@ -20,8 +20,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.rounded.Android
-import androidx.compose.material.icons.rounded.FlashOn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFlexibleTopAppBar
@@ -34,8 +32,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -49,8 +47,9 @@ import com.android.ozjflash.ui.navigation3.LocalNavigator
 import com.android.ozjflash.ui.navigation3.Navigator
 import com.android.ozjflash.ui.navigation3.Route
 import com.android.ozjflash.ui.screen.terminal.TerminalConsole
+import androidx.compose.foundation.Image
 
-/** Material3 Expressive 主体的工具箱页：仿主页的可折叠顶栏（标题 + USB 状态胶囊）+ 两张工具卡片 */
+/** Material3 Expressive 主体的工具箱页：仿主页的可折叠顶栏（标题 + USB 状态胶囊）+ 工具卡片 */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ToolsMaterial(
@@ -86,38 +85,23 @@ fun ToolsMaterial(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(13.dp),
         ) {
-            ToolCardMaterial(
-                navigator = navigator,
-                route = Route.Fastboot,
-                icon = Icons.Rounded.FlashOn,
-                titleRes = R.string.tools_fastboot,
-                descRes = R.string.tools_fastboot_desc,
-            )
-            ToolCardMaterial(
-                navigator = navigator,
-                route = Route.Adb,
-                icon = Icons.Rounded.Android,
-                titleRes = R.string.tools_adb,
-                descRes = R.string.tools_adb_desc,
-            )
+            OzjFlashCardMaterial(navigator = navigator)
             Box(Modifier.height(bottomInnerPadding))
         }
     }
 }
 
+/**
+ * 「欧真加线刷」卡片（Material）：图标为官方黑色 OPPO 字标，放在白色圆形底上保证深浅主题都清晰；
+ * 图标不随主题着色，固定为黑色，符合「黑色 OPPO 官方图标」要求。点击进入占位页。
+ */
 @Composable
-private fun ToolCardMaterial(
-    navigator: Navigator,
-    route: Route,
-    icon: ImageVector,
-    titleRes: Int,
-    descRes: Int,
-) {
+private fun OzjFlashCardMaterial(navigator: Navigator) {
     val colorScheme = MaterialTheme.colorScheme
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { navigator.push(route) },
+            .clickable { navigator.push(Route.OzjFlash) },
         shape = MaterialTheme.shapes.large,
         color = colorScheme.surfaceContainerHigh,
     ) {
@@ -132,23 +116,22 @@ private fun ToolCardMaterial(
                 modifier = Modifier
                     .size(32.dp)
                     .clip(CircleShape)
-                    .background(colorScheme.primaryContainer),
+                    .background(Color.White),
                 contentAlignment = Alignment.Center,
             ) {
-                Icon(
-                    imageVector = icon,
+                Image(
+                    painter = painterResource(R.drawable.ic_oppo),
                     contentDescription = null,
-                    tint = colorScheme.onPrimaryContainer,
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier.size(22.dp),
                 )
             }
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = stringResource(titleRes),
+                    text = stringResource(R.string.tools_ozjflash),
                     style = MaterialTheme.typography.titleMedium,
                 )
                 Text(
-                    text = stringResource(descRes),
+                    text = stringResource(R.string.tools_ozjflash_desc),
                     style = MaterialTheme.typography.bodySmall,
                     color = colorScheme.onSurfaceVariant,
                 )

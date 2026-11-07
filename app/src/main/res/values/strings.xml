@@ -200,6 +200,9 @@
     <string name="usb_refresh_list">Refresh list</string>
     <string name="tools_flash">Flash</string>
     <string name="tools_flash_desc">Flash fastboot / EDL / MTK / OTA payload to the device.</string>
+    <string name="tools_ozjflash">OZJ Flash</string>
+    <string name="tools_ozjflash_desc">OPPO/OnePlus flash: fastboot, EDL, OTA payload to device.</string>
+    <string name="ozjflash_placeholder">The OZJ Flash feature is coming soon.</string>
     <string name="settings_root_mode">Root mode</string>
     <string name="settings_root_mode_summary">Run tools directly with su</string>
     <string name="usb_request_access">Request USB access</string>

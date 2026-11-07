@@ -29,6 +29,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.rounded.Android
+import androidx.compose.material.icons.rounded.FlashOn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFlexibleTopAppBar
@@ -125,6 +127,7 @@ private fun FeatureMiuix(bottomInnerPadding: Dp) {
                     .padding(horizontal = 12.dp, vertical = 12.dp),
             ) {
                 FeatureCardMiuix(navigator)
+                FastbootAdbCardMiuix(navigator)
                 Spacer(Modifier.height(bottomInnerPadding))
             }
         }
@@ -162,6 +165,7 @@ private fun FeatureMaterial(bottomInnerPadding: Dp) {
                 .padding(horizontal = 16.dp, vertical = 12.dp),
         ) {
             FeatureCardMaterial(navigator)
+            FastbootAdbCardMaterial(navigator)
             Spacer(Modifier.height(bottomInnerPadding))
         }
     }
@@ -278,6 +282,140 @@ private fun FeatureRowMaterial(item: FeatureItem, onClick: () -> Unit) {
             )
             Text(
                 text = stringResource(item.descRes),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(20.dp),
+        )
+    }
+}
+
+/* ------------------- Fastboot / Adb 合并卡片（从工具页迁移而来） ------------------- */
+/**
+ * 工具页原来的 Fastboot、Adb 两张卡片合并为功能页里的一张卡片，两个选项为同一张卡片内的两行，
+ * 共享解压卡片的视觉风格（图标随主题着色、右侧灰色箭头、行间无分隔线）。
+ */
+
+@Composable
+private fun FastbootAdbCardMiuix(navigator: Navigator) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column {
+            FastbootAdbRowMiuix(
+                icon = Icons.Rounded.FlashOn,
+                titleRes = R.string.tools_fastboot,
+                descRes = R.string.tools_fastboot_desc,
+                onClick = { navigator.push(Route.Fastboot) },
+            )
+            FastbootAdbRowMiuix(
+                icon = Icons.Rounded.Android,
+                titleRes = R.string.tools_adb,
+                descRes = R.string.tools_adb_desc,
+                onClick = { navigator.push(Route.Adb) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun FastbootAdbRowMiuix(
+    icon: ImageVector,
+    @StringRes titleRes: Int,
+    @StringRes descRes: Int,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(14.dp),
+    ) {
+        MiuixIcon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = MiuixTheme.colorScheme.onSurface,
+            modifier = Modifier.size(32.dp),
+        )
+        Column(modifier = Modifier.weight(1f)) {
+            MiuixText(
+                text = stringResource(titleRes),
+                fontSize = 16.sp,
+                color = MiuixTheme.colorScheme.onSurface,
+            )
+            MiuixText(
+                text = stringResource(descRes),
+                fontSize = 13.sp,
+                color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+            )
+        }
+        MiuixIcon(
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            contentDescription = null,
+            tint = Color.Gray,
+            modifier = Modifier.size(20.dp),
+        )
+    }
+}
+
+@Composable
+private fun FastbootAdbCardMaterial(navigator: Navigator) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(18.dp),
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+    ) {
+        Column {
+            FastbootAdbRowMaterial(
+                icon = Icons.Rounded.FlashOn,
+                titleRes = R.string.tools_fastboot,
+                descRes = R.string.tools_fastboot_desc,
+                onClick = { navigator.push(Route.Fastboot) },
+            )
+            FastbootAdbRowMaterial(
+                icon = Icons.Rounded.Android,
+                titleRes = R.string.tools_adb,
+                descRes = R.string.tools_adb_desc,
+                onClick = { navigator.push(Route.Adb) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun FastbootAdbRowMaterial(
+    icon: ImageVector,
+    @StringRes titleRes: Int,
+    @StringRes descRes: Int,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(14.dp),
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.size(32.dp),
+        )
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = stringResource(titleRes),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            Text(
+                text = stringResource(descRes),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

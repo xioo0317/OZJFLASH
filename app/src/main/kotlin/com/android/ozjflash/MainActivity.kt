@@ -69,6 +69,7 @@ import com.android.ozjflash.ui.screen.terminal.rememberTerminalConsole
 import com.android.ozjflash.ui.screen.tools.ToolsPager
 import com.android.ozjflash.ui.screen.tools.ToolKind
 import com.android.ozjflash.ui.screen.tools.ToolPageScreen
+import com.android.ozjflash.ui.screen.tools.OzjFlashScreen
 import com.android.ozjflash.flash.FlashScreen
 import com.android.ozjflash.ui.screen.tools.rememberToolsState
 import com.android.ozjflash.ui.screen.feature.ExtractKind
@@ -199,6 +200,7 @@ class MainActivity : ComponentActivity() {
                             entry<Route.Adb> { ToolPageScreen(navigator, ToolKind.ADB) }
                             entry<Route.Extract7z> { FeatureExtractScreen(navigator, ExtractKind.SEVEN_Z) }
                             entry<Route.ExtractPayload> { FeatureExtractScreen(navigator, ExtractKind.PAYLOAD) }
+                            entry<Route.OzjFlash> { OzjFlashScreen(navigator) }
                             entry<Route.Flash> { FlashScreen() }
                         }
                     }
