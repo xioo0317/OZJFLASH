@@ -232,4 +232,17 @@
     <string name="adb_manual_s5_title">5. インターフェースが使用中の場合</string>
     <string name="adb_manual_s5_body">ログに LIBUSB_ERROR_BUSY が出た場合、前の adb server がインターフェースを保持しています。kill-server を実行し、USB ケーブルを抜き差しして残留を解放してから再試行してください。</string>
     <string name="adb_manual_close">閉じる</string>
+    <!-- Fastboot 説明書（Fastboot 二級ページの ? 丸ボタン） -->
+    <string name="fastboot_manual_title">Fastboot 使い方</string>
+    <string name="fastboot_manual_summary">ブートローダーモード・コマンド入力・Root 不要の仕組み</string>
+    <string name="fastboot_manual_s1_title">1. Fastboot モードに入る</string>
+    <string name="fastboot_manual_s1_body">対象端末の電源を切り、音量下 + 電源を長押しして Bootloader/Fastboot モードに入ります（または adb reboot bootloader）。USB ケーブルで接続し、システムの許可ダイアログが出たら「許可」をタップ。? ボタンは大タイトル表示中に表示され、折りたたむとデバイス状態カプセルに切り替わります。カプセルには接続中のデバイス種別が表示されます。</string>
+    <string name="fastboot_manual_s2_title">2. コマンドを入力</string>
+    <string name="fastboot_manual_s2_body">入力欄に fastboot サブコマンドを入力します（fastboot 接頭辞は自動付加）。例：devices、getvar all。「実行」をタップすると出力が行ごとに表示され、末尾に終了コードが出ます。</string>
+    <string name="fastboot_manual_s3_title">3. よく使うコマンド</string>
+    <string name="fastboot_manual_s3_body">devices でデバイス一覧；getvar all で全変数取得；flash boot boot.img でパーティション書き込み；erase userdata で消去；reboot で再起動；oem unlock でブートローダー解除。</string>
+    <string name="fastboot_manual_s4_title">4. Root 不要の仕組み</string>
+    <string name="fastboot_manual_s4_body">USB 許可を得ると、アプリは UsbManager でデバイスを開き、abstract Unix ソケット経由の FD 受け渡しで usbfs ハンドルを内蔵 fastboot に渡します。root もシステムデーモンも不要です。</string>
+    <string name="fastboot_manual_s5_title">5. インターフェースが使用中の場合</string>
+    <string name="fastboot_manual_s5_body">ログに LIBUSB_ERROR_BUSY が出た場合、前のプロセスがインターフェースを保持しています。USB ケーブルを抜き差しして残留を解放してから再試行してください。</string>
 </resources>

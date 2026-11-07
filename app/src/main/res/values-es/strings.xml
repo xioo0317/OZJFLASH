@@ -232,4 +232,17 @@
     <string name="adb_manual_s5_title">5. Si la interfaz está ocupada</string>
     <string name="adb_manual_s5_body">Si el registro muestra LIBUSB_ERROR_BUSY, un servidor adb anterior aún retiene la interfaz. Ejecute kill-server, desconecte y vuelva a conectar el cable USB para liberarlo y reintente.</string>
     <string name="adb_manual_close">Cerrar</string>
+    <!-- Guía de Fastboot (botón ? de la página secundaria de Fastboot) -->
+    <string name="fastboot_manual_title">Guía de Fastboot</string>
+    <string name="fastboot_manual_summary">Modo bootloader, comandos y notas sobre el modo sin root</string>
+    <string name="fastboot_manual_s1_title">1. Entrar en modo Fastboot</string>
+    <string name="fastboot_manual_s1_body">Apague el dispositivo y mantenga pulsados Volumen abajo + Encendido para entrar en modo Bootloader/Fastboot (o ejecute adb reboot bootloader), luego conéctelo por USB. Cuando aparezca el diálogo de permiso, pulse Permitir. El botón ? se muestra con el título grande y deja paso a la cápsula de estado al plegarse la barra; la cápsula indica el tipo de dispositivo conectado.</string>
+    <string name="fastboot_manual_s2_title">2. Introducir un comando</string>
+    <string name="fastboot_manual_s2_body">Escriba un subcomando fastboot en el cuadro (el prefijo fastboot se añade solo), p. ej. devices o getvar all, y pulse Ejecutar. La salida se imprime línea a línea con un código de salida al final.</string>
+    <string name="fastboot_manual_s3_title">3. Comandos habituales</string>
+    <string name="fastboot_manual_s3_body">devices lista dispositivos; getvar all lee todas las variables; flash boot boot.img graba una partición; erase userdata borra una partición; reboot reinicia; oem unlock desbloquea el bootloader.</string>
+    <string name="fastboot_manual_s4_title">4. Sobre el modo sin root</string>
+    <string name="fastboot_manual_s4_body">Con el permiso USB concedido, la app abre el dispositivo mediante UsbManager y pasa el descriptor usbfs al fastboot integrado a través de un socket Unix abstracto. No se necesita root ni ningún demonio del sistema.</string>
+    <string name="fastboot_manual_s5_title">5. Si la interfaz está ocupada</string>
+    <string name="fastboot_manual_s5_body">Si el registro muestra LIBUSB_ERROR_BUSY, un proceso anterior aún retiene la interfaz. Desconecte y vuelva a conectar el cable USB para liberarlo y reintente.</string>
 </resources>

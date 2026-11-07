@@ -29,7 +29,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -70,9 +69,10 @@ import com.android.ozjflash.flash.UsbFdSession
 import com.android.ozjflash.flash.UsbHost
 import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
-import com.android.ozjflash.ui.component.AdbManualDialog
+import com.android.ozjflash.ui.component.ToolManualDialog
 import com.android.ozjflash.ui.component.GlassBackButton
 import com.android.ozjflash.ui.component.GlassHelpButton
+import com.android.ozjflash.ui.component.TerminalOutputWindow
 import com.android.ozjflash.ui.component.material.ExpressiveScaffold
 import com.android.ozjflash.ui.component.material.expressiveTopAppBarColors
 import com.android.ozjflash.ui.component.usb.UsbPillCollapseActions
@@ -176,34 +176,42 @@ fun ToolPageScreen(navigator: Navigator, tool: ToolKind) {
  * 工具二级页顶栏右侧动作。
  *
  * 不再按「有没有设备」切换胶囊与 ? 号：USB 胶囊在 ADB / Fastboot 页都常驻，
- * ADB 页额外保留一个 [GlassHelpButton] 说明书入口。
+ * 且 ADB 与 Fastboot 页都保留一个 [GlassHelpButton] 说明书入口
+ * （按当前 [tool] 弹出 ADB / Fastboot 各自的说明文案）。
  *
  * Miuix 页传入 [scrollBehavior] 做折叠联动，交给 [UsbPillCollapseActions] 按 Miuix
  * 大小标题切换机制处理：展开态胶囊下移对齐大标题并随其渐出、? 号留在右上原位；
  * 折叠态胶囊渐入归位、? 号隐藏让位。两者在同一位置交替，不会互相挤位。
- * M3 页不传，胶囊与 ? 号都常驻（并排）。
+ * 折叠联动同时把静止态 showShadow 传给 ? 号按钮：滑动淡化时 ? 号与 USB 胶囊
+ * 一样取消 dropShadow 阴影，避免半透明合成层露出矩形阴影块。
+ * M3 页不传，胶囊与 ? 号都常驻（并排）、阴影始终绘制。
  */
 @Composable
 private fun ToolPageActions(
     tool: ToolKind,
     scrollBehavior: top.yukonga.miuix.kmp.basic.ScrollBehavior? = null,
 ) {
-    var showManual by remember { mutableStateOf(false) }
-    val help: (@Composable (Modifier) -> Unit)? = if (tool == ToolKind.ADB) {
-        { mod -> GlassHelpButton(onClick = { showManual = true }, modifier = mod) }
-    } else {
-        null
+    var manualTool by remember { mutableStateOf<ToolKind?>(null) }
+    val help: @Composable (Modifier, Boolean) -> Unit = { mod, showShadow ->
+        GlassHelpButton(
+            onClick = { manualTool = tool },
+            modifier = mod,
+            showShadow = showShadow,
+        )
     }
 
     if (scrollBehavior != null) {
         UsbPillCollapseActions(scrollBehavior = scrollBehavior, help = help)
     } else {
-        if (help != null) help(Modifier)
+        help(Modifier, true)
         UsbStatusPill()
     }
 
-    if (showManual) {
-        AdbManualDialog(onDismiss = { showManual = false })
+    manualTool?.let { kind ->
+        ToolManualDialog(
+            fastboot = kind == ToolKind.FASTBOOT,
+            onDismiss = { manualTool = null },
+        )
     }
 }
 
@@ -455,38 +463,10 @@ private fun ToolConsoleMiuix(bin: String) {
 
         Spacer(Modifier.height(12.dp))
 
-        MiuixCard(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                MiuixText(
-                    text = stringResource(R.string.tools_cmd_output),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = colorScheme.onSurface,
-                )
-                Spacer(Modifier.height(8.dp))
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            colorScheme.onSurface.copy(alpha = 0.05f),
-                            RoundedCornerShape(8.dp),
-                        )
-                        .padding(12.dp),
-                ) {
-                    SelectionContainer {
-                        MiuixText(
-                            text = state.output.ifEmpty { stringResource(R.string.tools_cmd_empty) },
-                            fontSize = 12.sp,
-                            color = if (state.output.isEmpty()) {
-                                Color.Gray
-                            } else {
-                                colorScheme.onSurface
-                            },
-                        )
-                    }
-                }
-            }
-        }
+        TerminalOutputWindow(
+            output = state.output,
+            emptyText = stringResource(R.string.tools_cmd_empty),
+        )
     }
 }
 
@@ -554,26 +534,9 @@ private fun ToolConsoleMaterial(bin: String) {
 
         Spacer(Modifier.height(12.dp))
 
-        ElevatedCard(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = stringResource(R.string.tools_cmd_output),
-                    style = MaterialTheme.typography.titleSmall,
-                )
-                Spacer(Modifier.height(8.dp))
-                SelectionContainer {
-                    Text(
-                        text = state.output.ifEmpty { stringResource(R.string.tools_cmd_empty) },
-                        fontFamily = FontFamily.Monospace,
-                        fontSize = 12.sp,
-                        color = if (state.output.isEmpty()) {
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        } else {
-                            MaterialTheme.colorScheme.onSurface
-                        },
-                    )
-                }
-            }
-        }
+        TerminalOutputWindow(
+            output = state.output,
+            emptyText = stringResource(R.string.tools_cmd_empty),
+        )
     }
 }

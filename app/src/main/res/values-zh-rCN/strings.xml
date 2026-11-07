@@ -233,4 +233,17 @@
     <string name="adb_manual_s5_title">5. 接口被占用时</string>
     <string name="adb_manual_s5_body">若日志出现 LIBUSB_ERROR_BUSY，说明上一个 adb server 仍占着接口。执行 kill-server，再重新插拔一次数据线释放残留占用，然后重试。</string>
     <string name="adb_manual_close">知道了</string>
+    <!-- Fastboot 说明书（Fastboot 二级页 ? 圆钮弹出） -->
+    <string name="fastboot_manual_title">Fastboot 使用说明</string>
+    <string name="fastboot_manual_summary">引导模式、命令输入与免 Root 说明</string>
+    <string name="fastboot_manual_s1_title">1. 进入 Fastboot 模式</string>
+    <string name="fastboot_manual_s1_body">将目标设备关机后按住「音量下 + 电源」进入 Bootloader/Fastboot 模式（或执行 adb reboot bootloader），再用数据线连接；系统弹出授权框时点「允许」。顶栏 ? 按钮在大标题展开时显示，收起为小标题后让位给设备状态胶囊；胶囊文字会显示当前接入的设备类型。</string>
+    <string name="fastboot_manual_s2_title">2. 输入命令</string>
+    <string name="fastboot_manual_s2_body">在输入框填写 fastboot 子命令（会自动补 fastboot 前缀），例如 devices 或 getvar all，点「执行」。输出逐行打印，末尾显示退出码。</string>
+    <string name="fastboot_manual_s3_title">3. 常用命令</string>
+    <string name="fastboot_manual_s3_body">devices 列出设备；getvar all 读取全部变量；flash boot boot.img 刷写分区；erase userdata 擦除分区；reboot 重启；oem unlock 解锁引导加载程序。</string>
+    <string name="fastboot_manual_s4_title">4. 免 Root 原理</string>
+    <string name="fastboot_manual_s4_body">获得 USB 授权后，应用通过 UsbManager 打开设备，再经 abstract Unix 套接字以 FD 传递方式把 usbfs 句柄交给内置 fastboot，全程无需 root，也不依赖系统守护进程。</string>
+    <string name="fastboot_manual_s5_title">5. 接口被占用时</string>
+    <string name="fastboot_manual_s5_body">若日志出现 LIBUSB_ERROR_BUSY，说明上一个进程仍占着接口。重新插拔一次数据线释放残留占用，然后重试。</string>
 </resources>

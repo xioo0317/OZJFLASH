@@ -3,6 +3,8 @@
     <string name="app_name">OZJFLASH</string>
 
     <!-- 底栏与通用 -->
+    <!-- macOS Terminal 窗口 chrome 标题：固定英文，仅在默认 values 定义，其他语言自动回退 -->
+    <string name="terminal_window_title" translatable="false">Terminal</string>
     <string name="terminal">Terminal</string>
     <string name="flash">Flash</string>
     <string name="home">Home</string>
@@ -247,4 +249,17 @@
     <string name="adb_manual_s5_title">5. If the interface is busy</string>
     <string name="adb_manual_s5_body">If the log shows LIBUSB_ERROR_BUSY, an earlier adb server still holds the interface. Run kill-server, then unplug and reconnect the USB cable to release the stale claim, and try again.</string>
     <string name="adb_manual_close">Close</string>
+    <!-- Fastboot 说明书（Fastboot 二级页 ? 圆钮弹出） -->
+    <string name="fastboot_manual_title">Fastboot Guide</string>
+    <string name="fastboot_manual_summary">Bootloader mode, commands and root-free notes</string>
+    <string name="fastboot_manual_s1_title">1. Enter Fastboot mode</string>
+    <string name="fastboot_manual_s1_body">Power off the target device and hold Volume Down + Power to enter Bootloader/Fastboot mode (or run adb reboot bootloader), then connect it via USB. When the system permission dialog appears, tap Allow. The ? button appears while the large title is expanded and gives way to the device status pill once the bar collapses; the pill shows the type of the connected device.</string>
+    <string name="fastboot_manual_s2_title">2. Enter a command</string>
+    <string name="fastboot_manual_s2_body">Type a fastboot subcommand in the input box (the fastboot prefix is added automatically), e.g. devices or getvar all, then tap Run. Output is printed line by line with an exit code at the end.</string>
+    <string name="fastboot_manual_s3_title">3. Common commands</string>
+    <string name="fastboot_manual_s3_body">devices — list connected devices; getvar all — read all variables; flash boot boot.img — flash a partition; erase userdata — wipe a partition; reboot — restart; oem unlock — unlock the bootloader.</string>
+    <string name="fastboot_manual_s4_title">4. About root-free mode</string>
+    <string name="fastboot_manual_s4_body">With USB access granted, the app opens the device via UsbManager and passes the usbfs file descriptor to the bundled fastboot through an FD-passing channel over an abstract Unix socket. No root or system daemon is required.</string>
+    <string name="fastboot_manual_s5_title">5. If the interface is busy</string>
+    <string name="fastboot_manual_s5_body">If the log shows LIBUSB_ERROR_BUSY, an earlier process still holds the interface. Unplug and reconnect the USB cable to release the stale claim, then try again.</string>
 </resources>

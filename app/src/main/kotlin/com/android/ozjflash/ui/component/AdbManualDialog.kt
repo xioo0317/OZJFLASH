@@ -30,50 +30,84 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
 private data class ManualSection(val title: String, val body: String)
 
 /**
- * ADB 二级页「?」圆钮点击后弹出的说明书。
- * 双风格对应：Miuix 用 OverlayDialog，Material3 用 ExpressiveDialog，
+ * 命令行二级页「?」圆钮点击后弹出的说明书。
+ *
+ * [fastboot] 为 true 时显示 Fastboot 专属文案（引导模式 / 刷写命令 / 免 Root 原理），
+ * 为 false 时显示 ADB 文案（USB 调试 / adb 子命令 / 免 Root 原理）。两套共用同一
+ * 双风格弹窗外壳：Miuix 用 OverlayDialog，Material3 用 ExpressiveDialog，
  * 与 USB 设备信息弹窗保持一致；内容较长故整体可滚动。
  */
 @Composable
-fun AdbManualDialog(onDismiss: () -> Unit) {
+fun ToolManualDialog(fastboot: Boolean, onDismiss: () -> Unit) {
     when (LocalUiMode.current) {
-        UiMode.Miuix -> AdbManualDialogMiuix(onDismiss)
-        UiMode.Material -> AdbManualDialogMaterial(onDismiss)
+        UiMode.Miuix -> ToolManualDialogMiuix(fastboot, onDismiss)
+        UiMode.Material -> ToolManualDialogMaterial(fastboot, onDismiss)
     }
 }
 
 @Composable
-private fun manualSections(): List<ManualSection> = listOf(
-    ManualSection(
-        stringResource(R.string.adb_manual_s1_title),
-        stringResource(R.string.adb_manual_s1_body),
-    ),
-    ManualSection(
-        stringResource(R.string.adb_manual_s2_title),
-        stringResource(R.string.adb_manual_s2_body),
-    ),
-    ManualSection(
-        stringResource(R.string.adb_manual_s3_title),
-        stringResource(R.string.adb_manual_s3_body),
-    ),
-    ManualSection(
-        stringResource(R.string.adb_manual_s4_title),
-        stringResource(R.string.adb_manual_s4_body),
-    ),
-    ManualSection(
-        stringResource(R.string.adb_manual_s5_title),
-        stringResource(R.string.adb_manual_s5_body),
-    ),
-)
+private fun manualSections(fastboot: Boolean): List<ManualSection> = if (fastboot) {
+    listOf(
+        ManualSection(
+            stringResource(R.string.fastboot_manual_s1_title),
+            stringResource(R.string.fastboot_manual_s1_body),
+        ),
+        ManualSection(
+            stringResource(R.string.fastboot_manual_s2_title),
+            stringResource(R.string.fastboot_manual_s2_body),
+        ),
+        ManualSection(
+            stringResource(R.string.fastboot_manual_s3_title),
+            stringResource(R.string.fastboot_manual_s3_body),
+        ),
+        ManualSection(
+            stringResource(R.string.fastboot_manual_s4_title),
+            stringResource(R.string.fastboot_manual_s4_body),
+        ),
+        ManualSection(
+            stringResource(R.string.fastboot_manual_s5_title),
+            stringResource(R.string.fastboot_manual_s5_body),
+        ),
+    )
+} else {
+    listOf(
+        ManualSection(
+            stringResource(R.string.adb_manual_s1_title),
+            stringResource(R.string.adb_manual_s1_body),
+        ),
+        ManualSection(
+            stringResource(R.string.adb_manual_s2_title),
+            stringResource(R.string.adb_manual_s2_body),
+        ),
+        ManualSection(
+            stringResource(R.string.adb_manual_s3_title),
+            stringResource(R.string.adb_manual_s3_body),
+        ),
+        ManualSection(
+            stringResource(R.string.adb_manual_s4_title),
+            stringResource(R.string.adb_manual_s4_body),
+        ),
+        ManualSection(
+            stringResource(R.string.adb_manual_s5_title),
+            stringResource(R.string.adb_manual_s5_body),
+        ),
+    )
+}
+
+private fun manualTitleRes(fastboot: Boolean) =
+    if (fastboot) R.string.fastboot_manual_title else R.string.adb_manual_title
+
+private fun manualSummaryRes(fastboot: Boolean) =
+    if (fastboot) R.string.fastboot_manual_summary else R.string.adb_manual_summary
 
 @Composable
-private fun AdbManualDialogMiuix(onDismiss: () -> Unit) {
-    val sections = manualSections()
+private fun ToolManualDialogMiuix(fastboot: Boolean, onDismiss: () -> Unit) {
+    val sections = manualSections(fastboot)
     val scheme = MiuixTheme.colorScheme
     OverlayDialog(
         show = true,
-        title = stringResource(R.string.adb_manual_title),
-        summary = stringResource(R.string.adb_manual_summary),
+        title = stringResource(manualTitleRes(fastboot)),
+        summary = stringResource(manualSummaryRes(fastboot)),
         onDismissRequest = onDismiss,
     ) {
         Column(
@@ -109,12 +143,12 @@ private fun AdbManualDialogMiuix(onDismiss: () -> Unit) {
 }
 
 @Composable
-private fun AdbManualDialogMaterial(onDismiss: () -> Unit) {
-    val sections = manualSections()
+private fun ToolManualDialogMaterial(fastboot: Boolean, onDismiss: () -> Unit) {
+    val sections = manualSections(fastboot)
     val scheme = MaterialTheme.colorScheme
     ExpressiveDialog(
         onDismissRequest = onDismiss,
-        title = { M3Text(stringResource(R.string.adb_manual_title)) },
+        title = { M3Text(stringResource(manualTitleRes(fastboot))) },
         text = {
             Column(
                 modifier = Modifier

@@ -10,24 +10,18 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -52,12 +46,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.ozjflash.R
 import com.android.ozjflash.ui.component.GlassBackButton
+import com.android.ozjflash.ui.component.TerminalOutputWindow
 import com.android.ozjflash.flash.NativeLibs
 import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
@@ -398,35 +391,10 @@ private fun ExtractBodyMiuix(kind: ExtractKind) {
             }
         }
 
-        MiuixCard(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                MiuixText(
-                    text = stringResource(R.string.extract_output),
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MiuixTheme.colorScheme.onSurface,
-                )
-                Spacer(Modifier.height(8.dp))
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            MiuixTheme.colorScheme.onSurface.copy(alpha = 0.05f),
-                            RoundedCornerShape(8.dp),
-                        )
-                        .padding(12.dp),
-                ) {
-                    SelectionContainer {
-                        MiuixText(
-                            text = state.output.ifEmpty { stringResource(R.string.extract_output_empty) },
-                            fontSize = 12.sp,
-                            color = if (state.output.isEmpty()) Color.Gray
-                            else MiuixTheme.colorScheme.onSurface,
-                        )
-                    }
-                }
-            }
-        }
+        TerminalOutputWindow(
+            output = state.output,
+            emptyText = stringResource(R.string.extract_output_empty),
+        )
     }
 }
 
@@ -477,23 +445,9 @@ private fun ExtractBodyMaterial(kind: ExtractKind) {
             }
         }
 
-        ElevatedCard(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = stringResource(R.string.extract_output),
-                    style = MaterialTheme.typography.titleSmall,
-                )
-                Spacer(Modifier.height(8.dp))
-                SelectionContainer {
-                    Text(
-                        text = state.output.ifEmpty { stringResource(R.string.extract_output_empty) },
-                        fontFamily = FontFamily.Monospace,
-                        fontSize = 12.sp,
-                        color = if (state.output.isEmpty()) MaterialTheme.colorScheme.onSurfaceVariant
-                        else MaterialTheme.colorScheme.onSurface,
-                    )
-                }
-            }
-        }
+        TerminalOutputWindow(
+            output = state.output,
+            emptyText = stringResource(R.string.extract_output_empty),
+        )
     }
 }

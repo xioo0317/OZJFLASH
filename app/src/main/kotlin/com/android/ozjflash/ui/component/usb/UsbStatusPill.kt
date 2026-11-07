@@ -298,7 +298,7 @@ private fun modeShortType(mode: UsbMode): String = when (mode) {
 @Composable
 fun UsbPillCollapseActions(
     scrollBehavior: ScrollBehavior,
-    help: (@Composable (Modifier) -> Unit)? = null,
+    help: (@Composable (Modifier, Boolean) -> Unit)? = null,
 ) {
     val density = LocalDensity.current
     val state = scrollBehavior.state
@@ -365,11 +365,15 @@ fun UsbPillCollapseActions(
         } else {
             UsbStatusPill(modifier = expandedModifier, showShadow = showShadow)
             if (help != null) {
+                // 与 USB 胶囊共用同一个静止态 showShadow：滑动淡化（alpha < 1）时
+                // 把 false 一并传给 ? 号液态玻璃按钮，取消其 dropShadow，
+                // 避免半透明合成层把模糊阴影按矩形 bounds 铺开露出直角阴影块。
                 help(
                     Modifier.graphicsLayer {
                         val frac = state.collapsedFraction.coerceIn(0f, 1f)
                         alpha = 1f - (frac * 3f).coerceIn(0f, 1f)
-                    }
+                    },
+                    showShadow,
                 )
             }
         }
