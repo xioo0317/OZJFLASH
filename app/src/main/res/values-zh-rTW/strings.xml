@@ -183,6 +183,9 @@
     <string name="usb_refresh_list">重新整理清單</string>
     <string name="tools_flash">刷寫</string>
     <string name="tools_flash_desc">透過 fastboot / EDL / MTK / OTA payload 向裝置刷寫。</string>
+    <string name="tools_ozjflash">歐真加線刷</string>
+    <string name="tools_ozjflash_desc">OPPO/一加 線刷入口：fastboot / EDL / OTA payload 刷寫。</string>
+    <string name="ozjflash_placeholder">「歐真加線刷」功能即將上線，敬請期待。</string>
     <string name="settings_root_mode">Root 模式</string>
     <string name="settings_root_mode_summary">直接執行工具</string>
     <string name="usb_request_access">請求 USB 權限</string>

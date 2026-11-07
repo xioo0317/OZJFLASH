@@ -41,26 +41,29 @@ import top.yukonga.miuix.kmp.blur.highlight.LightSource
 val LocalLiquidBackdrop = staticCompositionLocalOf<Backdrop?> { null }
 
 /**
- * 悬浮底栏同款细边缘高光：1dp BloomStroke 双峰描边（随光源方向变化），深色下压低
- * alpha，杜绝旧的 `border(1.1.dp, White 0.95)` 那圈「厚白高光」。
+ * 悬浮底栏同款细边缘高光：1dp BloomStroke 描边，深色下压低 alpha。
+ *
+ * 旧实现用 `dualPeak = true` 的双峰光源（顶/底中心两点亮），在胶囊中部折射出一条
+ * 横向亮带，被误看成「虚线」。这里改为**单峰顶光 + 关闭 dualPeak**，高光沿胶囊外缘
+ * 均匀描边，不再在内部中段产生横向线；同时把 innerBlur 收窄，描边更干净。
  */
 private fun chipHighlight(dark: Boolean): Highlight = Highlight(
     width = 1.dp,
     alpha = if (dark) 0.45f else 0.7f,
     style = BloomStroke(
         color = Color.White.copy(alpha = 0.10f),
-        innerBlurRadius = 2.dp,
+        innerBlurRadius = 1.2.dp,
         primaryLight = LightSource(
-            position = LightPosition(0.5f, -0.3f, -0.05f),
+            position = LightPosition(0.5f, -0.6f, 0.15f),
             color = Color.White,
             intensity = 1f,
         ),
         secondaryLight = LightSource(
-            position = LightPosition(0.5f, 0.8f, -0.5f),
+            position = LightPosition(0.5f, 0.8f, -0.4f),
             color = Color.White,
-            intensity = 0.4f,
+            intensity = 0.3f,
         ),
-        dualPeak = true,
+        dualPeak = false,
     ),
 )
 
@@ -129,9 +132,10 @@ fun Modifier.liquidGlassChip(
                     vibrancy()
                     blur(4.dp.toPx(), 4.dp.toPx())
                     val boost = 1f + 0.5f * pressProgress
+                    // 折射高度/强度收敛，避免在小胶囊上折射出一条横向亮带（被误认为虚线）
                     lens(
-                        refractionHeight = 16.dp.toPx() * boost,
-                        refractionAmount = 12.dp.toPx() * boost,
+                        refractionHeight = 8.dp.toPx() * boost,
+                        refractionAmount = 6.dp.toPx() * boost,
                     )
                 },
                 highlight = { specular },

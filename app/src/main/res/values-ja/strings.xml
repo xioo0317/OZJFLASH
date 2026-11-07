@@ -183,6 +183,9 @@
     <string name="usb_refresh_list">リストを更新</string>
     <string name="tools_flash">刷写</string>
     <string name="tools_flash_desc">fastboot / EDL / MTK / OTA payload 経由でデバイスに書き込み。</string>
+    <string name="tools_ozjflash">OZJ Flash</string>
+    <string name="tools_ozjflash_desc">OPPO/OnePlus 書き込み：fastboot / EDL / OTA payload 経由でデバイスに。</string>
+    <string name="ozjflash_placeholder">OZJ Flash 機能は近日公開予定です。</string>
     <string name="settings_root_mode">Root モード</string>
     <string name="settings_root_mode_summary">ツールを直接実行</string>
     <string name="usb_request_access">USB アクセスを要求</string>

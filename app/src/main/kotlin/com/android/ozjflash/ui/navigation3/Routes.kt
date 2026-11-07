@@ -59,6 +59,11 @@ sealed interface Route : NavKey, Parcelable {
     @Parcelize
     data object Adb : Route
 
+    /** 工具页 → 欧真加线刷（占位页，后续接入 OPPO/一加 线刷流程） */
+    @Serializable
+    @Parcelize
+    data object OzjFlash : Route
+
     /** 功能页 → 7z 解压执行页 */
     @Serializable
     @Parcelize

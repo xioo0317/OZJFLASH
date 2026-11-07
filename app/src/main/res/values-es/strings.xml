@@ -183,6 +183,9 @@
     <string name="usb_refresh_list">Actualizar lista</string>
     <string name="tools_flash">Flash</string>
     <string name="tools_flash_desc">Flashea fastboot / EDL / MTK / OTA payload al dispositivo.</string>
+    <string name="tools_ozjflash">OZJ Flash</string>
+    <string name="tools_ozjflash_desc">OPPO/OnePlus: flashea fastboot, EDL, OTA payload al dispositivo.</string>
+    <string name="ozjflash_placeholder">La función OZJ Flash estará disponible pronto.</string>
     <string name="settings_root_mode">Modo Root</string>
     <string name="settings_root_mode_summary">Ejecuta las herramientas directamente</string>
     <string name="usb_request_access">Solicitar acceso USB</string>
