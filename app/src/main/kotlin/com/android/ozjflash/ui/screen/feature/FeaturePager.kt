@@ -128,6 +128,7 @@ private fun FeatureMiuix(bottomInnerPadding: Dp) {
                     .padding(horizontal = 12.dp, vertical = 12.dp),
             ) {
                 FeatureCardMiuix(navigator)
+                Spacer(Modifier.height(12.dp))
                 FastbootAdbCardMiuix(navigator)
                 Spacer(Modifier.height(bottomInnerPadding))
             }
@@ -166,6 +167,7 @@ private fun FeatureMaterial(bottomInnerPadding: Dp) {
                 .padding(horizontal = 16.dp, vertical = 12.dp),
         ) {
             FeatureCardMaterial(navigator)
+            Spacer(Modifier.height(12.dp))
             FastbootAdbCardMaterial(navigator)
             Spacer(Modifier.height(bottomInnerPadding))
         }
@@ -221,7 +223,7 @@ private fun FeatureRowMiuix(item: FeatureItem, onClick: () -> Unit) {
             painter = painterResource(item.iconRes),
             contentDescription = null,
             colorFilter = ColorFilter.tint(MiuixTheme.colorScheme.onSurface),
-            modifier = Modifier.size(32.dp),
+            modifier = Modifier.size(26.dp),
         )
         Column(modifier = Modifier.weight(1f)) {
             MiuixText(
@@ -273,7 +275,7 @@ private fun FeatureRowMaterial(item: FeatureItem, onClick: () -> Unit) {
             painter = painterResource(item.iconRes),
             contentDescription = null,
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
-            modifier = Modifier.size(32.dp),
+            modifier = Modifier.size(26.dp),
         )
         Column(modifier = Modifier.weight(1f)) {
             Text(

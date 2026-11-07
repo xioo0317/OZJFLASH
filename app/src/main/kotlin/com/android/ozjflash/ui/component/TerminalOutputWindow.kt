@@ -59,6 +59,8 @@ private val TrafficGreen = Color(0xFF27C940)
 
 private data class WindowPalette(
     val edge: Color,
+    val titleBarBg: Color,
+    val divider: Color,
     val titleText: Color,
     val outputText: Color,
     val emptyText: Color,
@@ -81,6 +83,9 @@ private fun windowPalette(uiMode: UiMode): WindowPalette {
     // 颜色淡化差异：输出正文用完整 onSurface，标题 0.62，空态提示 0.38。
     return WindowPalette(
         edge = edge,
+        // 标题栏比主体略深的浅色差 + 一条可见分线，形成 macOS 窗口的上下层次
+        titleBarBg = onSurface.copy(alpha = if (dark) 0.06f else 0.035f),
+        divider = onSurface.copy(alpha = if (dark) 0.14f else 0.07f),
         titleText = onSurface.copy(alpha = 0.62f),
         outputText = onSurface,
         emptyText = onSurface.copy(alpha = 0.38f),
@@ -145,6 +150,7 @@ private fun ColumnScope.TerminalWindowContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(44.dp)
+                .background(palette.titleBarBg)
                 .padding(horizontal = 18.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -175,7 +181,7 @@ private fun ColumnScope.TerminalWindowContent(
             Modifier
                 .fillMaxWidth()
                 .height(1.dp)
-                .background(palette.edge),
+                .background(palette.divider),
         )
         // 主体：留白 + 等宽可复制输出
         Box(

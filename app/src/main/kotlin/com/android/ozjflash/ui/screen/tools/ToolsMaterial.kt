@@ -100,9 +100,8 @@ fun ToolsMaterial(
 private fun OzjFlashCardMaterial(navigator: Navigator) {
     val colorScheme = MaterialTheme.colorScheme
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { navigator.push(Route.OzjFlash) },
+        onClick = { navigator.push(Route.OzjFlash) },
+        modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
         color = colorScheme.surfaceContainerHigh,
     ) {
