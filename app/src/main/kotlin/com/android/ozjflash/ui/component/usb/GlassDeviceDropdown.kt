@@ -23,7 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -156,13 +158,16 @@ internal fun GlassDeviceDropdown(
                     transformOrigin = TransformOrigin(1f, 0f)
                 }
                 // 从上往下揭开：只绘制顶部 progress 比例的内容，产生「从胶囊裂开长出」的观感。
+                // 用 clipPath + Path（与 Miuix popupClipReveal 同构，已验证可编译）。
                 .drawWithContent {
-                    clipRect(
-                        left = 0f,
-                        top = 0f,
-                        right = size.width,
-                        bottom = size.height * revealProgress,
-                    ) {
+                    val reveal = Path().apply {
+                        moveTo(0f, 0f)
+                        lineTo(size.width, 0f)
+                        lineTo(size.width, size.height * revealProgress)
+                        lineTo(0f, size.height * revealProgress)
+                        close()
+                    }
+                    clipPath(reveal) {
                         this@drawWithContent.drawContent()
                     }
                 }
