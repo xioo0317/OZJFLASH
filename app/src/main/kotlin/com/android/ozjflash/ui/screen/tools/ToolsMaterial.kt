@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -99,9 +100,8 @@ fun ToolsMaterial(
 private fun OzjFlashCardMaterial(navigator: Navigator) {
     val colorScheme = MaterialTheme.colorScheme
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { navigator.push(Route.OzjFlash) },
+        onClick = { navigator.push(Route.OzjFlash) },
+        modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
         color = colorScheme.surfaceContainerHigh,
     ) {

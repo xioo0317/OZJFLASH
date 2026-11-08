@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
@@ -30,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -131,7 +133,9 @@ private fun OzjFlashCardMiuix(navigator: Navigator) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { navigator.push(Route.OzjFlash) }
+            .clip(RoundedCornerShape(16.dp))
+            .clickable { navigator.push(Route.OzjFlash) },
+        cornerRadius = 16.dp,
     ) {
         Row(
             modifier = Modifier

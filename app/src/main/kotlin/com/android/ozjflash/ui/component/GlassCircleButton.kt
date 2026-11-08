@@ -60,6 +60,7 @@ fun GlassCircleButton(
                 shape = CircleShape,
                 dark = darkGlass,
                 showShadow = showShadow,
+                refract = false,
             )
             .clip(CircleShape)
             .clickable(onClick = onClick),

@@ -85,8 +85,12 @@ fun Modifier.liquidGlassChip(
     shape: Shape,
     dark: Boolean,
     showShadow: Boolean = true,
+    refract: Boolean = true,
 ): Modifier {
-    val backdrop = LocalLiquidBackdrop.current
+    // refract=false：顶栏圆钮位于 backdrop 捕获层之外，真折射会采样到空/黑纹理
+    // （黑底 + onDrawSurface 的 White 0.16 = #292929 深灰圆）。关闭折射改走干净的
+    // 半透明玻璃底：浅色=白玻璃、深色=暗玻璃，符号始终清晰。
+    val backdrop = if (refract) LocalLiquidBackdrop.current else null
     val specular = remember(dark) { chipHighlight(dark) }
 
     // 按压缩放折射用：仅在真折射分支里读，降级分支不产生副作用。
