@@ -173,30 +173,16 @@ fun UsbStatusPill(
             }
         }
 
-        // 下拉挂在同一个 Box 里：胶囊模糊开启时改用同款液态玻璃卡片（会「裂开」展开），
-        // 未开启时保持 Miuix 原生下拉，零回归。
+        // 下拉挂在同一个 Box 里：Miuix 的 OverlayDropdownPopup 以父布局边界为锚点
         when (uiMode) {
-            UiMode.Miuix -> if (glassEnabled) {
-                GlassDeviceDropdown(
-                    expanded = expanded,
-                    onDismiss = { expanded = false },
-                    devices = devices,
-                    onDeviceClick = openInfo,
-                    onRequest = { UsbHost.requestPermission(context, it.device) },
-                    onRefresh = { UsbHost.refresh(context) },
-                    dark = darkGlass,
-                    contentColor = contentColor,
-                )
-            } else {
-                MiuixDeviceDropdown(
-                    expanded = expanded,
-                    onDismiss = { expanded = false },
-                    devices = devices,
-                    onDeviceClick = openInfo,
-                    onRequest = { UsbHost.requestPermission(context, it.device) },
-                    onRefresh = { UsbHost.refresh(context) },
-                )
-            }
+            UiMode.Miuix -> MiuixDeviceDropdown(
+                expanded = expanded,
+                onDismiss = { expanded = false },
+                devices = devices,
+                onDeviceClick = openInfo,
+                onRequest = { UsbHost.requestPermission(context, it.device) },
+                onRefresh = { UsbHost.refresh(context) },
+            )
 
             UiMode.Material -> MaterialDeviceDropdown(
                 expanded = expanded,
@@ -225,11 +211,11 @@ internal fun usbModeLabelRes(mode: UsbMode): Int = when (mode) {
 }
 
 /** 下拉里一条设备项的文案：沿用旧版「短类型 + 小写 VID:PID」，如「ADB 22d9:2769」 */
-internal fun deviceItemText(info: UsbDeviceInfo): String =
+private fun deviceItemText(info: UsbDeviceInfo): String =
     "${modeShortType(info.mode)} ${info.vidPid.lowercase()}"
 
 /** 按连接模式给出短类型名（旧版下拉文案用，不随系统语言变化） */
-internal fun modeShortType(mode: UsbMode): String = when (mode) {
+private fun modeShortType(mode: UsbMode): String = when (mode) {
     UsbMode.ADB -> "ADB"
     UsbMode.FASTBOOT -> "Fastboot"
     UsbMode.EDL, UsbMode.DLOAD -> "EDL"
