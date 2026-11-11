@@ -71,6 +71,9 @@ import com.android.ozjflash.ui.theme.LocalColorMode
 import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.theme.LocalBlurStyle
 import com.android.ozjflash.ui.theme.LocalUsbPillBlur
+import com.android.ozjflash.ui.theme.LocalUiRevamp
+import com.android.ozjflash.ui.theme.LocalDialogStyle
+import com.android.ozjflash.ui.theme.LocalCollapsedTitleAlign
 import com.android.ozjflash.ui.theme.LocalEnableFloatingBottomBar
 import com.android.ozjflash.ui.theme.LocalEnableFloatingBottomBarBlur
 import com.android.ozjflash.ui.theme.LocalEnableNavigationBadge
@@ -157,9 +160,15 @@ class MainActivity : ComponentActivity() {
                 LocalNavigator provides navigator,
                 LocalDensity provides density,
                 LocalColorMode provides appSettings.colorMode.value,
-                LocalEnableBlur provides uiState.enableBlur,
-                LocalBlurStyle provides uiState.blurStyle,
-                LocalUsbPillBlur provides uiState.usbPillBlur,
+                LocalUiRevamp provides uiState.uiRevamp,
+                LocalDialogStyle provides uiState.dialogStyle,
+                LocalCollapsedTitleAlign provides uiState.collapsedTitleAlign,
+                // 界面换新开启后：胶囊玻璃 / 圆钮玻璃 / 顶栏渐变模糊统一由总开关驱动，
+                // 旧的「模糊 + 效果 + 胶囊模糊」三项仅作为关闭态下的兼容回退。
+                LocalEnableBlur provides (uiState.enableBlur || uiState.uiRevamp),
+                // 界面换新开启即视为「渐变模糊」：胶囊玻璃、顶栏渐进模糊统一随总开关生效
+                LocalBlurStyle provides (if (uiState.uiRevamp) "gradient" else uiState.blurStyle),
+                LocalUsbPillBlur provides (uiState.usbPillBlur || uiState.uiRevamp),
                 LocalEnableFloatingBottomBar provides uiState.enableFloatingBottomBar,
                 LocalEnableFloatingBottomBarBlur provides uiState.enableFloatingBottomBarBlur,
                 LocalEnableNavigationBadge provides uiState.enableNavigationBadge,

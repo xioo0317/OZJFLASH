@@ -24,8 +24,14 @@ data class AppUiState(
     val miuixMonet: Boolean = false,
     val enableBlur: Boolean = false,
     val blurStyle: String = "gaussian",
-    /** USB 状态胶囊的液态玻璃效果开关 */
+    /** USB 状态胶囊的液态玻璃效果开关（兼容旧存档，现已并入 uiRevamp） */
     val usbPillBlur: Boolean = false,
+    /** 界面换新 (Beta) 总开关 */
+    val uiRevamp: Boolean = false,
+    /** 选项弹窗风格：miui / coui */
+    val dialogStyle: String = "miui",
+    /** 顶栏大标题折叠后对齐：start / center */
+    val collapsedTitleAlign: String = "center",
     val enableFloatingBottomBar: Boolean = false,
     val enableFloatingBottomBarBlur: Boolean = false,
     val enableNavigationBadge: Boolean = true,
@@ -51,6 +57,9 @@ class AppViewModel(
             enableBlur = repo.enableBlur,
             blurStyle = repo.blurStyle,
             usbPillBlur = repo.usbPillBlur,
+            uiRevamp = repo.uiRevamp,
+            dialogStyle = repo.dialogStyle,
+            collapsedTitleAlign = repo.collapsedTitleAlign,
             enableFloatingBottomBar = repo.enableFloatingBottomBar,
             enableFloatingBottomBarBlur = repo.enableFloatingBottomBarBlur,
             enableNavigationBadge = repo.enableNavigationBadge,
@@ -108,6 +117,21 @@ class AppViewModel(
     fun setUsbPillBlur(enabled: Boolean) {
         repo.usbPillBlur = enabled
         _uiState.value = _uiState.value.copy(usbPillBlur = enabled)
+    }
+
+    fun setUiRevamp(enabled: Boolean) {
+        repo.uiRevamp = enabled
+        _uiState.value = _uiState.value.copy(uiRevamp = enabled)
+    }
+
+    fun setDialogStyle(style: String) {
+        repo.dialogStyle = style
+        _uiState.value = _uiState.value.copy(dialogStyle = style)
+    }
+
+    fun setCollapsedTitleAlign(align: String) {
+        repo.collapsedTitleAlign = align
+        _uiState.value = _uiState.value.copy(collapsedTitleAlign = align)
     }
 
     fun setFloatingBottomBar(enabled: Boolean) {

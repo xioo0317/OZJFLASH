@@ -73,6 +73,14 @@
     <string name="settings_blur_effect">Efecto</string>
     <string name="settings_blur_effect_gaussian">Desenfoque gaussiano</string>
     <string name="settings_blur_effect_gradient">Desenfoque degradado</string>
+    <string name="settings_ui_revamp">Renovación de UI (Beta)</string>
+    <string name="settings_ui_revamp_summary">Desenfoque degradado COUI, cristal de píldora y botones</string>
+    <string name="settings_dialog_style">Estilo del diálogo de opciones</string>
+    <string name="settings_dialog_style_miui">Estilo MIUI</string>
+    <string name="settings_dialog_style_coui">COUI-Kit</string>
+    <string name="settings_collapsed_title_align">Alineación del título plegado</string>
+    <string name="settings_collapsed_title_align_start">Izquierda</string>
+    <string name="settings_collapsed_title_align_center">Centro</string>
     <string name="settings_enable_floating_bottom_bar">Barra inferior flotante</string>
     <string name="settings_enable_floating_bottom_bar_summary">Reemplazar la barra acoplada por una píldora flotante</string>
     <string name="settings_enable_floating_bottom_bar_blur">Desenfoque de la barra flotante</string>

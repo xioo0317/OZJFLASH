@@ -35,11 +35,13 @@ import com.android.ozjflash.ui.navigation3.Navigator
 import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.util.BlurredBar
 import com.android.ozjflash.ui.util.rememberBlurBackdrop
+import com.android.ozjflash.ui.util.rememberRevampBackdrop
+import com.android.ozjflash.ui.util.revampSource
 import top.yukonga.miuix.kmp.basic.Card as MiuixCard
 import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
 import top.yukonga.miuix.kmp.basic.Scaffold as MiuixScaffold
 import top.yukonga.miuix.kmp.basic.Text as MiuixText
-import top.yukonga.miuix.kmp.basic.TopAppBar as MiuixTopAppBar
+import com.android.ozjflash.ui.util.RevampTopAppBar as MiuixTopAppBar
 import top.yukonga.miuix.kmp.basic.rememberTopAppBarState as rememberMiuixTopAppBarState
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.extended.Back
@@ -66,11 +68,12 @@ private fun OzjFlashMiuix(navigator: Navigator) {
         androidx.compose.animation.core.exponentialDecay<Float>(),
     )
     val backdrop = rememberBlurBackdrop(LocalEnableBlur.current)
+    val revampBackdrop = rememberRevampBackdrop()
     val barColor = if (backdrop != null) Color.Transparent else MiuixTheme.colorScheme.surface
 
     MiuixScaffold(
         topBar = {
-            BlurredBar(backdrop) {
+            BlurredBar(backdrop, couiBackdrop = revampBackdrop) {
                 MiuixTopAppBar(
                     color = barColor,
                     title = stringResource(R.string.tools_ozjflash),
@@ -92,6 +95,7 @@ private fun OzjFlashMiuix(navigator: Navigator) {
     ) { innerPadding ->
         Column(
             modifier = Modifier
+                .revampSource(revampBackdrop)
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
                 .verticalScroll(rememberScrollState())

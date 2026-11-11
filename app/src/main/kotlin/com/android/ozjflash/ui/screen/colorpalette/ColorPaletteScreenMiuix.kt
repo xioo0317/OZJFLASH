@@ -7,6 +7,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -57,8 +58,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -69,6 +72,9 @@ import com.android.ozjflash.ui.component.miuix.ScaleDialog
 import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.util.BlurredBar
 import com.android.ozjflash.ui.util.rememberBlurBackdrop
+import com.android.ozjflash.ui.util.rememberRevampBackdrop
+import com.android.ozjflash.ui.util.revampSource
+import com.android.ozjflash.ui.util.StyledDropdownPreference
 import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamiccolor.ColorSpec
 import com.materialkolor.rememberDynamicColorScheme
@@ -80,13 +86,12 @@ import top.yukonga.miuix.kmp.basic.Slider
 import top.yukonga.miuix.kmp.basic.SliderDefaults
 import top.yukonga.miuix.kmp.basic.TabRow
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.basic.TopAppBar
+import com.android.ozjflash.ui.util.RevampTopAppBar as TopAppBar
 import top.yukonga.miuix.kmp.basic.rememberTopAppBarState
 import top.yukonga.miuix.kmp.blur.layerBackdrop
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.extended.Back
 import top.yukonga.miuix.kmp.preference.ArrowPreference
-import top.yukonga.miuix.kmp.preference.OverlayDropdownPreference
 import top.yukonga.miuix.kmp.preference.SwitchPreference
 import top.yukonga.miuix.kmp.theme.MiuixTheme.colorScheme
 import top.yukonga.miuix.kmp.utils.overScrollVertical
@@ -107,6 +112,7 @@ fun ColorPaletteScreenMiuix(
     )
     val enableBlurState = LocalEnableBlur.current
     val backdrop = rememberBlurBackdrop(enableBlurState)
+    val revampBackdrop = rememberRevampBackdrop()
     val blurActive = backdrop != null
     val barColor = if (blurActive) Color.Transparent else colorScheme.surface
     val uiState = state.uiState
@@ -115,7 +121,7 @@ fun ColorPaletteScreenMiuix(
 
     Scaffold(
         topBar = {
-            BlurredBar(backdrop) {
+            BlurredBar(backdrop, couiBackdrop = revampBackdrop) {
                 TopAppBar(
                     color = barColor,
                     title = stringResource(R.string.settings_theme),
@@ -137,7 +143,10 @@ fun ColorPaletteScreenMiuix(
     ) { innerPadding ->
         val showScaleDialog = rememberSaveable { mutableStateOf(false) }
 
-        Box(modifier = if (backdrop != null) Modifier.layerBackdrop(backdrop) else Modifier) {
+        Box(modifier = Modifier
+            .revampSource(revampBackdrop)
+            .then(if (backdrop != null) Modifier.layerBackdrop(backdrop) else Modifier)
+        ) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -197,7 +206,7 @@ fun ColorPaletteScreenMiuix(
                             Column {
                                 val colorItems = paletteColorEntries.map { stringResource(it.second) }
                                 val colorValues = paletteColorEntries.map { it.first }
-                                OverlayDropdownPreference(
+                                StyledDropdownPreference(
                                     title = stringResource(id = R.string.settings_key_color),
                                     items = colorItems,
                                     startAction = {
@@ -218,7 +227,7 @@ fun ColorPaletteScreenMiuix(
                                 AnimatedVisibility(visible = uiState.appSettings.keyColor != 0) {
                                     Column {
                                         val styles = PaletteStyle.entries
-                                        OverlayDropdownPreference(
+                                        StyledDropdownPreference(
                                             title = stringResource(R.string.settings_color_style),
                                             startAction = {
                                                 Icon(
@@ -237,7 +246,7 @@ fun ColorPaletteScreenMiuix(
                                         )
 
                                         val specs = ColorSpec.SpecVersion.entries
-                                        OverlayDropdownPreference(
+                                        StyledDropdownPreference(
                                             title = stringResource(R.string.settings_color_spec),
                                             startAction = {
                                                 Icon(
@@ -260,7 +269,8 @@ fun ColorPaletteScreenMiuix(
                         }
                     }
 
-                    // 模糊：单独一张卡片；开启后可在「效果」里选择高斯 / 渐变
+                    // 模糊：只保留总开关。原「效果（高斯/渐变）」与独立「胶囊模糊」
+                    // 已合并进下方「界面换新 (Beta)」总开关，此处不再提供入口。
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         Card(
                             modifier = Modifier
@@ -281,45 +291,56 @@ fun ColorPaletteScreenMiuix(
                                 checked = uiState.enableBlur,
                                 onCheckedChange = actions::setBlur,
                             )
-                            AnimatedVisibility(visible = uiState.enableBlur) {
-                                val effectItems = listOf(
-                                    stringResource(id = R.string.settings_blur_effect_gaussian),
-                                    stringResource(id = R.string.settings_blur_effect_gradient),
+                        }
+                    }
+
+                    // 界面换新 (Beta)：COUI 渐进模糊 + 胶囊/圆钮玻璃 + 顶栏模糊的统一入口。
+                    // 主开关不受 API 门槛限制：玻璃圆钮、标题折叠对齐在低版本同样生效，
+                    // COUI 渐进模糊与 COUI 弹窗由各自组件内部按 API 33 自动回退。
+                    Card(
+                        modifier = Modifier
+                            .padding(top = 12.dp)
+                            .fillMaxWidth(),
+                    ) {
+                        SwitchPreference(
+                            title = stringResource(id = R.string.settings_ui_revamp),
+                            summary = stringResource(id = R.string.settings_ui_revamp_summary),
+                            startAction = {
+                                Image(
+                                    painter = painterResource(R.drawable.ic_ui_revamp_pill),
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .padding(end = 6.dp)
+                                        .size(24.dp),
+                                    colorFilter = ColorFilter.tint(colorScheme.onBackground),
                                 )
-                                OverlayDropdownPreference(
-                                    title = stringResource(id = R.string.settings_blur_effect),
-                                    items = effectItems,
-                                    startAction = {
-                                        Icon(
-                                            Icons.Rounded.Style,
-                                            modifier = Modifier.padding(end = 6.dp),
-                                            contentDescription = stringResource(id = R.string.settings_blur_effect),
-                                            tint = colorScheme.onBackground,
-                                        )
-                                    },
-                                    selectedIndex = if (uiState.blurStyle == "gradient") 1 else 0,
+                            },
+                            checked = uiState.uiRevamp,
+                            onCheckedChange = actions::setUiRevamp,
+                        )
+                        AnimatedVisibility(visible = uiState.uiRevamp) {
+                            Column {
+                                StyledDropdownPreference(
+                                    title = stringResource(id = R.string.settings_dialog_style),
+                                    items = listOf(
+                                        stringResource(id = R.string.settings_dialog_style_miui),
+                                        stringResource(id = R.string.settings_dialog_style_coui),
+                                    ),
+                                    selectedIndex = if (uiState.dialogStyle == "coui") 1 else 0,
                                     onSelectedIndexChange = { index ->
-                                        actions.setBlurStyle(if (index == 1) "gradient" else "gaussian")
+                                        actions.setDialogStyle(if (index == 1) "coui" else "miui")
                                     },
                                 )
-                            }
-                            // 只有「模糊开启 + 效果 = 渐变模糊」时才弹出 USB 胶囊模糊子选项
-                            AnimatedVisibility(
-                                visible = uiState.enableBlur && uiState.blurStyle == "gradient",
-                            ) {
-                                SwitchPreference(
-                                    title = stringResource(id = R.string.settings_usb_pill_blur),
-                                    summary = stringResource(id = R.string.settings_usb_pill_blur_summary),
-                                    startAction = {
-                                        Icon(
-                                            Icons.Rounded.BlurOn,
-                                            modifier = Modifier.padding(end = 6.dp),
-                                            contentDescription = stringResource(id = R.string.settings_usb_pill_blur),
-                                            tint = colorScheme.onBackground,
-                                        )
+                                StyledDropdownPreference(
+                                    title = stringResource(id = R.string.settings_collapsed_title_align),
+                                    items = listOf(
+                                        stringResource(id = R.string.settings_collapsed_title_align_start),
+                                        stringResource(id = R.string.settings_collapsed_title_align_center),
+                                    ),
+                                    selectedIndex = if (uiState.collapsedTitleAlign == "start") 0 else 1,
+                                    onSelectedIndexChange = { index ->
+                                        actions.setCollapsedTitleAlign(if (index == 0) "start" else "center")
                                     },
-                                    checked = uiState.usbPillBlur,
-                                    onCheckedChange = actions::setUsbPillBlur,
                                 )
                             }
                         }

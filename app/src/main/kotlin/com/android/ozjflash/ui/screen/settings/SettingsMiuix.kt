@@ -40,16 +40,18 @@ import com.android.ozjflash.flash.FlashBridge
 import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.util.BlurredBar
 import com.android.ozjflash.ui.util.rememberBlurBackdrop
+import com.android.ozjflash.ui.util.rememberRevampBackdrop
+import com.android.ozjflash.ui.util.revampSource
+import com.android.ozjflash.ui.util.StyledDropdownPreference
 import com.android.ozjflash.ui.viewmodel.AppUiState
 import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
 import top.yukonga.miuix.kmp.basic.Scaffold
-import top.yukonga.miuix.kmp.basic.TopAppBar
+import com.android.ozjflash.ui.util.RevampTopAppBar as TopAppBar
 import top.yukonga.miuix.kmp.basic.rememberTopAppBarState
 import top.yukonga.miuix.kmp.blur.layerBackdrop
 import top.yukonga.miuix.kmp.preference.ArrowPreference
-import top.yukonga.miuix.kmp.preference.OverlayDropdownPreference
 import top.yukonga.miuix.kmp.preference.SwitchPreference
 import top.yukonga.miuix.kmp.theme.MiuixTheme.colorScheme
 import top.yukonga.miuix.kmp.utils.overScrollVertical
@@ -76,6 +78,7 @@ fun SettingsMiuix(
     )
     val enableBlur = LocalEnableBlur.current
     val backdrop = rememberBlurBackdrop(enableBlur)
+    val revampBackdrop = rememberRevampBackdrop()
     val blurActive = backdrop != null
     val barColor = if (blurActive) Color.Transparent else colorScheme.surface
     val context = LocalContext.current
@@ -83,7 +86,7 @@ fun SettingsMiuix(
 
     Scaffold(
         topBar = {
-            BlurredBar(backdrop) {
+            BlurredBar(backdrop, couiBackdrop = revampBackdrop) {
                 TopAppBar(
                     color = barColor,
                     title = stringResource(R.string.settings),
@@ -96,7 +99,10 @@ fun SettingsMiuix(
             .add(WindowInsets.displayCutout)
             .only(WindowInsetsSides.Horizontal),
     ) { innerPadding ->
-        Box(modifier = if (backdrop != null) Modifier.layerBackdrop(backdrop) else Modifier) {
+        Box(modifier = Modifier
+            .revampSource(revampBackdrop)
+            .then(if (backdrop != null) Modifier.layerBackdrop(backdrop) else Modifier)
+        ) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -137,7 +143,7 @@ fun SettingsMiuix(
                                 "es" to stringResource(R.string.language_es),
                             )
                             val langIndex = langEntries.indexOfFirst { it.first == uiState.language }.coerceAtLeast(0)
-                            OverlayDropdownPreference(
+                            StyledDropdownPreference(
                                 title = stringResource(R.string.settings_language),
                                 summary = stringResource(R.string.settings_language_summary),
                                 items = langEntries.map { it.second },

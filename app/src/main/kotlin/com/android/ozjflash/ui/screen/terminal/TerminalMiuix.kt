@@ -40,7 +40,7 @@ import com.android.ozjflash.terminal.RealTerminal
 import com.android.ozjflash.terminal.RealTerminalView
 import com.android.ozjflash.ui.component.usb.UsbStatusPill
 import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
-import top.yukonga.miuix.kmp.basic.TopAppBar
+import com.android.ozjflash.ui.util.RevampTopAppBar as TopAppBar
 import top.yukonga.miuix.kmp.basic.rememberTopAppBarState
 import top.yukonga.miuix.kmp.basic.Text
 

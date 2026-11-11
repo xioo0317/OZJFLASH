@@ -48,6 +48,8 @@ import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.theme.isInDarkTheme
 import com.android.ozjflash.ui.util.BlurredBar
 import com.android.ozjflash.ui.util.rememberBlurBackdrop
+import com.android.ozjflash.ui.util.rememberRevampBackdrop
+import com.android.ozjflash.ui.util.revampSource
 import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
@@ -56,7 +58,7 @@ import top.yukonga.miuix.kmp.basic.Scaffold
 import top.yukonga.miuix.kmp.basic.ScrollBehavior
 import top.yukonga.miuix.kmp.basic.rememberTopAppBarState
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.basic.TopAppBar
+import com.android.ozjflash.ui.util.RevampTopAppBar as TopAppBar
 import top.yukonga.miuix.kmp.blur.layerBackdrop
 import top.yukonga.miuix.kmp.preference.ArrowPreference
 import top.yukonga.miuix.kmp.theme.MiuixTheme.colorScheme
@@ -77,6 +79,7 @@ fun HomePagerMiuix(
     )
     val enableBlur = LocalEnableBlur.current
     val backdrop = rememberBlurBackdrop(enableBlur)
+    val revampBackdrop = rememberRevampBackdrop()
     val blurActive = backdrop != null
     val barColor = if (blurActive) Color.Transparent else colorScheme.surface
     Scaffold(
@@ -84,6 +87,7 @@ fun HomePagerMiuix(
             TopBar(
                 scrollBehavior = scrollBehavior,
                 backdrop = backdrop,
+                couiBackdrop = revampBackdrop,
                 barColor = barColor,
             )
         },
@@ -92,7 +96,10 @@ fun HomePagerMiuix(
             .add(WindowInsets.displayCutout)
             .only(WindowInsetsSides.Horizontal),
     ) { innerPadding ->
-        Box(modifier = if (backdrop != null) Modifier.layerBackdrop(backdrop) else Modifier) {
+        Box(modifier = Modifier
+            .revampSource(revampBackdrop)
+            .then(if (backdrop != null) Modifier.layerBackdrop(backdrop) else Modifier)
+        ) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -127,9 +134,10 @@ fun HomePagerMiuix(
 private fun TopBar(
     scrollBehavior: ScrollBehavior,
     backdrop: top.yukonga.miuix.kmp.blur.LayerBackdrop?,
+    couiBackdrop: com.itos.coui.backdrop.CouiBackdrop?,
     barColor: Color,
 ) {
-    BlurredBar(backdrop) {
+    BlurredBar(backdrop, couiBackdrop = couiBackdrop) {
         TopAppBar(
             color = barColor,
             title = stringResource(R.string.app_name),

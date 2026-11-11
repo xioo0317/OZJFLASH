@@ -21,18 +21,17 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.ozjflash.ui.component.liquid.liquidGlassChip
+import com.android.ozjflash.ui.theme.LocalUiRevamp
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /**
- * 顶栏「圆形液态玻璃」按钮（返回键 / 说明问号键）—— 与 USB 胶囊共用同一套
- * [liquidGlassChip]「悬浮底栏同款」真液态玻璃：取背景内容做 vibrancy / blur / lens
- * 折射，边缘为细描边 + 内阴影，深色下不再有厚白高光环。
+ * 顶栏圆形按钮（返回键 / 说明问号键）。
  *
- * backdrop 为空（M3 页 / 低版本 / 关闭模糊）时芯片自动回退为克制玻璃底；
- * 取色随当前页面 surface 明暗：深色 / 纯黑 = 近白符号，浅色 = 近黑符号。
+ * 「界面换新 (Beta)」开启时与 USB 胶囊共用同一套 [liquidGlassChip] 液态玻璃；
+ * 关闭时退回普通无底色图标按钮（玻璃实现并入总开关，不再单独常驻）。
  *
- * [showShadow] 与 USB 胶囊同一份逻辑：折叠顶栏滑动淡化（外层 graphicsLayer 的
- * alpha < 1）时由调用方传 false 取消外阴影，避免半透明合成层露出矩形阴影块。
+ * [showShadow] 与 USB 胶囊同一份逻辑：折叠顶栏滑动淡化时由调用方传 false 取消
+ * 外阴影，避免半透明合成层露出矩形阴影块。
  */
 @Composable
 fun GlassCircleButton(
@@ -43,10 +42,25 @@ fun GlassCircleButton(
     showShadow: Boolean = true,
     content: @Composable BoxScope.(tint: Color) -> Unit,
 ) {
+    val revamp = LocalUiRevamp.current
     val surface = MiuixTheme.colorScheme.surface
     val darkGlass = dark || (surface.red + surface.green + surface.blue < 1.5f)
-    val tint = if (darkGlass) Color(0xFFF2F2F2) else Color(0xFF1B1B1B)
 
+    if (!revamp) {
+        // 关闭界面换新：普通图标按钮，无液态玻璃、无底色
+        Box(
+            modifier = modifier
+                .size(size)
+                .clip(CircleShape)
+                .clickable(onClick = onClick),
+            contentAlignment = Alignment.Center,
+        ) {
+            content(MiuixTheme.colorScheme.onSurface)
+        }
+        return
+    }
+
+    val tint = if (darkGlass) Color(0xFFF2F2F2) else Color(0xFF1B1B1B)
     Box(
         modifier = modifier
             .size(size)

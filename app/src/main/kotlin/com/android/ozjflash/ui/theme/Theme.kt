@@ -122,7 +122,16 @@ val LocalEnableBlur = staticCompositionLocalOf { false }
 /** 模糊风格：gaussian = 默认高斯模糊；gradient = 渐变（渐进）模糊。供顶/底栏 BlurredBar 读取 */
 val LocalBlurStyle = staticCompositionLocalOf { "gaussian" }
 
-/** USB 状态胶囊是否使用液态玻璃效果（独立于顶/底栏模糊） */
+/** 界面换新 (Beta) 总开关：COUI 渐进模糊 + 胶囊/圆钮玻璃的统一入口 */
+val LocalUiRevamp = staticCompositionLocalOf { false }
+
+/** 选项弹窗风格：miui = 原 MIUI 风格下拉；coui = COUI-Kit 菜单 */
+val LocalDialogStyle = staticCompositionLocalOf { "miui" }
+
+/** 顶栏大标题折叠后的对齐：start = 靠左；center = 居中 */
+val LocalCollapsedTitleAlign = staticCompositionLocalOf { "center" }
+
+/** USB 状态胶囊是否使用液态玻璃效果（现已并入 [LocalUiRevamp]，保留兼容旧存档） */
 val LocalUsbPillBlur = staticCompositionLocalOf { false }
 
 val LocalEnableFloatingBottomBar = staticCompositionLocalOf { false }

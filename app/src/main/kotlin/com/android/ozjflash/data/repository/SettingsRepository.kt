@@ -18,9 +18,9 @@ interface SettingsRepository {
     var colorStyle: String
     var colorSpec: String
     var enableBlur: Boolean
-    /** 模糊风格：gaussian = 高斯模糊（默认）；gradient = 渐变模糊 */
+    /** 模糊风格：gaussian = 高斯模糊（默认）；gradient = 渐变模糊。保留兼容旧存档，UI 已无入口 */
     var blurStyle: String
-    /** USB 状态胶囊是否使用液态玻璃效果（独立于顶/底栏模糊，默认关闭） */
+    /** USB 状态胶囊液态玻璃。保留兼容旧存档，现已并入 uiRevamp 总开关 */
     var usbPillBlur: Boolean
     var enableFloatingBottomBar: Boolean
     var enableFloatingBottomBarBlur: Boolean
@@ -35,6 +35,12 @@ interface SettingsRepository {
     var terminalPty: Boolean
     /** 应用显示语言：system = 跟随系统，否则为 BCP-47/限定符（zh-CN, ja, es…） */
     var language: String
+    /** 界面换新 (Beta) 总开关：COUI 渐进模糊 + 胶囊/圆钮玻璃，并解锁下方子项 */
+    var uiRevamp: Boolean
+    /** 选项弹窗风格：miui = 原 MIUI 风格下拉；coui = COUI-Kit 菜单 */
+    var dialogStyle: String
+    /** 顶栏大标题折叠后的对齐：start = 靠左；center = 居中 */
+    var collapsedTitleAlign: String
 }
 
 private const val SETTINGS_PREFS = "settings"
@@ -112,4 +118,16 @@ class SettingsRepositoryImpl : SettingsRepository {
     override var language: String
         get() = prefs.getString("language", "system") ?: "system"
         set(value) = prefs.edit { putString("language", value) }
+
+    override var uiRevamp: Boolean
+        get() = prefs.getBoolean("ui_revamp", false)
+        set(value) = prefs.edit { putBoolean("ui_revamp", value) }
+
+    override var dialogStyle: String
+        get() = prefs.getString("dialog_style", "miui") ?: "miui"
+        set(value) = prefs.edit { putString("dialog_style", value) }
+
+    override var collapsedTitleAlign: String
+        get() = prefs.getString("collapsed_title_align", "center") ?: "center"
+        set(value) = prefs.edit { putString("collapsed_title_align", value) }
 }

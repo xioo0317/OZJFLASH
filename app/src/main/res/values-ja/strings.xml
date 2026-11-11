@@ -73,6 +73,14 @@
     <string name="settings_blur_effect">エフェクト</string>
     <string name="settings_blur_effect_gaussian">ガウスぼかし</string>
     <string name="settings_blur_effect_gradient">グラデーションぼかし</string>
+    <string name="settings_ui_revamp">UI リニューアル (Beta)</string>
+    <string name="settings_ui_revamp_summary">COUI 段階ぼかし・カプセルと丸ボタンのガラス</string>
+    <string name="settings_dialog_style">オプションダイアログのスタイル</string>
+    <string name="settings_dialog_style_miui">MIUI スタイル</string>
+    <string name="settings_dialog_style_coui">COUI-Kit</string>
+    <string name="settings_collapsed_title_align">折りたたみ時のタイトル位置</string>
+    <string name="settings_collapsed_title_align_start">左寄せ</string>
+    <string name="settings_collapsed_title_align_center">中央揃え</string>
     <string name="settings_enable_floating_bottom_bar">フローティングボトムバー</string>
     <string name="settings_enable_floating_bottom_bar_summary">貼り付けナビをフローティングピルバーに置き換え</string>
     <string name="settings_enable_floating_bottom_bar_blur">フローティングバーのぼかし</string>

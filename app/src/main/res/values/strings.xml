@@ -83,6 +83,14 @@
     <string name="settings_blur_effect">Effect</string>
     <string name="settings_blur_effect_gaussian">Gaussian blur</string>
     <string name="settings_blur_effect_gradient">Gradient blur</string>
+    <string name="settings_ui_revamp">UI Revamp (Beta)</string>
+    <string name="settings_ui_revamp_summary">COUI gradient blur, glass pill and round buttons</string>
+    <string name="settings_dialog_style">Option dialog style</string>
+    <string name="settings_dialog_style_miui">MIUI style</string>
+    <string name="settings_dialog_style_coui">COUI-Kit</string>
+    <string name="settings_collapsed_title_align">Collapsed title alignment</string>
+    <string name="settings_collapsed_title_align_start">Start</string>
+    <string name="settings_collapsed_title_align_center">Center</string>
     <string name="settings_enable_floating_bottom_bar">Floating bottom bar</string>
     <string name="settings_enable_floating_bottom_bar_summary">Replace the dock with a floating pill bar</string>
     <string name="settings_enable_floating_bottom_bar_blur">Blur floating bar</string>

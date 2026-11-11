@@ -1,12 +1,19 @@
 package com.android.ozjflash.ui.util
 
+import android.annotation.SuppressLint
+import android.os.Build
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
 import com.android.ozjflash.ui.component.liquid.LocalLiquidBackdrop
 import com.android.ozjflash.ui.theme.LocalBlurStyle
+import com.android.ozjflash.ui.theme.LocalUiRevamp
+import com.itos.coui.backdrop.CouiBackdrop
+import com.itos.coui.effect.drawCouiGradientBackdrop
 import top.yukonga.miuix.kmp.blur.BlendColorEntry
 import top.yukonga.miuix.kmp.blur.BlurColors
 import top.yukonga.miuix.kmp.blur.LayerBackdrop
@@ -27,51 +34,63 @@ fun rememberBlurBackdrop(enableBlur: Boolean): LayerBackdrop? {
     }
 }
 
+/**
+ * 顶栏统一模糊容器。
+ *
+ * [couiBackdrop] 非空且「界面换新」开启、系统为 API 33+ 时，走 COUI-Kit 的
+ * 渐进高斯模糊（RuntimeShader 原厂曲线）；否则回退到 Miuix 的
+ * progressiveTextureBlur / textureBlur。
+ *
+ * 注意：COUI 的源挂在页面正文节点（[Modifier.revampSource]），本容器只是源外的
+ * 消费者；两者是 Scaffold 的 topBar / content 兄弟槽位，不会自采样。
+ */
+@SuppressLint("NewApi")
 @Composable
 fun BlurredBar(
     backdrop: LayerBackdrop?,
+    couiBackdrop: CouiBackdrop? = null,
     blurActive: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     val blurStyle = LocalBlurStyle.current
+    val revamp = LocalUiRevamp.current
     val colors = BlurColors(
         blendColors = listOf(
             BlendColorEntry(color = MiuixTheme.colorScheme.surface.copy(0.87f)),
         ),
     )
-    // 把页面注册的背景内容层注入顶栏：顶栏上的 USB 胶囊 / 返回键 / 问号键据此做
-    // drawBackdrop 真折射（取背景内容，而非手绘渐变）。M3 页不走 BlurredBar，
-    // LocalLiquidBackdrop 为 null，芯片组件自动回退为无厚白高光环的克制玻璃底。
+    // 玻璃胶囊 / 圆钮的真折射仍取 Miuix LayerBackdrop（页面正文层），与 COUI 采样互不干扰
     CompositionLocalProvider(LocalLiquidBackdrop provides backdrop) {
-        if (blurActive && backdrop != null && blurStyle == "gradient") {
-            // 渐变（渐进）模糊：使用 Miuix 内置 progressiveTextureBlur + ProgressiveBlur.Top。
-            // 模糊半径随高度平滑过渡、底部自然淡出，既不会拉伸铺满整屏，也不会出现生硬的分界线。
-            Box(
-                modifier = Modifier.progressiveTextureBlur(
+        val couiActive = revamp && couiBackdrop != null &&
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+        val modifier = when {
+            couiActive -> {
+                val density = LocalDensity.current
+                Modifier.drawCouiGradientBackdrop(
+                    backdrop = couiBackdrop!!,
+                    fadeHeightPx = 220.dp.value * density.density,
+                    referenceBlurRadiusPx = 20.dp.value * density.density,
+                )
+            }
+            blurActive && backdrop != null && blurStyle == "gradient" ->
+                Modifier.progressiveTextureBlur(
                     backdrop,
                     RectangleShape,
                     25f,
                     ProgressiveBlur.Top,
                     colors = colors,
-                ),
-            ) {
-                content()
-            }
-        } else {
-            Box(
-                modifier = if (blurActive && backdrop != null) {
-                    Modifier.textureBlur(
-                        backdrop = backdrop,
-                        shape = RectangleShape,
-                        blurRadius = 25f,
-                        colors = colors,
-                    )
-                } else {
-                    Modifier
-                },
-            ) {
-                content()
-            }
+                )
+            blurActive && backdrop != null ->
+                Modifier.textureBlur(
+                    backdrop = backdrop,
+                    shape = RectangleShape,
+                    blurRadius = 25f,
+                    colors = colors,
+                )
+            else -> Modifier
+        }
+        Box(modifier = modifier) {
+            content()
         }
     }
 }

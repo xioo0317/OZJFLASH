@@ -75,6 +75,14 @@
     <string name="settings_blur_effect">效果</string>
     <string name="settings_blur_effect_gaussian">高斯模糊</string>
     <string name="settings_blur_effect_gradient">渐变模糊</string>
+    <string name="settings_ui_revamp">界面换新 (Beta)</string>
+    <string name="settings_ui_revamp_summary">COUI 渐进模糊、胶囊与圆钮玻璃</string>
+    <string name="settings_dialog_style">选项弹窗风格</string>
+    <string name="settings_dialog_style_miui">MIUI 风格</string>
+    <string name="settings_dialog_style_coui">COUI-Kit</string>
+    <string name="settings_collapsed_title_align">标题折叠对齐</string>
+    <string name="settings_collapsed_title_align_start">靠左</string>
+    <string name="settings_collapsed_title_align_center">居中</string>
     <string name="settings_enable_floating_bottom_bar">悬浮底栏</string>
     <string name="settings_enable_floating_bottom_bar_summary">用悬浮胶囊条替代贴底导航栏</string>
     <string name="settings_enable_floating_bottom_bar_blur">悬浮底栏模糊</string>
