@@ -14,7 +14,8 @@ android {
 
     defaultConfig {
         applicationId 'com.android.ozjflash'
-        minSdk 26
+        // COUI-Kit 的 AAR 声明 minSdk 31（官方要求不用 overrideLibrary 绕过），对齐到 31
+        minSdk 31
         targetSdk 34
         versionCode 37
         versionName '1.13.23'
@@ -81,6 +82,11 @@ dependencies {
     implementation libs.miuix.nav
     implementation libs.miuix.preference
     implementation libs.miuix.blur
+
+    // COUI-Kit：本次仅把库编译进项目，不调用任何 COUI API
+    implementation libs.coui.core
+    implementation libs.coui.material3
+    implementation libs.coui.icons
 
     // 预测性返回手势：反射调用 Android 14 隐藏 API ApplicationInfo.setEnableOnBackInvokedCallback
     implementation("org.lsposed.hiddenapibypass:hiddenapibypass:4.0")

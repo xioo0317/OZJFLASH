@@ -10,6 +10,8 @@ navigationEvent = "1.1.2"
 materialKolor = "5.0.1"
 miuix = "0.9.4"
 kotlinxSerialization = "1.11.0"
+# COUI-Kit：三个模块同版本同步发布（Maven Central）
+couiVersion = "0.0.1-alpha10"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -42,3 +44,9 @@ miuix-icons = { module = "top.yukonga.miuix.kmp:miuix-icons-android", version.re
 miuix-nav = { module = "top.yukonga.miuix.kmp:miuix-nav-android", version.ref = "miuix" }
 miuix-preference = { module = "top.yukonga.miuix.kmp:miuix-preference-android", version.ref = "miuix" }
 miuix-blur = { module = "top.yukonga.miuix.kmp:miuix-blur-android", version.ref = "miuix" }
+
+# COUI-Kit（ColorOS 17 风格 Compose 组件库，MPL-2.0）
+# 三个模块同版本、同步发布；本次仅编译接入，不调用任何 API
+coui-core = { module = "io.github.itoseo:coui", version.ref = "couiVersion" }
+coui-material3 = { module = "io.github.itoseo:coui-material3", version.ref = "couiVersion" }
+coui-icons = { module = "io.github.itoseo:coui-icons", version.ref = "couiVersion" }
