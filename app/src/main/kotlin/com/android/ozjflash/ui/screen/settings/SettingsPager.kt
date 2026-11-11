@@ -7,8 +7,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.ozjflash.R
 import com.android.ozjflash.flash.FlashBridge
-import com.android.ozjflash.ui.LocalUiMode
-import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.navigation3.Navigator
 import com.android.ozjflash.ui.navigation3.Route
 import com.android.ozjflash.ui.theme.ColorMode
@@ -19,7 +17,6 @@ class SettingsActions internal constructor(
     private val viewModel: AppViewModel,
     private val navigator: Navigator,
 ) {
-    fun setUiMode(mode: UiMode) = viewModel.setUiMode(mode)
     fun setColorMode(mode: ColorMode) = viewModel.setColorMode(mode)
     fun setKeyColor(color: Int) = viewModel.setKeyColor(color)
     fun setMiuixMonet(enabled: Boolean) = viewModel.setMiuixMonet(enabled)
@@ -52,10 +49,7 @@ fun SettingPager(
         SettingsActions(viewModel, navigator)
     }
 
-    when (LocalUiMode.current) {
-        UiMode.Miuix -> SettingsMiuix(uiState, actions, bottomInnerPadding, isCurrentPage)
-        UiMode.Material -> SettingsMaterial(uiState, actions, bottomInnerPadding, isCurrentPage)
-    }
+    SettingsMiuix(uiState, actions, bottomInnerPadding, isCurrentPage)
 }
 
 /** 主题色候选：0 表示跟随系统动态色 */

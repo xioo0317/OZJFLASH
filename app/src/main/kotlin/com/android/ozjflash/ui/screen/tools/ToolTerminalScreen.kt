@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
@@ -29,17 +28,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LargeFlexibleTopAppBar
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
@@ -67,14 +55,10 @@ import com.android.ozjflash.flash.FlashBridge
 import com.android.ozjflash.flash.ToolConsole
 import com.android.ozjflash.flash.UsbFdSession
 import com.android.ozjflash.flash.UsbHost
-import com.android.ozjflash.ui.LocalUiMode
-import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.component.ToolManualDialog
 import com.android.ozjflash.ui.component.GlassBackButton
 import com.android.ozjflash.ui.component.GlassHelpButton
 import com.android.ozjflash.ui.component.TerminalOutputWindow
-import com.android.ozjflash.ui.component.material.ExpressiveScaffold
-import com.android.ozjflash.ui.component.material.expressiveTopAppBarColors
 import com.android.ozjflash.ui.component.usb.UsbPillCollapseActions
 import com.android.ozjflash.ui.component.usb.UsbStatusPill
 import com.android.ozjflash.ui.navigation3.Navigator
@@ -166,10 +150,7 @@ fun ToolPageScreen(navigator: Navigator, tool: ToolKind) {
         }
     }
 
-    when (LocalUiMode.current) {
-        UiMode.Miuix -> ToolPageMiuix(navigator, tool)
-        UiMode.Material -> ToolPageMaterial(navigator, tool)
-    }
+    ToolPageMiuix(navigator, tool)
 }
 
 /**
@@ -276,45 +257,6 @@ private fun ToolPageMiuix(navigator: Navigator, tool: ToolKind) {
                     )
                 }
             }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun ToolPageMaterial(navigator: Navigator, tool: ToolKind) {
-    val title = stringResource(tool.titleRes)
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-
-    ExpressiveScaffold(
-        topBar = {
-            LargeFlexibleTopAppBar(
-                title = { Text(title) },
-                navigationIcon = {
-                    GlassBackButton(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        onClick = { navigator.pop() },
-                    )
-                },
-                actions = { ToolPageActions(tool) },
-                colors = expressiveTopAppBarColors(),
-                windowInsets = WindowInsets.systemBars
-                    .add(WindowInsets.displayCutout)
-                    .only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
-                scrollBehavior = scrollBehavior,
-            )
-        },
-        contentWindowInsets = WindowInsets.systemBars
-            .add(WindowInsets.displayCutout)
-            .only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
-    ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
-                .padding(innerPadding),
-        ) {
-            item { ToolConsoleMaterial(tool.bin) }
         }
     }
 }
@@ -456,77 +398,6 @@ private fun ToolConsoleMiuix(bin: String) {
                         text = "Root",
                         fontSize = 11.sp,
                         color = colorScheme.onSurfaceVariantSummary,
-                    )
-                }
-            }
-        }
-
-        Spacer(Modifier.height(12.dp))
-
-        TerminalOutputWindow(
-            output = state.output,
-            emptyText = stringResource(R.string.tools_cmd_empty),
-        )
-    }
-}
-
-@Composable
-private fun ToolConsoleMaterial(bin: String) {
-    val state = rememberToolConsoleState(bin)
-    val rootMode by FlashBridge.rootMode.collectAsStateWithLifecycle()
-
-    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-        ElevatedCard(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = stringResource(R.string.tools_cmd_title),
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = stringResource(descRes(bin)),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Spacer(Modifier.height(12.dp))
-                OutlinedTextField(
-                    value = state.input,
-                    onValueChange = { state.input = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text(stringResource(hintRes(bin))) },
-                    singleLine = true,
-                    textStyle = TextStyle(
-                        fontFamily = FontFamily.Monospace,
-                        fontSize = 14.sp,
-                    ),
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = { state.execute() }),
-                )
-                Spacer(Modifier.height(12.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Button(
-                        onClick = { state.execute() },
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = !state.running,
-                    ) {
-                        Text(
-                            text = if (state.running) {
-                                stringResource(R.string.tools_cmd_running)
-                            } else {
-                                stringResource(R.string.tools_cmd_run)
-                            },
-                        )
-                    }
-                }
-                if (rootMode) {
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        text = "Root",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }

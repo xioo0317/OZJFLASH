@@ -55,10 +55,6 @@
     <string name="terminal_open_summary">Open the built-in terminal</string>
 
     <!-- 设置 -->
-    <string name="settings_ui_mode">UI Style</string>
-    <string name="settings_ui_mode_summary">Choose the interface style.</string>
-    <string name="settings_ui_mode_miuix">Miuix</string>
-    <string name="settings_ui_mode_material">Material</string>
     <string name="settings_theme">Theme settings</string>
     <string name="settings_theme_summary">Choose the app theme mode</string>
     <string name="settings_theme_system">Follow system</string>
@@ -98,7 +94,7 @@
     <string name="about_app_name_title">OZJFLASH</string>
     <string name="about_app_name_value">A Compose based tool set with a built-in terminal and a rootless flashing workflow. Bundled binaries (adb, fastboot, bash, mke2fs, make_f2fs, payload-dumper-go and more) are unpacked into private storage and injected into the terminal PATH.</string>
     <string name="about_ui_title">Dual UI hosts</string>
-    <string name="about_ui_value">Both interface hosts ship together: Miuix (MIUI style) and Material 3 Expressive. Switch between them in Settings → Interface style; all pages, bars and dialogs render natively in whichever host is active.</string>
+    <string name="about_ui_value">Ships with a single Miuix (MIUI style) interface host; all pages, bars and dialogs render natively with Miuix components.</string>
     <string name="about_tools_title">Sources</string>
     <string name="about_tools_value">UI shell derived from KernelSU Manager (root / module / HTTP / JNI code removed); flashing binaries come from public platform tool builds. This app never requests or uses root.</string>
     <string name="about_disclaimer_title">Disclaimer</string>

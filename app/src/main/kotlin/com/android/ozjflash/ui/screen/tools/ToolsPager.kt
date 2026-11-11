@@ -8,12 +8,8 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
-import com.android.ozjflash.R
 import com.android.ozjflash.flash.NativeLibs
-import com.android.ozjflash.ui.LocalUiMode
-import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.screen.terminal.TerminalConsole
 
 /** 单个内置工具的存在状态 */
@@ -47,8 +43,5 @@ fun ToolsPager(
     isCurrentPage: Boolean,
 ) {
     val state = rememberToolsState(binDir)
-    when (LocalUiMode.current) {
-        UiMode.Miuix -> ToolsMiuix(state, console, bottomInnerPadding, isCurrentPage)
-        UiMode.Material -> ToolsMaterial(state, console, bottomInnerPadding, isCurrentPage)
-    }
+    ToolsMiuix(state, console, bottomInnerPadding, isCurrentPage)
 }

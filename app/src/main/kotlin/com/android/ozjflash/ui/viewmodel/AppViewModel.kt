@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.ozjflash.data.repository.SettingsRepository
 import com.android.ozjflash.data.repository.SettingsRepositoryImpl
-import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.theme.AppSettings
 import com.android.ozjflash.ui.theme.ColorMode
 import com.android.ozjflash.ui.theme.ThemeController
@@ -21,8 +20,7 @@ data class AppUiState(
         paletteStyle = com.materialkolor.PaletteStyle.TonalSpot,
         colorSpec = com.materialkolor.dynamiccolor.ColorSpec.SpecVersion.SPEC_2025,
     ),
-    val uiMode: UiMode = UiMode.fromValue(UiMode.DEFAULT_VALUE),
-    /** Miuix 主体下是否按系统壁纸生成配色（Material 主体恒由 Material You 决定） */
+    /** 是否按系统壁纸生成配色 */
     val miuixMonet: Boolean = false,
     val enableBlur: Boolean = false,
     val blurStyle: String = "gaussian",
@@ -40,7 +38,7 @@ data class AppUiState(
 )
 
 /**
- * 应用级 ViewModel：只负责外观设置与 UI 模式切换，不含 root / shell / 网络行为。
+ * 应用级 ViewModel：只负责外观设置，不含 root / shell / 网络行为。
  */
 class AppViewModel(
     private val repo: SettingsRepository = SettingsRepositoryImpl(),
@@ -49,7 +47,6 @@ class AppViewModel(
     private val _uiState = MutableStateFlow(
         AppUiState(
             appSettings = ThemeController.getAppSettings(repo),
-            uiMode = UiMode.fromValue(repo.uiMode),
             miuixMonet = repo.miuixMonet,
             enableBlur = repo.enableBlur,
             blurStyle = repo.blurStyle,
@@ -68,14 +65,6 @@ class AppViewModel(
 
     fun refreshAppSettings() {
         _uiState.value = _uiState.value.copy(appSettings = ThemeController.getAppSettings(repo))
-    }
-
-    fun setUiMode(mode: UiMode) {
-        repo.uiMode = mode.value
-        _uiState.value = _uiState.value.copy(
-            uiMode = mode,
-            appSettings = ThemeController.getAppSettings(repo)
-        )
     }
 
     fun setColorMode(mode: ColorMode) {

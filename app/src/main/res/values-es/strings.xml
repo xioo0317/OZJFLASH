@@ -45,10 +45,6 @@
     <string name="terminal_open_summary">Abrir la terminal integrada</string>
 
     <!-- 設定 -->
-    <string name="settings_ui_mode">Estilo de interfaz</string>
-    <string name="settings_ui_mode_summary">Elige el estilo de la interfaz</string>
-    <string name="settings_ui_mode_miuix">Miuix</string>
-    <string name="settings_ui_mode_material">Material</string>
     <string name="settings_theme">Ajustes del tema</string>
     <string name="settings_theme_summary">Elige el modo de tema de la app</string>
     <string name="settings_theme_system">Seguir al sistema</string>
@@ -88,7 +84,7 @@
     <string name="about_app_name_title">OZJFLASH</string>
     <string name="about_app_name_value">Conjunto de herramientas basado en Compose con terminal integrada y flujo de flasheo sin root. Los binarios incluidos (adb, fastboot, bash, mke2fs, make_f2fs, payload-dumper-go y más) se extraen al almacenamiento privado y se añaden al PATH de la terminal.</string>
     <string name="about_ui_title">Doble IU</string>
-    <string name="about_ui_value">Incluye ambos hosts de interfaz: Miuix (estilo MIUI) y Material 3 Expressive. Cambia entre ellos en Ajustes → Interfaz; páginas, barras y diálogos se renderizan de forma nativa en el host activo.</string>
+    <string name="about_ui_value">Incluye un único host de interfaz Miuix (estilo MIUI); todas las páginas, barras y diálogos se renderizan de forma nativa con componentes Miuix.</string>
     <string name="about_tools_title">Fuentes</string>
     <string name="about_tools_value">El shell de la IU deriva de KernelSU Manager (se eliminó el código de root, módulos, HTTP y JNI); los binarios de flasheo provienen de compilaciones públicas de herramientas de plataforma. Esta app nunca solicita ni usa root.</string>
     <string name="about_disclaimer_title">Aviso legal</string>

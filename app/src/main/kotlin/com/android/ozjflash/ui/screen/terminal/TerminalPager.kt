@@ -13,8 +13,6 @@ import com.android.ozjflash.flash.NativeLibs
 import com.android.ozjflash.terminal.RealTerminal
 import com.android.ozjflash.terminal.TerminalEngine
 import com.android.ozjflash.terminal.rememberRealTerminal
-import com.android.ozjflash.ui.LocalUiMode
-import com.android.ozjflash.ui.UiMode
 
 /** 输出缓冲上限，避免长时间刷写日志吃满内存 */
 private const val MAX_OUTPUT_CHARS = 128_000
@@ -75,10 +73,7 @@ fun TerminalPager(
     bottomInnerPadding: Dp,
     isCurrentPage: Boolean,
 ) {
-    when (LocalUiMode.current) {
-        UiMode.Miuix -> TerminalMiuix(terminal, bottomInnerPadding, isCurrentPage)
-        UiMode.Material -> TerminalMaterial(terminal, bottomInnerPadding, isCurrentPage)
-    }
+    TerminalMiuix(terminal, bottomInnerPadding, isCurrentPage)
 }
 
 /**

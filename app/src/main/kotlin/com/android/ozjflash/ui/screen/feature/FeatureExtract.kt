@@ -23,17 +23,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LargeFlexibleTopAppBar
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -52,10 +41,6 @@ import com.android.ozjflash.R
 import com.android.ozjflash.ui.component.GlassBackButton
 import com.android.ozjflash.ui.component.TerminalOutputWindow
 import com.android.ozjflash.flash.NativeLibs
-import com.android.ozjflash.ui.LocalUiMode
-import com.android.ozjflash.ui.UiMode
-import com.android.ozjflash.ui.component.material.ExpressiveScaffold
-import com.android.ozjflash.ui.component.material.expressiveTopAppBarColors
 import com.android.ozjflash.ui.navigation3.Navigator
 import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.util.BlurredBar
@@ -253,10 +238,7 @@ private fun rememberExtractState(): ExtractState {
 /** 解压二级页：按当前 UI 主体分派到 Miuix / Material 两套外壳 */
 @Composable
 fun FeatureExtractScreen(navigator: Navigator, kind: ExtractKind) {
-    when (LocalUiMode.current) {
-        UiMode.Miuix -> ExtractMiuix(navigator, kind)
-        UiMode.Material -> ExtractMaterial(navigator, kind)
-    }
+    ExtractMiuix(navigator, kind)
 }
 
 @Composable
@@ -305,44 +287,6 @@ private fun ExtractMiuix(navigator: Navigator, kind: ExtractKind) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun ExtractMaterial(navigator: Navigator, kind: ExtractKind) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-    val topInsets = WindowInsets.systemBars
-        .add(WindowInsets.displayCutout)
-        .only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
-
-    ExpressiveScaffold(
-        topBar = {
-            LargeFlexibleTopAppBar(
-                title = { Text(stringResource(kind.titleRes)) },
-                navigationIcon = {
-                    GlassBackButton(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        onClick = { navigator.pop() },
-                    )
-                },
-                colors = expressiveTopAppBarColors(),
-                windowInsets = topInsets,
-                scrollBehavior = scrollBehavior,
-            )
-        },
-        contentWindowInsets = topInsets,
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
-                .verticalScroll(rememberScrollState())
-                .padding(innerPadding)
-                .padding(16.dp),
-        ) {
-            ExtractBodyMaterial(kind)
-        }
-    }
-}
-
 @Composable
 private fun ExtractBodyMiuix(kind: ExtractKind) {
     val state = rememberExtractState()
@@ -386,60 +330,6 @@ private fun ExtractBodyMiuix(kind: ExtractKind) {
                         text = stringResource(R.string.extract_output_dir, it),
                         fontSize = 11.sp,
                         color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
-                    )
-                }
-            }
-        }
-
-        TerminalOutputWindow(
-            output = state.output,
-            emptyText = stringResource(R.string.extract_output_empty),
-        )
-    }
-}
-
-@Composable
-private fun ExtractBodyMaterial(kind: ExtractKind) {
-    val state = rememberExtractState()
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) {
-        state.onPicked(it)
-    }
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        ElevatedCard(modifier = Modifier.fillMaxWidth()) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Text(
-                    text = stringResource(R.string.extract_hint),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Text(
-                    text = state.name ?: stringResource(R.string.extract_no_file),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                OutlinedButton(
-                    onClick = { launcher.launch(arrayOf("*/*")) },
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(stringResource(R.string.extract_pick_file))
-                }
-                Button(
-                    onClick = { state.start(kind) },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = state.uri != null && !state.running,
-                ) {
-                    Text(
-                        if (state.running) stringResource(R.string.extract_running)
-                        else stringResource(R.string.extract_start)
-                    )
-                }
-                state.outPath?.let {
-                    Text(
-                        text = stringResource(R.string.extract_output_dir, it),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }

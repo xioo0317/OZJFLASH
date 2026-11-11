@@ -16,29 +16,18 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Android
 import androidx.compose.material.icons.rounded.FlashOn
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LargeFlexibleTopAppBar
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,12 +41,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.ozjflash.R
-import com.android.ozjflash.ui.LocalUiMode
-import com.android.ozjflash.ui.UiMode
-import com.android.ozjflash.ui.component.material.ExpressiveScaffold
-import com.android.ozjflash.ui.component.material.expressiveTopAppBarColors
 import com.android.ozjflash.ui.component.usb.UsbPillCollapseActions
-import com.android.ozjflash.ui.component.usb.UsbStatusPill
 import com.android.ozjflash.ui.navigation3.LocalNavigator
 import com.android.ozjflash.ui.navigation3.Navigator
 import com.android.ozjflash.ui.navigation3.Route
@@ -79,14 +63,11 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  *
  * 一张卡片内放两个选项：7z 解压 / payload.bin 解压，行间无分隔线，
  * 左侧图标用主题 onSurface 着色（浅色黑、深色白的黑白配），右侧灰色箭头。
- * 分别按 Miuix / Material 主体渲染成各自风格的卡片组件，点击后 push 到解压执行页。
+ * 用 Miuix 原生组件渲染卡片，点击后 push 到解压执行页。
  */
 @Composable
 fun FeaturePager(bottomInnerPadding: Dp, isCurrentPage: Boolean) {
-    when (LocalUiMode.current) {
-        UiMode.Miuix -> FeatureMiuix(bottomInnerPadding)
-        UiMode.Material -> FeatureMaterial(bottomInnerPadding)
-    }
+    FeatureMiuix(bottomInnerPadding)
 }
 
 @Composable
@@ -132,44 +113,6 @@ private fun FeatureMiuix(bottomInnerPadding: Dp) {
                 FastbootAdbCardMiuix(navigator)
                 Spacer(Modifier.height(bottomInnerPadding))
             }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun FeatureMaterial(bottomInnerPadding: Dp) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-    val navigator = LocalNavigator.current
-
-    ExpressiveScaffold(
-        topBar = {
-            LargeFlexibleTopAppBar(
-                title = { Text(stringResource(R.string.feature)) },
-                colors = expressiveTopAppBarColors(),
-                windowInsets = WindowInsets.safeDrawing.only(
-                    WindowInsetsSides.Top + WindowInsetsSides.Horizontal
-                ),
-                scrollBehavior = scrollBehavior,
-                actions = { UsbStatusPill() },
-            )
-        },
-        contentWindowInsets = WindowInsets.safeDrawing.only(
-            WindowInsetsSides.Top + WindowInsetsSides.Horizontal
-        ),
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
-                .verticalScroll(rememberScrollState())
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-        ) {
-            FeatureCardMaterial(navigator)
-            Spacer(Modifier.height(12.dp))
-            FastbootAdbCardMaterial(navigator)
-            Spacer(Modifier.height(bottomInnerPadding))
         }
     }
 }
@@ -246,58 +189,6 @@ private fun FeatureRowMiuix(item: FeatureItem, onClick: () -> Unit) {
     }
 }
 
-@Composable
-private fun FeatureCardMaterial(navigator: Navigator) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(18.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-    ) {
-        Column {
-            FEATURE_ITEMS.forEach { item ->
-                FeatureRowMaterial(item) { navigator.push(item.route) }
-            }
-        }
-    }
-}
-
-@Composable
-private fun FeatureRowMaterial(item: FeatureItem, onClick: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(14.dp),
-    ) {
-        Image(
-            painter = painterResource(item.iconRes),
-            contentDescription = null,
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
-            modifier = Modifier.size(26.dp),
-        )
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = stringResource(item.titleRes),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-            Text(
-                text = stringResource(item.descRes),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(20.dp),
-        )
-    }
-}
-
 /* ------------------- Fastboot / Adb 合并卡片（从工具页迁移而来） ------------------- */
 /**
  * 工具页原来的 Fastboot、Adb 两张卡片合并为功能页里的一张卡片，两个选项为同一张卡片内的两行，
@@ -361,72 +252,6 @@ private fun FastbootAdbRowMiuix(
             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = null,
             tint = Color.Gray,
-            modifier = Modifier.size(20.dp),
-        )
-    }
-}
-
-@Composable
-private fun FastbootAdbCardMaterial(navigator: Navigator) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(18.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-    ) {
-        Column {
-            FastbootAdbRowMaterial(
-                icon = Icons.Rounded.FlashOn,
-                titleRes = R.string.tools_fastboot,
-                descRes = R.string.tools_fastboot_desc,
-                onClick = { navigator.push(Route.Fastboot) },
-            )
-            FastbootAdbRowMaterial(
-                icon = Icons.Rounded.Android,
-                titleRes = R.string.tools_adb,
-                descRes = R.string.tools_adb_desc,
-                onClick = { navigator.push(Route.Adb) },
-            )
-        }
-    }
-}
-
-@Composable
-private fun FastbootAdbRowMaterial(
-    icon: ImageVector,
-    @StringRes titleRes: Int,
-    @StringRes descRes: Int,
-    onClick: () -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(14.dp),
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.size(32.dp),
-        )
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = stringResource(titleRes),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-            Text(
-                text = stringResource(descRes),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(20.dp),
         )
     }

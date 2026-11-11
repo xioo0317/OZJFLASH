@@ -10,8 +10,6 @@ import androidx.compose.ui.unit.Dp
 import com.android.ozjflash.CrashLogger
 import com.android.ozjflash.flash.NativeLibs
 import com.android.ozjflash.ozjApp
-import com.android.ozjflash.ui.LocalUiMode
-import com.android.ozjflash.ui.UiMode
 import java.io.File
 
 /**
@@ -95,17 +93,9 @@ fun HomePager(
     val uriHandler = LocalUriHandler.current
     val actions = HomeActions(onOpenUrl = uriHandler::openUri)
 
-    when (LocalUiMode.current) {
-        UiMode.Miuix -> HomePagerMiuix(
-            state = rememberHomeState(binDir),
-            actions = actions,
-            bottomInnerPadding = bottomInnerPadding,
-        )
-
-        UiMode.Material -> HomePagerMaterial(
-            state = rememberHomeState(binDir),
-            actions = actions,
-            bottomInnerPadding = bottomInnerPadding,
-        )
-    }
+    HomePagerMiuix(
+        state = rememberHomeState(binDir),
+        actions = actions,
+        bottomInnerPadding = bottomInnerPadding,
+    )
 }

@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.add
@@ -19,15 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LargeFlexibleTopAppBar
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,11 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.ozjflash.R
-import com.android.ozjflash.ui.LocalUiMode
-import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.component.GlassBackButton
-import com.android.ozjflash.ui.component.material.ExpressiveScaffold
-import com.android.ozjflash.ui.component.material.expressiveTopAppBarColors
 import com.android.ozjflash.ui.navigation3.Navigator
 import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.util.BlurredBar
@@ -67,10 +54,7 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  */
 @Composable
 fun OzjFlashScreen(navigator: Navigator) {
-    when (LocalUiMode.current) {
-        UiMode.Miuix -> OzjFlashMiuix(navigator)
-        UiMode.Material -> OzjFlashMaterial(navigator)
-    }
+    OzjFlashMiuix(navigator)
 }
 
 @Composable
@@ -119,44 +103,6 @@ private fun OzjFlashMiuix(navigator: Navigator) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun OzjFlashMaterial(navigator: Navigator) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-    val topInsets = WindowInsets.systemBars
-        .add(WindowInsets.displayCutout)
-        .only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
-
-    ExpressiveScaffold(
-        topBar = {
-            LargeFlexibleTopAppBar(
-                title = { Text(stringResource(R.string.tools_ozjflash)) },
-                navigationIcon = {
-                    GlassBackButton(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        onClick = { navigator.pop() },
-                    )
-                },
-                colors = expressiveTopAppBarColors(),
-                windowInsets = topInsets,
-                scrollBehavior = scrollBehavior,
-            )
-        },
-        contentWindowInsets = topInsets,
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
-                .verticalScroll(rememberScrollState())
-                .padding(innerPadding)
-                .padding(16.dp),
-        ) {
-            OzjFlashBody()
-        }
-    }
-}
-
 @Composable
 private fun OzjFlashBody() {
     MiuixCardCompat(modifier = Modifier.fillMaxWidth()) {
@@ -188,71 +134,38 @@ private fun OzjFlashBody() {
     }
 }
 
-/* --------------------------- 双主题兼容封装 --------------------------- */
-// 占位页卡片在 Miuix / Material 下分别用各自的 Card / Surface 与配色，
-// 这里用轻量封装避免两套几乎重复的 body 代码。
+/* --------------------------- Miuix 组件封装 --------------------------- */
+// 占位页统一使用 Miuix 原生 Card / Text 与配色。
 
 @Composable
 private fun MiuixCardCompat(modifier: Modifier, content: @Composable () -> Unit) {
-    if (LocalUiMode.current == UiMode.Miuix) {
-        MiuixCard(modifier = modifier) { content() }
-    } else {
-        Surface(
-            modifier = modifier,
-            shape = MaterialTheme.shapes.large,
-            color = MaterialTheme.colorScheme.surfaceContainerHigh,
-        ) { content() }
-    }
+    MiuixCard(modifier = modifier) { content() }
 }
 
 @Composable
 private fun MiuixTextCompatTitle(text: String) {
-    if (LocalUiMode.current == UiMode.Miuix) {
-        MiuixText(
-            text = text,
-            fontSize = 20.sp,
-            fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
-            color = MiuixTheme.colorScheme.onSurface,
-        )
-    } else {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-    }
+    MiuixText(
+        text = text,
+        fontSize = 20.sp,
+        fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
+        color = MiuixTheme.colorScheme.onSurface,
+    )
 }
 
 @Composable
 private fun MiuixTextCompatBody(text: String) {
-    if (LocalUiMode.current == UiMode.Miuix) {
-        MiuixText(
-            text = text,
-            fontSize = 14.sp,
-            color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
-        )
-    } else {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    }
+    MiuixText(
+        text = text,
+        fontSize = 14.sp,
+        color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+    )
 }
 
 @Composable
 private fun MiuixTextCompatHint(text: String) {
-    if (LocalUiMode.current == UiMode.Miuix) {
-        MiuixText(
-            text = text,
-            fontSize = 13.sp,
-            color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
-        )
-    } else {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    }
+    MiuixText(
+        text = text,
+        fontSize = 13.sp,
+        color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+    )
 }

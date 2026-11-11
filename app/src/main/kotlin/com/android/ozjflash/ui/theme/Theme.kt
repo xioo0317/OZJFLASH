@@ -8,8 +8,6 @@ import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamiccolor.ColorSpec
 import com.android.ozjflash.data.repository.SettingsRepository
 import com.android.ozjflash.data.repository.SettingsRepositoryImpl
-import com.android.ozjflash.ui.LocalUiMode
-import com.android.ozjflash.ui.UiMode
 
 enum class ColorMode(val value: Int) {
     SYSTEM(0),
@@ -66,19 +64,15 @@ fun ColorSpec.SpecVersion.effectiveFor(style: PaletteStyle): ColorSpec.SpecVersi
 
 object ThemeController {
     fun getAppSettings(repo: SettingsRepository = SettingsRepositoryImpl()): AppSettings {
-        val uiMode = repo.uiMode
         var colorModeValue = repo.themeMode
-
-        if (uiMode == "miuix") {
-            val miuixMonet = repo.miuixMonet
-            val colorMode = ColorMode.fromValue(colorModeValue)
-            colorModeValue = if (!miuixMonet && colorMode.isMonet) {
-                colorMode.toNonMonetMode()
-            } else if (miuixMonet && !colorMode.isMonet) {
-                colorMode.toMonetMode()
-            } else {
-                colorModeValue
-            }
+        val miuixMonet = repo.miuixMonet
+        val currentColorMode = ColorMode.fromValue(colorModeValue)
+        colorModeValue = if (!miuixMonet && currentColorMode.isMonet) {
+            currentColorMode.toNonMonetMode()
+        } else if (miuixMonet && !currentColorMode.isMonet) {
+            currentColorMode.toMonetMode()
+        } else {
+            colorModeValue
         }
 
         val colorMode = ColorMode.fromValue(colorModeValue)
@@ -103,21 +97,12 @@ object ThemeController {
 @Composable
 fun OzjFlashTheme(
     appSettings: AppSettings = ThemeController.getAppSettings(),
-    uiMode: UiMode = LocalUiMode.current,
     content: @Composable () -> Unit
 ) {
-
-    when (uiMode) {
-        UiMode.Miuix -> MiuixOzjFlashTheme(
-            appSettings = appSettings,
-            content = content
-        )
-
-        UiMode.Material -> MaterialOzjFlashTheme(
-            appSettings = appSettings,
-            content = content
-        )
-    }
+    MiuixOzjFlashTheme(
+        appSettings = appSettings,
+        content = content
+    )
 }
 
 @Composable

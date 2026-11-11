@@ -45,10 +45,6 @@
     <string name="terminal_open_summary">内蔵端末を開く</string>
 
     <!-- 設定 -->
-    <string name="settings_ui_mode">UI スタイル</string>
-    <string name="settings_ui_mode_summary">アプリのインターフェーススタイルを選択します</string>
-    <string name="settings_ui_mode_miuix">Miuix</string>
-    <string name="settings_ui_mode_material">Material</string>
     <string name="settings_theme">テーマ設定</string>
     <string name="settings_theme_summary">アプリのテーマモードを選択します</string>
     <string name="settings_theme_system">システムに合わせる</string>
@@ -88,7 +84,7 @@
     <string name="about_app_name_title">OZJFLASH</string>
     <string name="about_app_name_value">内蔵ターミナルと root 不要のフラッシュ機能を備えた Compose ベースのツールセット。同梱の adb・fastboot・bash・mke2fs・make_f2fs・payload-dumper-go などの実行ファイルは初回起動時にプライベート領域へ展開され、ターミナルの PATH に追加されます。</string>
     <string name="about_ui_title">デュアル UI</string>
-    <string name="about_ui_value">Miuix（Mi スタイル）と Material 3 Expressive の両方を同梱。設定 → インターフェースからいつでも切り替え可能。ページ・ナビ・ダイアログはいずれの主体でもネイティブに描画されます。</string>
+    <string name="about_ui_value">Miuix（Mi スタイル）の単一インターフェースのみを同梱。ページ・ナビ・ダイアログはすべて Miuix のネイティブコンポーネントで描画されます。</string>
     <string name="about_tools_title">ソースについて</string>
     <string name="about_tools_value">UI シェルは KernelSU Manager から移植（root・モジュール・HTTP・JNI 関連コードを削除）。フラッシュ用バイナリは公開されているプラットフォームツールのビルドから。本アプリは root を要求・利用しません。</string>
     <string name="about_disclaimer_title">免責事項</string>

@@ -3,7 +3,6 @@ package com.android.ozjflash.data.repository
 import android.content.Context
 import androidx.core.content.edit
 import com.android.ozjflash.ozjApp
-import com.android.ozjflash.ui.UiMode
 
 /**
  * OZJFLASH 的应用设置存储。
@@ -13,7 +12,6 @@ import com.android.ozjflash.ui.UiMode
  * 以及所有 shell / JNI 读写。底层为 SharedPreferences。
  */
 interface SettingsRepository {
-    var uiMode: String
     var themeMode: Int
     var miuixMonet: Boolean
     var keyColor: Int
@@ -46,10 +44,6 @@ class SettingsRepositoryImpl : SettingsRepository {
     private val prefs by lazy {
         ozjApp.getSharedPreferences(SETTINGS_PREFS, Context.MODE_PRIVATE)
     }
-
-    override var uiMode: String
-        get() = prefs.getString("ui_mode", UiMode.DEFAULT_VALUE) ?: UiMode.DEFAULT_VALUE
-        set(value) = prefs.edit { putString("ui_mode", value) }
 
     override var themeMode: Int
         get() = prefs.getInt("color_mode", 0)

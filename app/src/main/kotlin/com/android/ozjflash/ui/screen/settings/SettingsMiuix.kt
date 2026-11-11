@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AdminPanelSettings
 import androidx.compose.material.icons.rounded.BugReport
-import androidx.compose.material.icons.rounded.DisplaySettings
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Language
 import androidx.compose.material.icons.rounded.Palette
@@ -38,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import com.android.ozjflash.R
 import com.android.ozjflash.findActivity
 import com.android.ozjflash.flash.FlashBridge
-import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.util.BlurredBar
 import com.android.ozjflash.ui.util.rememberBlurBackdrop
@@ -116,28 +114,6 @@ fun SettingsMiuix(
                     ) {
                         // 外观：界面切换 / 主题设置 / 语言（二级页）
                         Card(modifier = Modifier.fillMaxWidth()) {
-                            val uiModeItems = listOf(
-                                stringResource(R.string.settings_ui_mode_miuix),
-                                stringResource(R.string.settings_ui_mode_material),
-                            )
-                            OverlayDropdownPreference(
-                                title = stringResource(R.string.settings_ui_mode),
-                                summary = stringResource(R.string.settings_ui_mode_summary),
-                                items = uiModeItems,
-                                startAction = {
-                                    Icon(
-                                        Icons.Rounded.DisplaySettings,
-                                        modifier = Modifier.padding(end = 6.dp),
-                                        contentDescription = stringResource(R.string.settings_ui_mode),
-                                        tint = colorScheme.onBackground,
-                                    )
-                                },
-                                selectedIndex = if (uiState.uiMode == UiMode.Miuix) 0 else 1,
-                                onSelectedIndexChange = {
-                                    actions.setUiMode(if (it == 0) UiMode.Miuix else UiMode.Material)
-                                },
-                            )
-
                             ArrowPreference(
                                 title = stringResource(R.string.settings_theme),
                                 summary = stringResource(R.string.settings_theme_summary),

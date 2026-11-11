@@ -22,11 +22,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ContentPaste
 import androidx.compose.material.icons.rounded.DeleteSweep
 import androidx.compose.material.icons.rounded.Refresh
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.TopAppBar as MaterialTopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,7 +31,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -42,8 +38,6 @@ import androidx.compose.ui.unit.sp
 import com.android.ozjflash.R
 import com.android.ozjflash.terminal.RealTerminal
 import com.android.ozjflash.terminal.RealTerminalView
-import com.android.ozjflash.ui.LocalUiMode
-import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.component.usb.UsbStatusPill
 import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
 import top.yukonga.miuix.kmp.basic.TopAppBar
@@ -114,10 +108,7 @@ internal fun TerminalPane(
 /** 终端顶栏：按当前 UI 主体分派到对应的原生 TopAppBar 组件，保证与主页顶栏一致 */
 @Composable
 private fun TerminalTopBar(terminal: RealTerminal) {
-    when (LocalUiMode.current) {
-        UiMode.Miuix -> MiuixTerminalTopBar(terminal)
-        UiMode.Material -> MaterialTerminalTopBar(terminal)
-    }
+    MiuixTerminalTopBar(terminal)
 }
 
 @Composable
@@ -140,21 +131,6 @@ private fun MiuixTerminalTopBar(terminal: RealTerminal) {
             UsbStatusPill(dark = true, modifier = Modifier.padding(start = 4.dp))
         },
         scrollBehavior = scrollBehavior,
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun MaterialTerminalTopBar(terminal: RealTerminal) {
-    MaterialTopAppBar(
-        title = { Text(stringResource(R.string.terminal), color = TerminalForeground) },
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = TerminalBackground),
-        actions = {
-            TerminalTopBarAction(Icons.Rounded.ContentPaste, stringResource(R.string.paste_text), terminal::pasteFromClipboard)
-            TerminalTopBarAction(Icons.Rounded.DeleteSweep, stringResource(R.string.terminal_clear), terminal::clearScreen)
-            TerminalTopBarAction(Icons.Rounded.Refresh, stringResource(R.string.terminal_restart), terminal::restart)
-            UsbStatusPill(dark = true, modifier = Modifier.padding(start = 4.dp))
-        },
     )
 }
 

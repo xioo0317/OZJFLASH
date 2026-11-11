@@ -16,9 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material3.Card as M3Card
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,8 +26,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.ozjflash.R
-import com.android.ozjflash.ui.LocalUiMode
-import com.android.ozjflash.ui.UiMode
 import top.yukonga.miuix.kmp.basic.Card as MiuixCard
 import top.yukonga.miuix.kmp.basic.Text as MiuixText
 import top.yukonga.miuix.kmp.theme.MiuixTheme
@@ -41,14 +36,10 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  * 保留 macOS 窗口结构：红黄绿交通灯圆点 + 右上 "Terminal" 标题栏 + 标题栏下
  * 分隔线 + 主体留白，输出以等宽字体打印在主体里、可长按选择复制。
  *
- * **不做液态玻璃**：外壳改用原生 Card 组件（Miuix 用 MiuixCard、Material3 用 M3
- * Card），只配一条白色细边框（边缘）与标题栏/主体之间的白色分线；没有磨砂渐变、
- * 彩虹光斑、手绘阴影或高光环，深色模式下也不会出现厚重高光。
- *
- * **双风格差异**：容器用各自体系的原生组件，文字组件按 [LocalUiMode] 分派 ——
- * Miuix 用 MiuixText、Material3 用 M3 Text；除此之外只做「颜色淡化差异」：
- * 标题 / 输出 / 空态文字统一取各自主题 colorScheme 的 onSurface，按 alpha
- * 派生淡化层次，不另设两套排版或配色。
+ * **不做液态玻璃**：外壳直接用 Miuix 原生 Card，只配一条白色细边框与标题栏/主体
+ * 之间的白色分线；没有磨砂渐变、彩虹光斑、手绘阴影或高光环，深色模式下也不会
+ * 出现厚重高光。文字统一用 MiuixText，取 Miuix colorScheme 的 onSurface 按 alpha
+ * 派生淡化层次。
  */
 private val TerminalWindowShape = RoundedCornerShape(20.dp)
 
@@ -67,15 +58,9 @@ private data class WindowPalette(
 )
 
 @Composable
-private fun windowPalette(uiMode: UiMode): WindowPalette {
-    val surface = when (uiMode) {
-        UiMode.Miuix -> MiuixTheme.colorScheme.surface
-        UiMode.Material -> MaterialTheme.colorScheme.surface
-    }
-    val onSurface = when (uiMode) {
-        UiMode.Miuix -> MiuixTheme.colorScheme.onSurface
-        UiMode.Material -> MaterialTheme.colorScheme.onSurface
-    }
+private fun windowPalette(): WindowPalette {
+    val surface = MiuixTheme.colorScheme.surface
+    val onSurface = MiuixTheme.colorScheme.onSurface
     val dark = surface.red + surface.green + surface.blue < 1.5f
     // 白色边缘 / 分线：深色下压低 alpha 避免刺眼，浅色下接近纯白；都是 1dp 细线，
     // 不再是液态玻璃那种厚高光环。
@@ -104,9 +89,7 @@ fun TerminalOutputWindow(
     emptyText: String,
     modifier: Modifier = Modifier,
 ) {
-    val uiMode = LocalUiMode.current
-    val palette = windowPalette(uiMode)
-    val isMiuix = uiMode == UiMode.Miuix
+    val palette = windowPalette()
 
     // 白色细边框：原生 Card 组件的自带背景 + 圆角，外沿勾一圈白色细线。
     val cardModifier = modifier
@@ -118,23 +101,14 @@ fun TerminalOutputWindow(
             output = output,
             emptyText = emptyText,
             palette = palette,
-            isMiuix = isMiuix,
         )
     }
 
-    if (isMiuix) {
-        MiuixCard(
-            modifier = cardModifier,
-            cornerRadius = 20.dp,
-            content = content,
-        )
-    } else {
-        M3Card(
-            modifier = cardModifier,
-            shape = TerminalWindowShape,
-            content = content,
-        )
-    }
+    MiuixCard(
+        modifier = cardModifier,
+        cornerRadius = 20.dp,
+        content = content,
+    )
 }
 
 @Composable
@@ -142,7 +116,6 @@ private fun ColumnScope.TerminalWindowContent(
     output: String,
     emptyText: String,
     palette: WindowPalette,
-    isMiuix: Boolean,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         // 标题栏：左侧红黄绿交通灯，右侧 "Terminal"（背景用 Card 自带色，无渐变玻璃）
@@ -162,19 +135,11 @@ private fun ColumnScope.TerminalWindowContent(
             }
             Spacer(Modifier.weight(1f))
             val titleText = stringResource(R.string.terminal_window_title)
-            if (isMiuix) {
-                MiuixText(
-                    text = titleText,
-                    color = palette.titleText,
-                    fontSize = 17.sp,
-                )
-            } else {
-                Text(
-                    text = titleText,
-                    color = palette.titleText,
-                    fontSize = 17.sp,
-                )
-            }
+            MiuixText(
+                text = titleText,
+                color = palette.titleText,
+                fontSize = 17.sp,
+            )
         }
         // 标题栏与主体之间的白色分线
         Box(
@@ -193,23 +158,13 @@ private fun ColumnScope.TerminalWindowContent(
             SelectionContainer {
                 val bodyText = output.ifEmpty { emptyText }
                 val bodyColor = if (output.isEmpty()) palette.emptyText else palette.outputText
-                if (isMiuix) {
-                    MiuixText(
-                        text = bodyText,
-                        fontFamily = FontFamily.Monospace,
-                        fontSize = 12.sp,
-                        lineHeight = 17.sp,
-                        color = bodyColor,
-                    )
-                } else {
-                    Text(
-                        text = bodyText,
-                        fontFamily = FontFamily.Monospace,
-                        fontSize = 12.sp,
-                        lineHeight = 17.sp,
-                        color = bodyColor,
-                    )
-                }
+                MiuixText(
+                    text = bodyText,
+                    fontFamily = FontFamily.Monospace,
+                    fontSize = 12.sp,
+                    lineHeight = 17.sp,
+                    color = bodyColor,
+                )
             }
         }
     }

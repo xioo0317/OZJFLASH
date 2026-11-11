@@ -5,9 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text as M3Text
-import androidx.compose.material3.TextButton as M3TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -21,9 +18,6 @@ import com.android.ozjflash.R
 import com.android.ozjflash.flash.UsbDeviceInfo
 import com.android.ozjflash.flash.UsbHostManager
 import com.android.ozjflash.flash.releaseFd
-import com.android.ozjflash.ui.LocalUiMode
-import com.android.ozjflash.ui.UiMode
-import com.android.ozjflash.ui.component.material.ExpressiveDialog
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.Text as MiuixText
 import top.yukonga.miuix.kmp.basic.TextButton as MiuixTextButton
@@ -43,10 +37,7 @@ private data class UsbInfoRow(val label: String, val value: String)
 @Composable
 fun UsbDeviceInfoDialog(info: UsbDeviceInfo, onDismiss: () -> Unit) {
     val rows = usbInfoRows(info)
-    when (LocalUiMode.current) {
-        UiMode.Miuix -> UsbDeviceInfoDialogMiuix(rows, onDismiss)
-        UiMode.Material -> UsbDeviceInfoDialogMaterial(rows, onDismiss)
-    }
+    UsbDeviceInfoDialogMiuix(rows, onDismiss)
 }
 
 /**
@@ -150,42 +141,4 @@ private fun UsbDeviceInfoDialogMiuix(rows: List<UsbInfoRow>, onDismiss: () -> Un
             )
         }
     }
-}
-
-@Composable
-private fun UsbDeviceInfoDialogMaterial(rows: List<UsbInfoRow>, onDismiss: () -> Unit) {
-    val colorScheme = MaterialTheme.colorScheme
-    ExpressiveDialog(
-        onDismissRequest = onDismiss,
-        title = { M3Text(stringResource(R.string.usb_info_title)) },
-        text = {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                rows.forEach { row ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 5.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                    ) {
-                        M3Text(
-                            text = row.label,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = colorScheme.onSurfaceVariant,
-                            modifier = Modifier.weight(1f),
-                        )
-                        M3Text(
-                            text = row.value,
-                            style = MaterialTheme.typography.bodySmall,
-                            fontWeight = FontWeight.Medium,
-                            textAlign = TextAlign.End,
-                            modifier = Modifier.weight(1.4f),
-                        )
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            M3TextButton(onClick = onDismiss) { M3Text(stringResource(R.string.usb_info_close)) }
-        },
-    )
 }

@@ -47,11 +47,6 @@
     <string name="terminal_clear">清屏</string>
     <string name="terminal_restart">重开会话</string>
     <string name="terminal_open_summary">打开内置终端</string>
-
-    <string name="settings_ui_mode">界面风格</string>
-    <string name="settings_ui_mode_summary">选择应用的界面风格</string>
-    <string name="settings_ui_mode_miuix">Miuix</string>
-    <string name="settings_ui_mode_material">Material</string>
     <string name="settings_theme">主题设置</string>
     <string name="settings_theme_summary">选择应用的主题模式</string>
     <string name="settings_theme_system">跟随系统</string>
@@ -90,7 +85,7 @@
     <string name="about_app_name_title">OZJFLASH</string>
     <string name="about_app_name_value">基于 Compose 的工具集合：内置终端 + 免 root 刷写流程。随包的 adb、fastboot、bash、mke2fs、make_f2fs、payload-dumper-go 等可执行文件会在首次启动时释放到私有目录，并注入终端 PATH。</string>
     <string name="about_ui_title">双 UI 主体</string>
-    <string name="about_ui_value">同时内置 Miuix（小米风格）与 Material 3 Expressive 两套界面主体，可在「设置 → 界面主体」中随时切换；页面、导航栏与弹窗都会以当前主体的原生组件渲染。</string>
+    <string name="about_ui_value">仅内置 Miuix（小米风格）一套界面主体；页面、导航栏与弹窗均以 Miuix 原生组件渲染。</string>
     <string name="about_tools_title">来源说明</string>
     <string name="about_tools_value">界面框架移植自 KernelSU Manager（已移除 root / 模块 / HTTP / JNI 相关代码），刷写可执行文件来自公开的平台工具构建。本应用不申请也不使用 root 权限。</string>
     <string name="about_disclaimer_title">免责声明</string>

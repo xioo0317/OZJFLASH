@@ -7,9 +7,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text as M3Text
-import androidx.compose.material3.TextButton as M3TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -17,9 +14,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.ozjflash.R
-import com.android.ozjflash.ui.LocalUiMode
-import com.android.ozjflash.ui.UiMode
-import com.android.ozjflash.ui.component.material.ExpressiveDialog
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.Text as MiuixText
 import top.yukonga.miuix.kmp.basic.TextButton as MiuixTextButton
@@ -33,16 +27,12 @@ private data class ManualSection(val title: String, val body: String)
  * 命令行二级页「?」圆钮点击后弹出的说明书。
  *
  * [fastboot] 为 true 时显示 Fastboot 专属文案（引导模式 / 刷写命令 / 免 Root 原理），
- * 为 false 时显示 ADB 文案（USB 调试 / adb 子命令 / 免 Root 原理）。两套共用同一
- * 双风格弹窗外壳：Miuix 用 OverlayDialog，Material3 用 ExpressiveDialog，
- * 与 USB 设备信息弹窗保持一致；内容较长故整体可滚动。
+ * 为 false 时显示 ADB 文案（USB 调试 / adb 子命令 / 免 Root 原理）。弹窗外壳用
+ * Miuix 的 OverlayDialog，与 USB 设备信息弹窗保持一致；内容较长故整体可滚动。
  */
 @Composable
 fun ToolManualDialog(fastboot: Boolean, onDismiss: () -> Unit) {
-    when (LocalUiMode.current) {
-        UiMode.Miuix -> ToolManualDialogMiuix(fastboot, onDismiss)
-        UiMode.Material -> ToolManualDialogMaterial(fastboot, onDismiss)
-    }
+    ToolManualDialogMiuix(fastboot, onDismiss)
 }
 
 @Composable
@@ -140,41 +130,4 @@ private fun ToolManualDialogMiuix(fastboot: Boolean, onDismiss: () -> Unit) {
             )
         }
     }
-}
-
-@Composable
-private fun ToolManualDialogMaterial(fastboot: Boolean, onDismiss: () -> Unit) {
-    val sections = manualSections(fastboot)
-    val scheme = MaterialTheme.colorScheme
-    ExpressiveDialog(
-        onDismissRequest = onDismiss,
-        title = { M3Text(stringResource(manualTitleRes(fastboot))) },
-        text = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState()),
-            ) {
-                sections.forEach { section ->
-                    M3Text(
-                        text = section.title,
-                        style = MaterialTheme.typography.titleSmall,
-                        color = scheme.primary,
-                    )
-                    Spacer(Modifier.height(3.dp))
-                    M3Text(
-                        text = section.body,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = scheme.onSurfaceVariant,
-                    )
-                    Spacer(Modifier.height(12.dp))
-                }
-            }
-        },
-        confirmButton = {
-            M3TextButton(onClick = onDismiss) {
-                M3Text(stringResource(R.string.adb_manual_close))
-            }
-        },
-    )
 }

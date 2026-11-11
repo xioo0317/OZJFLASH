@@ -4,8 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.android.ozjflash.ui.LocalUiMode
-import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.navigation3.Navigator
 import com.android.ozjflash.ui.viewmodel.AppViewModel
 
@@ -27,8 +25,5 @@ fun ColorPaletteScreen(
         currentColorMode = uiState.appSettings.colorMode,
     )
 
-    when (LocalUiMode.current) {
-        UiMode.Miuix -> ColorPaletteScreenMiuix(state, actions)
-        UiMode.Material -> ColorPaletteScreenMaterial(state, actions)
-    }
+    ColorPaletteScreenMiuix(state, actions)
 }

@@ -7,10 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text as M3Text
-import androidx.compose.material3.TextButton as M3TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,9 +26,6 @@ import com.android.ozjflash.R
 import com.android.ozjflash.flash.UsbDeviceInfo
 import com.android.ozjflash.flash.UsbHost
 import com.android.ozjflash.flash.UsbMode
-import com.android.ozjflash.ui.LocalUiMode
-import com.android.ozjflash.ui.UiMode
-import com.android.ozjflash.ui.component.material.ExpressiveDialog
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.SmallTitle
@@ -53,40 +46,22 @@ fun UsbHostCard(modifier: Modifier = Modifier) {
     val devices by UsbHost.devices.collectAsStateWithLifecycle()
     val result by UsbHost.lastResult.collectAsStateWithLifecycle()
     var pending by remember { mutableStateOf<UsbDeviceInfo?>(null) }
-    val uiMode = LocalUiMode.current
 
     LaunchedEffect(Unit) { UsbHost.refresh(context) }
 
-    when (uiMode) {
-        UiMode.Miuix -> UsbHostCardMiuix(
-            devices = devices,
-            denied = result?.granted == false,
-            onRequest = { pending = it },
-            modifier = modifier,
-        )
-
-        UiMode.Material -> UsbHostCardMaterial(
-            devices = devices,
-            denied = result?.granted == false,
-            onRequest = { pending = it },
-            modifier = modifier,
-        )
-    }
+    UsbHostCardMiuix(
+        devices = devices,
+        denied = result?.granted == false,
+        onRequest = { pending = it },
+        modifier = modifier,
+    )
 
     pending?.let { info ->
-        when (uiMode) {
-            UiMode.Miuix -> UsbPermissionDialogMiuix(
-                info = info,
-                onConfirm = { UsbHost.requestPermission(context, info.device) },
-                onDismiss = { pending = null },
-            )
-
-            UiMode.Material -> UsbPermissionDialogMaterial(
-                info = info,
-                onConfirm = { UsbHost.requestPermission(context, info.device) },
-                onDismiss = { pending = null },
-            )
-        }
+        UsbPermissionDialogMiuix(
+            info = info,
+            onConfirm = { UsbHost.requestPermission(context, info.device) },
+            onDismiss = { pending = null },
+        )
     }
 }
 
@@ -182,91 +157,6 @@ private fun UsbHostCardMiuix(
 }
 
 @Composable
-private fun UsbHostCardMaterial(
-    devices: List<UsbDeviceInfo>,
-    denied: Boolean,
-    onRequest: (UsbDeviceInfo) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val colorScheme = MaterialTheme.colorScheme
-    Column(modifier = modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp)) {
-        M3Text(
-            text = stringResource(R.string.usb_devices),
-            style = MaterialTheme.typography.titleSmall,
-            color = colorScheme.onSurface,
-            fontWeight = FontWeight.Medium
-        )
-        Surface(
-            shape = MaterialTheme.shapes.medium,
-            color = colorScheme.surfaceContainer,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
-        ) {
-            Column(modifier = Modifier.padding(14.dp)) {
-                if (devices.isEmpty()) {
-                    M3Text(
-                        text = stringResource(R.string.usb_none),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = colorScheme.onSurfaceVariant
-                    )
-                } else {
-                    devices.forEach { info ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 6.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                M3Text(text = info.label, style = MaterialTheme.typography.bodyMedium)
-                                M3Text(
-                                    text = info.vidPid,
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = colorScheme.onSurfaceVariant
-                                )
-                                M3Text(
-                                    text = info.mode.label,
-                                    style = MaterialTheme.typography.labelSmall,
-                                    fontWeight = FontWeight.Medium,
-                                    color = modeColor(info.mode)
-                                )
-                            }
-                            if (info.granted) {
-                                M3Text(
-                                    text = stringResource(R.string.usb_granted),
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = colorScheme.primary
-                                )
-                            } else {
-                                M3TextButton(onClick = { onRequest(info) }) {
-                                    M3Text(stringResource(R.string.usb_request))
-                                }
-                            }
-                        }
-                    }
-                }
-                if (denied) {
-                    M3Text(
-                        text = stringResource(R.string.usb_denied),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = colorScheme.error,
-                        modifier = Modifier.padding(top = 8.dp)
-                    )
-                }
-                M3Text(
-                    text = stringResource(R.string.usb_hint),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
-            }
-        }
-    }
-}
-
-@Composable
 private fun UsbPermissionDialogMiuix(
     info: UsbDeviceInfo,
     onConfirm: () -> Unit,
@@ -310,33 +200,5 @@ private fun UsbPermissionDialogMiuix(
                 }
             }
         }
-    )
-}
-
-@Composable
-private fun UsbPermissionDialogMaterial(
-    info: UsbDeviceInfo,
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
-) {
-    ExpressiveDialog(
-        onDismissRequest = {
-            UsbHost.consumeResult()
-            onDismiss()
-        },
-        title = { M3Text(stringResource(R.string.usb_grant_title)) },
-        text = { M3Text(stringResource(R.string.usb_grant_message, info.label)) },
-        confirmButton = {
-            M3TextButton(onClick = {
-                onConfirm()
-                onDismiss()
-            }) { M3Text(stringResource(R.string.usb_allow)) }
-        },
-        dismissButton = {
-            M3TextButton(onClick = {
-                UsbHost.consumeResult()
-                onDismiss()
-            }) { M3Text(stringResource(android.R.string.cancel)) }
-        },
     )
 }

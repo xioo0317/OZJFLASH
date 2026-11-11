@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,8 +20,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.ozjflash.ui.LocalUiMode
-import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.component.liquid.liquidGlassChip
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
@@ -46,10 +43,7 @@ fun GlassCircleButton(
     showShadow: Boolean = true,
     content: @Composable BoxScope.(tint: Color) -> Unit,
 ) {
-    val surface = when (LocalUiMode.current) {
-        UiMode.Miuix -> MiuixTheme.colorScheme.surface
-        UiMode.Material -> MaterialTheme.colorScheme.surface
-    }
+    val surface = MiuixTheme.colorScheme.surface
     val darkGlass = dark || (surface.red + surface.green + surface.blue < 1.5f)
     val tint = if (darkGlass) Color(0xFFF2F2F2) else Color(0xFF1B1B1B)
 

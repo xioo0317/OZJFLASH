@@ -1,7 +1,6 @@
 package com.android.ozjflash
 
 import android.content.Context
-import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -24,7 +23,6 @@ import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -32,7 +30,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -47,24 +44,18 @@ import com.android.ozjflash.flash.NativeLibs
 import com.android.ozjflash.flash.UsbHost
 import com.android.ozjflash.terminal.TerminalEngine
 import com.android.ozjflash.ui.LocalMainPagerState
-import com.android.ozjflash.ui.LocalUiMode
-import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.component.bottombar.BottomBar
-import com.android.ozjflash.ui.component.bottombar.MainPagerState
 import com.android.ozjflash.ui.component.bottombar.NavigationBadgeState
 import com.android.ozjflash.ui.component.bottombar.SideRail
 import com.android.ozjflash.ui.component.bottombar.rememberMainPagerState
 import com.android.ozjflash.ui.component.bottombar.useNavigationRail
 import com.android.ozjflash.ui.navigation3.LocalNavigator
-import com.android.ozjflash.ui.navigation3.Navigator
 import com.android.ozjflash.ui.navigation3.Route
 import com.android.ozjflash.ui.navigation3.rememberNavigator
 import com.android.ozjflash.ui.screen.about.AboutScreen
 import com.android.ozjflash.ui.screen.colorpalette.ColorPaletteScreen
 import com.android.ozjflash.ui.screen.home.HomePager
 import com.android.ozjflash.ui.screen.settings.SettingPager
-import com.android.ozjflash.ui.screen.terminal.TerminalConsole
-import com.android.ozjflash.ui.screen.terminal.TerminalPager
 import com.android.ozjflash.ui.screen.terminal.rememberTerminalConsole
 import com.android.ozjflash.ui.screen.tools.ToolsPager
 import com.android.ozjflash.ui.screen.tools.ToolKind
@@ -86,7 +77,6 @@ import com.android.ozjflash.ui.theme.LocalEnableNavigationBadge
 import com.android.ozjflash.ui.theme.OzjFlashTheme
 import com.android.ozjflash.ui.util.rememberBlurBackdrop
 import com.android.ozjflash.ui.viewmodel.AppViewModel
-import top.yukonga.miuix.kmp.blur.Backdrop
 import top.yukonga.miuix.kmp.blur.LayerBackdrop
 import top.yukonga.miuix.kmp.blur.layerBackdrop
 import top.yukonga.miuix.kmp.blur.rememberLayerBackdrop
@@ -142,7 +132,6 @@ class MainActivity : ComponentActivity() {
             val viewModel = viewModel<AppViewModel>()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             val appSettings = uiState.appSettings
-            val uiMode = uiState.uiMode
             val darkMode = appSettings.colorMode.isDark ||
                 (appSettings.colorMode.isSystem && isSystemInDarkTheme())
 
@@ -174,9 +163,8 @@ class MainActivity : ComponentActivity() {
                 LocalEnableFloatingBottomBar provides uiState.enableFloatingBottomBar,
                 LocalEnableFloatingBottomBarBlur provides uiState.enableFloatingBottomBarBlur,
                 LocalEnableNavigationBadge provides uiState.enableNavigationBadge,
-                LocalUiMode provides uiMode,
             ) {
-                OzjFlashTheme(appSettings = appSettings, uiMode = uiMode) {
+                OzjFlashTheme(appSettings = appSettings) {
                     val mainScreen = @Composable {
                         MainScreen(
                             viewModel = viewModel,
@@ -204,13 +192,7 @@ class MainActivity : ComponentActivity() {
                             entry<Route.Flash> { FlashScreen() }
                         }
                     }
-                    when (uiMode) {
-                        UiMode.Material -> androidx.compose.material3.Scaffold(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainer
-                        ) { navDisplay() }
-
-                        UiMode.Miuix -> top.yukonga.miuix.kmp.basic.Scaffold { navDisplay() }
-                    }
+                    top.yukonga.miuix.kmp.basic.Scaffold { navDisplay() }
                 }
             }
         }
@@ -276,11 +258,7 @@ private fun MainScreen(
     LaunchedEffect(settledPage) { onPageChanged(settledPage) }
     LaunchedEffect(mainPagerState.pagerState.currentPage) { mainPagerState.syncPage() }
 
-    val uiMode = LocalUiMode.current
-    val surfaceColor = when (uiMode) {
-        UiMode.Material -> MaterialTheme.colorScheme.surface
-        UiMode.Miuix -> MiuixTheme.colorScheme.surface
-    }
+    val surfaceColor = MiuixTheme.colorScheme.surface
     // miuix-blur 依赖 android.graphics.RuntimeShader（API 33 才有），
     // 低版本上一旦触碰就会 NoClassDefFoundError 直接闪退，因此整条链路按版本降级
     val blurSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
@@ -351,19 +329,10 @@ private fun MainScreen(
                     )
                 }
             }
-            when (uiMode) {
-                UiMode.Material -> androidx.compose.material3.Scaffold(
-                    bottomBar = bottomBar,
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
-                ) { innerPadding ->
-                    pagerContent(innerPadding.calculateBottomPadding())
-                }
-
-                UiMode.Miuix -> top.yukonga.miuix.kmp.basic.Scaffold(
-                    bottomBar = bottomBar
-                ) { innerPadding ->
-                    pagerContent(innerPadding.calculateBottomPadding())
-                }
+            top.yukonga.miuix.kmp.basic.Scaffold(
+                bottomBar = bottomBar
+            ) { innerPadding ->
+                pagerContent(innerPadding.calculateBottomPadding())
             }
         }
     }
