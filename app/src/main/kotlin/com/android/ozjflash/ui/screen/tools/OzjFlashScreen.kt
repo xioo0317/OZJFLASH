@@ -85,6 +85,7 @@ private fun OzjFlashMiuix(navigator: Navigator) {
                         )
                     },
                     scrollBehavior = scrollBehavior,
+                    hasNavigationIcon = true,
                 )
             }
         },

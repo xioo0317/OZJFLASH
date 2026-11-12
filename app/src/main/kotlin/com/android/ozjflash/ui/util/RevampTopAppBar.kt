@@ -49,6 +49,8 @@ fun RevampTopAppBar(
     navigationIcon: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
     scrollBehavior: ScrollBehavior? = null,
+    // 二级页有返回键时置 true：靠左自绘标题需让出导航区，否则会压在返回键上
+    hasNavigationIcon: Boolean = false,
 ) {
     // 无 scrollBehavior 的页面不会折叠大标题，「折叠后对齐」无意义，直接走原生分支
     val alignStart = LocalUiRevamp.current &&
@@ -83,11 +85,14 @@ fun RevampTopAppBar(
             derivedStateOf { scrollBehavior?.state?.collapsedFraction ?: 0f }
         }
         val statusBarTop = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+        // 原生 TitlePadding 是 26dp；有返回键时再让出 48dp（40dp 圆钮 + 8dp 间距），
+        // 否则靠左标题会直接压在返回键上。宁可多留白也不能遮挡可点击区域。
+        val startPadding = if (hasNavigationIcon) 26.dp + 48.dp else 26.dp
         Box(
             modifier = Modifier
                 .matchParentSize()
                 .padding(top = statusBarTop)
-                .padding(horizontal = 26.dp),
+                .padding(start = startPadding, end = 26.dp),
             contentAlignment = Alignment.CenterStart,
         ) {
             Text(

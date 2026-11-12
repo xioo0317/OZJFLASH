@@ -44,6 +44,7 @@ class ColorPaletteActions internal constructor(
     fun setUiRevamp(enabled: Boolean) = viewModel.setUiRevamp(enabled)
     fun setDialogStyle(style: String) = viewModel.setDialogStyle(style)
     fun setCollapsedTitleAlign(align: String) = viewModel.setCollapsedTitleAlign(align)
+    fun setGlowEffect(enabled: Boolean) = viewModel.setGlowEffect(enabled)
     fun setFloatingBottomBar(enabled: Boolean) = viewModel.setFloatingBottomBar(enabled)
     fun setFloatingBottomBarBlur(enabled: Boolean) = viewModel.setFloatingBottomBarBlur(enabled)
     fun setNavigationBadge(enabled: Boolean) = viewModel.setNavigationBadge(enabled)

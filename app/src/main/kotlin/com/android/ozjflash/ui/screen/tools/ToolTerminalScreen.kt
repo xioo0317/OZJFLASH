@@ -230,6 +230,7 @@ private fun ToolPageMiuix(navigator: Navigator, tool: ToolKind) {
                         ToolPageActions(tool = tool, scrollBehavior = scrollBehavior)
                     },
                     scrollBehavior = scrollBehavior,
+                    hasNavigationIcon = true,
                 )
             }
         },

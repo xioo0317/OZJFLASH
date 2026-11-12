@@ -83,10 +83,9 @@ dependencies {
     implementation libs.miuix.preference
     implementation libs.miuix.blur
 
-    // COUI-Kit：本次仅把库编译进项目，不调用任何 COUI API
+    // COUI-Kit：只保留实际使用的 core（采样 / 渐进模糊 / 菜单）。
+    // material3 风格与 icons 模块零引用，已移除以免白占 dex。
     implementation libs.coui.core
-    implementation libs.coui.material3
-    implementation libs.coui.icons
 
     // 预测性返回手势：反射调用 Android 14 隐藏 API ApplicationInfo.setEnableOnBackInvokedCallback
     implementation("org.lsposed.hiddenapibypass:hiddenapibypass:4.0")

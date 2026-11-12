@@ -68,11 +68,6 @@
     <string name="settings_others">Otros</string>
     <string name="settings_enable_blur">Desenfoque</string>
     <string name="settings_enable_blur_summary">Desenfoca las barras superior e inferior</string>
-    <string name="settings_usb_pill_blur">Cristal de la píldora</string>
-    <string name="settings_usb_pill_blur_summary">Aplica un efecto de cristal a la píldora USB</string>
-    <string name="settings_blur_effect">Efecto</string>
-    <string name="settings_blur_effect_gaussian">Desenfoque gaussiano</string>
-    <string name="settings_blur_effect_gradient">Desenfoque degradado</string>
     <string name="settings_ui_revamp">Renovación de UI (Beta)</string>
     <string name="settings_ui_revamp_summary">Desenfoque degradado COUI, cristal de píldora y botones</string>
     <string name="settings_dialog_style">Estilo del diálogo de opciones</string>
@@ -81,6 +76,8 @@
     <string name="settings_collapsed_title_align">Alineación del título plegado</string>
     <string name="settings_collapsed_title_align_start">Izquierda</string>
     <string name="settings_collapsed_title_align_center">Centro</string>
+    <string name="settings_glow_effect">Efecto de brillo</string>
+    <string name="settings_glow_effect_summary">Luz de cristal líquido en los menús de opciones COUI</string>
     <string name="settings_enable_floating_bottom_bar">Barra inferior flotante</string>
     <string name="settings_enable_floating_bottom_bar_summary">Reemplazar la barra acoplada por una píldora flotante</string>
     <string name="settings_enable_floating_bottom_bar_blur">Desenfoque de la barra flotante</string>

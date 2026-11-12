@@ -78,11 +78,6 @@
     <string name="settings_others">Other</string>
     <string name="settings_enable_blur">Blur</string>
     <string name="settings_enable_blur_summary">Blur the top and bottom bars</string>
-    <string name="settings_usb_pill_blur">Pill glass</string>
-    <string name="settings_usb_pill_blur_summary">Give the USB pill a liquid glass effect</string>
-    <string name="settings_blur_effect">Effect</string>
-    <string name="settings_blur_effect_gaussian">Gaussian blur</string>
-    <string name="settings_blur_effect_gradient">Gradient blur</string>
     <string name="settings_ui_revamp">UI Revamp (Beta)</string>
     <string name="settings_ui_revamp_summary">COUI gradient blur, glass pill and round buttons</string>
     <string name="settings_dialog_style">Option dialog style</string>
@@ -91,6 +86,8 @@
     <string name="settings_collapsed_title_align">Collapsed title alignment</string>
     <string name="settings_collapsed_title_align_start">Start</string>
     <string name="settings_collapsed_title_align_center">Center</string>
+    <string name="settings_glow_effect">Glow effect</string>
+    <string name="settings_glow_effect_summary">Liquid-glass spotlight on COUI option menus</string>
     <string name="settings_enable_floating_bottom_bar">Floating bottom bar</string>
     <string name="settings_enable_floating_bottom_bar_summary">Replace the dock with a floating pill bar</string>
     <string name="settings_enable_floating_bottom_bar_blur">Blur floating bar</string>

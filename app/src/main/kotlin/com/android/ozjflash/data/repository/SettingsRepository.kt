@@ -41,6 +41,8 @@ interface SettingsRepository {
     var dialogStyle: String
     /** 顶栏大标题折叠后的对齐：start = 靠左；center = 居中 */
     var collapsedTitleAlign: String
+    /** 凝光视效：COUI 选项弹窗增强聚光高光（液态玻璃观感），随界面换新解锁 */
+    var glowEffect: Boolean
 }
 
 private const val SETTINGS_PREFS = "settings"
@@ -130,4 +132,8 @@ class SettingsRepositoryImpl : SettingsRepository {
     override var collapsedTitleAlign: String
         get() = prefs.getString("collapsed_title_align", "center") ?: "center"
         set(value) = prefs.edit { putString("collapsed_title_align", value) }
+
+    override var glowEffect: Boolean
+        get() = prefs.getBoolean("glow_effect", false)
+        set(value) = prefs.edit { putBoolean("glow_effect", value) }
 }

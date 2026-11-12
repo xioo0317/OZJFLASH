@@ -32,6 +32,8 @@ data class AppUiState(
     val dialogStyle: String = "miui",
     /** 顶栏大标题折叠后对齐：start / center */
     val collapsedTitleAlign: String = "center",
+    /** 凝光视效：COUI 选项弹窗增强聚光高光 */
+    val glowEffect: Boolean = false,
     val enableFloatingBottomBar: Boolean = false,
     val enableFloatingBottomBarBlur: Boolean = false,
     val enableNavigationBadge: Boolean = true,
@@ -60,6 +62,7 @@ class AppViewModel(
             uiRevamp = repo.uiRevamp,
             dialogStyle = repo.dialogStyle,
             collapsedTitleAlign = repo.collapsedTitleAlign,
+            glowEffect = repo.glowEffect,
             enableFloatingBottomBar = repo.enableFloatingBottomBar,
             enableFloatingBottomBarBlur = repo.enableFloatingBottomBarBlur,
             enableNavigationBadge = repo.enableNavigationBadge,
@@ -132,6 +135,11 @@ class AppViewModel(
     fun setCollapsedTitleAlign(align: String) {
         repo.collapsedTitleAlign = align
         _uiState.value = _uiState.value.copy(collapsedTitleAlign = align)
+    }
+
+    fun setGlowEffect(enabled: Boolean) {
+        repo.glowEffect = enabled
+        _uiState.value = _uiState.value.copy(glowEffect = enabled)
     }
 
     fun setFloatingBottomBar(enabled: Boolean) {

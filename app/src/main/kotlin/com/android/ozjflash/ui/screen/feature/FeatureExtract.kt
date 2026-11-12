@@ -269,6 +269,7 @@ private fun ExtractMiuix(navigator: Navigator, kind: ExtractKind) {
                         )
                     },
                     scrollBehavior = scrollBehavior,
+                    hasNavigationIcon = true,
                 )
             }
         },

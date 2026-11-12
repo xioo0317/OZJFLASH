@@ -2,13 +2,17 @@ package com.android.ozjflash.ui.util
 
 import android.os.Build
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.android.ozjflash.ui.theme.LocalDialogStyle
+import com.android.ozjflash.ui.theme.LocalGlowEffect
+import com.itos.coui.menu.CouiMenuDefaults
 import com.itos.coui.menu.CouiMenuItem
 import com.itos.coui.menu.Menu
 import com.itos.coui.menu.couiMenuAnchor
@@ -53,6 +57,13 @@ fun StyledDropdownPreference(
     var expanded by remember { mutableStateOf(false) }
     val anchor = rememberCouiMenuAnchor()
     val current = items.getOrNull(selectedIndex) ?: ""
+    // 凝光视效：增强菜单聚光高光（spotlightDiffuse），形成液态玻璃的流动亮面
+    val baseStyle = CouiMenuDefaults.style()
+    val menuStyle = if (LocalGlowEffect.current) {
+        baseStyle.copy(spotlightDiffuse = 0.95f)
+    } else {
+        baseStyle
+    }
 
     Box(modifier = Modifier.couiMenuAnchor(anchor)) {
         ArrowPreference(
@@ -65,6 +76,8 @@ fun StyledDropdownPreference(
     }
 
     Menu(
+        // 卡片加宽，避免长选项折行；高度仍随选项数量自适应
+        modifier = Modifier.widthIn(min = 260.dp),
         expanded = expanded,
         onDismissRequest = { expanded = false },
         items = items.mapIndexed { index, text ->
@@ -74,7 +87,8 @@ fun StyledDropdownPreference(
             expanded = false
             onSelectedIndexChange(item.value)
         },
+        style = menuStyle,
         anchor = anchor,
-        headerText = title,
+        // 不再传 headerText：去掉选项上方那行说明，菜单只保留选项本身
     )
 }

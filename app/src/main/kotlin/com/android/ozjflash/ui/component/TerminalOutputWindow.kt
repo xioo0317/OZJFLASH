@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.ozjflash.R
+import com.android.ozjflash.ui.theme.isDarkSurface
 import top.yukonga.miuix.kmp.basic.Card as MiuixCard
 import top.yukonga.miuix.kmp.basic.Text as MiuixText
 import top.yukonga.miuix.kmp.theme.MiuixTheme
@@ -61,7 +62,7 @@ private data class WindowPalette(
 private fun windowPalette(): WindowPalette {
     val surface = MiuixTheme.colorScheme.surface
     val onSurface = MiuixTheme.colorScheme.onSurface
-    val dark = surface.red + surface.green + surface.blue < 1.5f
+    val dark = surface.isDarkSurface()
     // 白色边缘 / 分线：深色下压低 alpha 避免刺眼，浅色下接近纯白；都是 1dp 细线，
     // 不再是液态玻璃那种厚高光环。
     val edge = if (dark) Color.White.copy(alpha = 0.18f) else Color.White.copy(alpha = 0.90f)

@@ -68,11 +68,6 @@
     <string name="settings_others">其它</string>
     <string name="settings_enable_blur">模糊</string>
     <string name="settings_enable_blur_summary">啟用頂欄與底欄的模糊效果</string>
-    <string name="settings_usb_pill_blur">膠囊模糊</string>
-    <string name="settings_usb_pill_blur_summary">開啟後 USB 膠囊呈現液態玻璃效果</string>
-    <string name="settings_blur_effect">效果</string>
-    <string name="settings_blur_effect_gaussian">高斯模糊</string>
-    <string name="settings_blur_effect_gradient">漸變模糊</string>
     <string name="settings_ui_revamp">介面換新 (Beta)</string>
     <string name="settings_ui_revamp_summary">COUI 漸進模糊、膠囊與圓鈕玻璃</string>
     <string name="settings_dialog_style">選項彈窗風格</string>
@@ -81,6 +76,8 @@
     <string name="settings_collapsed_title_align">標題摺疊對齊</string>
     <string name="settings_collapsed_title_align_start">靠左</string>
     <string name="settings_collapsed_title_align_center">置中</string>
+    <string name="settings_glow_effect">凝光視效</string>
+    <string name="settings_glow_effect_summary">選項彈窗使用液態玻璃聚光</string>
     <string name="settings_enable_floating_bottom_bar">懸浮底欄</string>
     <string name="settings_enable_floating_bottom_bar_summary">用懸浮膠囊條替代貼底導覽列</string>
     <string name="settings_enable_floating_bottom_bar_blur">懸浮底欄模糊</string>

@@ -74,6 +74,7 @@ import com.android.ozjflash.ui.theme.LocalUsbPillBlur
 import com.android.ozjflash.ui.theme.LocalUiRevamp
 import com.android.ozjflash.ui.theme.LocalDialogStyle
 import com.android.ozjflash.ui.theme.LocalCollapsedTitleAlign
+import com.android.ozjflash.ui.theme.LocalGlowEffect
 import com.android.ozjflash.ui.theme.LocalEnableFloatingBottomBar
 import com.android.ozjflash.ui.theme.LocalEnableFloatingBottomBarBlur
 import com.android.ozjflash.ui.theme.LocalEnableNavigationBadge
@@ -163,6 +164,7 @@ class MainActivity : ComponentActivity() {
                 LocalUiRevamp provides uiState.uiRevamp,
                 LocalDialogStyle provides uiState.dialogStyle,
                 LocalCollapsedTitleAlign provides uiState.collapsedTitleAlign,
+                LocalGlowEffect provides uiState.glowEffect,
                 // 界面换新开启后：胶囊玻璃 / 圆钮玻璃 / 顶栏渐变模糊统一由总开关驱动，
                 // 旧的「模糊 + 效果 + 胶囊模糊」三项仅作为关闭态下的兼容回退。
                 LocalEnableBlur provides (uiState.enableBlur || uiState.uiRevamp),

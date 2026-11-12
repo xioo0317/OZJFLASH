@@ -31,7 +31,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.ozjflash.R
+import kotlin.math.PI
 import kotlin.math.roundToInt
+import kotlin.math.sin
 import com.android.ozjflash.flash.UsbDeviceInfo
 import com.android.ozjflash.flash.UsbHost
 import com.android.ozjflash.flash.UsbMode
@@ -39,6 +41,7 @@ import com.android.ozjflash.ui.component.liquid.liquidGlassChip
 import com.android.ozjflash.ui.theme.LocalBlurStyle
 import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.theme.LocalUsbPillBlur
+import com.android.ozjflash.ui.theme.isDarkSurface
 import top.yukonga.miuix.kmp.basic.DropdownDefaults
 import top.yukonga.miuix.kmp.basic.DropdownEntry
 import top.yukonga.miuix.kmp.basic.DropdownItem
@@ -103,8 +106,8 @@ fun UsbStatusPill(
 
     // 取当前页面背景色判断明暗，供真折射芯片的降级配色 / 阴影强度使用。
     val glassBase = if (dark) Color(0xFF101010) else MiuixTheme.colorScheme.surface
-    val isDarkSurface = (glassBase.red + glassBase.green + glassBase.blue) < 1.5f
-    val darkGlass = dark || isDarkSurface
+    val darkSurface = glassBase.isDarkSurface()
+    val darkGlass = dark || darkSurface
 
     val pillShape = RoundedCornerShape(50)
     // 与主题设置页里「USB 胶囊模糊」选项的显隐条件严格一致：模糊开启 + 效果=渐变。
@@ -179,26 +182,17 @@ private fun modeShortType(mode: UsbMode): String = when (mode) {
 }
 
 /**
- * 顶栏 USB 胶囊 + 可选「?」说明书圆钮，完全对齐 Miuix TopAppBar 的大小标题切换。
+ * 顶栏 USB 胶囊 + 可选「?」说明书圆钮。
  *
- * Miuix 0.9.4 的真实机制（TopAppBar.kt）：
- * - 大标题 `alpha = 1 - (collapsedFraction * 3).coerceIn(0,1)`，折叠前 1/3 就淡完，
- *   并 `translationY = heightOffset` 随内容一起上移；
- * - 小标题：在 `collapsedFraction * 3 >= 1` 处由 [derivedStateOf] 布尔**离散触发**，
- *   用 spring（`folmeSpring damping=1.0, response=0.3/0.15`）把 alpha 0→1、
- *   translationY 20→0 **一次性 animateTo 快速到位**——不是逐帧读 fraction 线性插值。
- * 即 Miuix 是**两个实例在各自固定位置交叉接管**，小标题是「快速到位」而非「渐入渐出」。
+ * 「界面换新 (Beta)」的顶栏由 `RevampTopAppBar` 自绘折叠标题，标题随
+ * `collapsedFraction` 连续淡入淡出。胶囊不再沿用 Miuix 的「离散切换」，改为
+ * 单实例连续跟随：
+ * - 位置随 `heightOffset` 从大标题行连续滑到 actions 原位；
+ * - alpha 走「两端 1、中点 0.4」的对称曲线，与折叠标题同节奏；
+ * - 问号在 0→0.5 区间平滑淡出，之后移除占位把位置让给胶囊。
  *
- * 之前用「单个胶囊 + V 形 alpha + 线性位移」：滑到一半 alpha≈0.3 几乎消失、两端又恢复，
- * 且会被顶栏 clipToBounds 裁切后突然跳回大标题行，与标题切换完全脱节。
- * 现在改为两个胶囊在**各自固定位置**交叉接管，切换点取 `frac = 1/3`。
- *
- * - **展开态**：胶囊下移对齐大标题行，随大标题一起上移并按同一曲线渐出；
- *   「?」钮留在顶栏右上原位，与胶囊垂直错开、互不遮挡。
- * - **折叠态**：胶囊回到 actions 原位，「直接跳到目标位置」——越过切换点后
- *   以 alpha=1、位移 0 立即出现，不做 spring 快速到位动画、不逐帧淡化；
- *   「?」钮隐藏让位。收回小标题时同样直接切换，没有拖尾。
- * - 两者放进同一个 [Box] 的同一位置交替，避免 actions 的 Row 并排把「?」挤到屏幕中间。
+ * 不用双实例交叉淡入淡出：同一个胶囊组合两份会重复枚举设备、产生两个下拉弹层，
+ * 状态也会分裂。单实例连续插值在视觉上已与标题同步。
  *
  * 位移用 [offset] 而非 graphicsLayer，下拉菜单锚点会跟着胶囊一起移动；
  * heightOffsetLimit 由 Miuix 测量大标题后写入（负的大标题行高，px），首帧是
@@ -214,13 +208,15 @@ fun UsbPillCollapseActions(
     val collapsedCenterPx = with(density) { TopAppBarDefaults.CollapsedHeight.toPx() / 2f }
     val fallbackExpansionPx = with(density) { 32.sp.toPx() * 1.2f }
 
-    // 只在跨越切换点时重组一次（与 Miuix smallTitleVisible 同源），动画本身走 draw 阶段。
-    val collapsedActive by remember(state) {
-        derivedStateOf { state.collapsedFraction * 3f >= 1f }
+    // 问号只在展开侧存在：越过中点后移除占位，把位置让给胶囊
+    val helpGone by remember(state) {
+        derivedStateOf { state.collapsedFraction >= 0.5f }
     }
 
-    // 展开态胶囊：对齐大标题行 + 随大标题上移，alpha 与 Miuix largeTitleAlpha 完全一致。
-    val expandedModifier = Modifier
+    // 单实例胶囊：位置随 heightOffset 从大标题行连续滑到 actions 原位，alpha 走
+    // 「两端 1、中点最淡」的对称曲线，与自绘折叠标题的淡入淡出同节奏。
+    // 不用双实例交叉，避免同一胶囊组合两份状态（重复枚举 / 两个下拉弹层）。
+    val pillModifier = Modifier
         .offset {
             val limit = state.heightOffsetLimit
             val expansion = if (limit < -1f && limit > -10_000f) -limit else fallbackExpansionPx
@@ -228,18 +224,12 @@ fun UsbPillCollapseActions(
         }
         .graphicsLayer {
             val frac = state.collapsedFraction.coerceIn(0f, 1f)
-            alpha = 1f - (frac * 3f).coerceIn(0f, 1f)
+            // 中点最多淡到 0.4，避免状态胶囊完全消失；两端保持不透明
+            alpha = 1f - 0.6f * sin(PI.toFloat() * frac)
         }
 
-    // 折叠态胶囊：从大标题切到小标题时「直接跳到目标位置」——不做 spring 快速到位
-    // 动画，也不逐帧淡化。开关由 collapsedActive 布尔离散触发：越过切换点后胶囊
-    // 立即以 alpha=1、位移 0 出现在小标题行原位；收回时直接消失、没有拖尾。
-    val collapsedModifier = Modifier
-
-    // 阴影只在两端静止态绘制：完全展开（frac≈0）或完全折叠（frac≈1）。
-    // 滑动 / 切换动画期间外层 graphicsLayer 的 alpha < 1，dropShadow 的模糊阴影会
-    // 按合成层矩形 bounds 铺开露出直角阴影块，因此中间过程直接取消。
-    // derivedStateOf 把逐帧变化的 fraction 折叠成布尔，只在端点跨越时重组一次。
+    // 阴影只在两端静止态绘制：中间过程中层 alpha < 1，dropShadow 会按合成层矩形
+    // bounds 铺开露出直角阴影块，因此直接取消。
     val showShadow by remember(state) {
         derivedStateOf {
             val frac = state.collapsedFraction
@@ -248,22 +238,16 @@ fun UsbPillCollapseActions(
     }
 
     Box(contentAlignment = Alignment.CenterEnd) {
-        if (collapsedActive) {
-            UsbStatusPill(modifier = collapsedModifier, showShadow = showShadow)
-        } else {
-            UsbStatusPill(modifier = expandedModifier, showShadow = showShadow)
-            if (help != null) {
-                // 与 USB 胶囊共用同一个静止态 showShadow：滑动淡化（alpha < 1）时
-                // 把 false 一并传给 ? 号液态玻璃按钮，取消其 dropShadow，
-                // 避免半透明合成层把模糊阴影按矩形 bounds 铺开露出直角阴影块。
-                help(
-                    Modifier.graphicsLayer {
-                        val frac = state.collapsedFraction.coerceIn(0f, 1f)
-                        alpha = 1f - (frac * 3f).coerceIn(0f, 1f)
-                    },
-                    showShadow,
-                )
-            }
+        UsbStatusPill(modifier = pillModifier, showShadow = showShadow)
+        if (!helpGone && help != null) {
+            // 问号在 0→0.5 区间平滑淡出，与胶囊同步；到 0.5 后移除占位
+            help(
+                Modifier.graphicsLayer {
+                    val frac = state.collapsedFraction.coerceIn(0f, 1f)
+                    alpha = (1f - frac * 2f).coerceIn(0f, 1f)
+                },
+                showShadow,
+            )
         }
     }
 }

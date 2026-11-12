@@ -4,6 +4,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
 import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamiccolor.ColorSpec
 import com.android.ozjflash.data.repository.SettingsRepository
@@ -115,6 +116,14 @@ fun isInDarkTheme(): Boolean {
     }
 }
 
+/**
+ * 按表面色粗判是否深色：RGB 分量和 < 1.5。
+ *
+ * 覆盖纯黑（0）与近黑（如 #101010≈0.19），用于玻璃件 / 顶栏在深色表面下切到
+ * 深色玻璃配色。此前三处组件各自内联同一表达式，统一到此。
+ */
+fun Color.isDarkSurface(): Boolean = red + green + blue < 1.5f
+
 val LocalColorMode = staticCompositionLocalOf { 0 }
 
 val LocalEnableBlur = staticCompositionLocalOf { false }
@@ -130,6 +139,9 @@ val LocalDialogStyle = staticCompositionLocalOf { "miui" }
 
 /** 顶栏大标题折叠后的对齐：start = 靠左；center = 居中 */
 val LocalCollapsedTitleAlign = staticCompositionLocalOf { "center" }
+
+/** 凝光视效：COUI 选项弹窗增强聚光高光（液态玻璃观感） */
+val LocalGlowEffect = staticCompositionLocalOf { false }
 
 /** USB 状态胶囊是否使用液态玻璃效果（现已并入 [LocalUiRevamp]，保留兼容旧存档） */
 val LocalUsbPillBlur = staticCompositionLocalOf { false }

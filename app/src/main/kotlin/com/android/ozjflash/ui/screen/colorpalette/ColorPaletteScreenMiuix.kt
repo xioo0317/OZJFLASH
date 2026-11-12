@@ -38,6 +38,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AspectRatio
+import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.BlurOn
 import androidx.compose.material.icons.rounded.CallToAction
 import androidx.compose.material.icons.rounded.Colorize
@@ -133,6 +134,7 @@ fun ColorPaletteScreenMiuix(
                         )
                     },
                     scrollBehavior = scrollBehavior,
+                    hasNavigationIcon = true,
                 )
             }
         },
@@ -341,6 +343,20 @@ fun ColorPaletteScreenMiuix(
                                     onSelectedIndexChange = { index ->
                                         actions.setCollapsedTitleAlign(if (index == 0) "start" else "center")
                                     },
+                                )
+                                SwitchPreference(
+                                    title = stringResource(id = R.string.settings_glow_effect),
+                                    summary = stringResource(id = R.string.settings_glow_effect_summary),
+                                    startAction = {
+                                        Icon(
+                                            Icons.Rounded.AutoAwesome,
+                                            modifier = Modifier.padding(end = 6.dp),
+                                            contentDescription = stringResource(id = R.string.settings_glow_effect),
+                                            tint = colorScheme.onBackground,
+                                        )
+                                    },
+                                    checked = uiState.glowEffect,
+                                    onCheckedChange = actions::setGlowEffect,
                                 )
                             }
                         }
