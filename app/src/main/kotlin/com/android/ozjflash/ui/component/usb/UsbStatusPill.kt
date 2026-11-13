@@ -1,6 +1,11 @@
 package com.android.ozjflash.ui.component.usb
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,6 +50,8 @@ import com.android.ozjflash.flash.UsbMode
 import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.component.liquid.liquidGlassChip
+import com.android.ozjflash.ui.theme.LocalBlurStyle
+import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.theme.LocalUsbPillBlur
 import top.yukonga.miuix.kmp.basic.DropdownDefaults
 import top.yukonga.miuix.kmp.basic.DropdownEntry
@@ -126,11 +133,10 @@ fun UsbStatusPill(
     val darkGlass = dark || isDarkSurface
 
     val pillShape = RoundedCornerShape(50)
-    // 「液态胶囊」已从顶/底栏模糊的效果选择中独立：只由设置页该开关控制，
-    // 不再捆绑 blurStyle == gradient，也不再依赖是否开启模糊。只要开关打开，
-    // Miuix 主体即用手绘玻璃（LocalLiquidBackdrop 为空时芯片自动降级为克制玻璃底）。
+    // 「液态胶囊」仅在「模糊开启 + 效果 = 透明渐变」下生效（与设置页选项显隐条件一致）。
     // M3 主体按需求取消液态玻璃实现，只保留 Miuix 主体的手绘玻璃。
-    val glassEnabled = pillBlurEnabled && uiMode == UiMode.Miuix
+    val blurActive = LocalEnableBlur.current && LocalBlurStyle.current == "gradient"
+    val glassEnabled = pillBlurEnabled && blurActive && uiMode == UiMode.Miuix
 
     val openInfo: (UsbDeviceInfo) -> Unit = {
         expanded = false
@@ -276,10 +282,14 @@ fun UsbPillCollapseActions(
             alpha = 1f - (frac * 3f).coerceIn(0f, 1f)
         }
 
-    // 折叠态胶囊：从大标题切到小标题时「直接跳到目标位置」——不做 spring 快速到位
-    // 动画，也不逐帧淡化。开关由 collapsedActive 布尔离散触发：越过切换点后胶囊
-    // 立即以 alpha=1、位移 0 出现在小标题行原位；收回时直接消失、没有拖尾。
-    val collapsedModifier = Modifier
+    // 折叠态胶囊：与 COUI 小标题同款「淡入淡出」——不是 spring 快速到位、也不做位移，
+    // 而是纯 alpha 0→1 渐显 / 1→0 渐隐，与自绘标题的淡入淡出节奏完全一致（见 HomeMiuix）。
+    // 用 AnimatedVisibility 管理进入 / 退出，退出动画结束后才移除组合（避免透明胶囊在原位
+    // 拦截点击），消除之前的突然跳位。
+    val collapseAlphaSpring = spring<Float>(
+        dampingRatio = Spring.DampingRatioNoBouncy,
+        stiffness = Spring.StiffnessMedium,
+    )
 
     // 阴影只在两端静止态绘制：完全展开（frac≈0）或完全折叠（frac≈1）。
     // 滑动 / 切换动画期间外层 graphicsLayer 的 alpha < 1，dropShadow 的模糊阴影会
@@ -293,22 +303,27 @@ fun UsbPillCollapseActions(
     }
 
     Box(contentAlignment = Alignment.CenterEnd) {
-        if (collapsedActive) {
-            UsbStatusPill(modifier = collapsedModifier, showShadow = showShadow)
-        } else {
-            UsbStatusPill(modifier = expandedModifier, showShadow = showShadow)
-            if (help != null) {
-                // 与 USB 胶囊共用同一个静止态 showShadow：滑动淡化（alpha < 1）时
-                // 把 false 一并传给 ? 号液态玻璃按钮，取消其 dropShadow，
-                // 避免半透明合成层把模糊阴影按矩形 bounds 铺开露出直角阴影块。
-                help(
-                    Modifier.graphicsLayer {
-                        val frac = state.collapsedFraction.coerceIn(0f, 1f)
-                        alpha = 1f - (frac * 3f).coerceIn(0f, 1f)
-                    },
-                    showShadow,
-                )
-            }
+        // 展开态胶囊（大标题行）：随 frac 渐出
+        UsbStatusPill(modifier = expandedModifier, showShadow = showShadow)
+        // 折叠态胶囊（原位）：淡入淡出接管，退出动画结束后移除组合
+        AnimatedVisibility(
+            visible = collapsedActive,
+            enter = fadeIn(collapseAlphaSpring),
+            exit = fadeOut(collapseAlphaSpring),
+        ) {
+            UsbStatusPill(modifier = Modifier, showShadow = showShadow)
+        }
+        if (help != null && !collapsedActive) {
+            // 与 USB 胶囊共用同一个静止态 showShadow：滑动淡化（alpha < 1）时
+            // 把 false 一并传给 ? 号液态玻璃按钮，取消其 dropShadow，
+            // 避免半透明合成层把模糊阴影按矩形 bounds 铺开露出直角阴影块。
+            help(
+                Modifier.graphicsLayer {
+                    val frac = state.collapsedFraction.coerceIn(0f, 1f)
+                    alpha = 1f - (frac * 3f).coerceIn(0f, 1f)
+                },
+                showShadow,
+            )
         }
     }
 }

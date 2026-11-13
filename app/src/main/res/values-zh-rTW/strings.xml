@@ -79,6 +79,12 @@
     <string name="settings_blur_effect_gradient">透明漸變</string>
     <string name="settings_blur_radius">模糊強度</string>
     <string name="settings_blur_radius_summary">自訂預設（高斯）模糊的半徑</string>
+    <string name="settings_title_alignment">標題對齊</string>
+    <string name="settings_title_align_start">靠左</string>
+    <string name="settings_title_align_center">置中</string>
+    <string name="settings_dropdown_style">彈窗風格</string>
+    <string name="settings_dropdown_style_miuix">Miuix 彈窗</string>
+    <string name="settings_dropdown_style_coui">ColorOS 17</string>
     <string name="settings_enable_floating_bottom_bar">懸浮底欄</string>
     <string name="settings_enable_floating_bottom_bar_summary">用懸浮膠囊條替代貼底導覽列</string>
     <string name="settings_enable_floating_bottom_bar_blur">懸浮底欄模糊</string>

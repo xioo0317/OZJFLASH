@@ -109,23 +109,30 @@ object ToolConsole {
         rootMode: Boolean,
         onLine: (String) -> Unit,
     ): Int {
+        // 命令日志：功能名_时间.log。诊断信息（info：…）只进日志不进终端；
+        // 工具真实 stdout 既进终端也镜像进日志；执行指令写入日志便于排查。
+        val logFile = CommandLogger.begin(context, tool)
+        val diag: (String) -> Unit = { CommandLogger.append(logFile, it) }
+        val out: (String) -> Unit = { line -> onLine(line); CommandLogger.append(logFile, line) }
+        CommandLogger.append(logFile, "info：>_ ${tool} ${raw.trim()}")
+
         val args = normalize(raw, tool)
         if (args.isEmpty()) return -1
 
         val binPath = File(context.filesDir, "bin").absolutePath
         val exe = resolveExe(context, tool, binPath)
         if (exe == null) {
-            onLine("[错误] 内置 $tool 不存在（lib/arm64 与 files/bin 均未找到）")
+            out("[错误] 内置 $tool 不存在（lib/arm64 与 files/bin 均未找到）")
             return -1
         }
 
         // Root 模式：su -c 直接跑二进制，二进制自己能访问 /dev/bus/usb，无需 usbhost
         if (rootMode) {
-            onLine("[诊断] Root 模式：直接访问设备，无需 usbhost")
+            diag("info：root 模式：直接访问设备，无需 usbhost")
             return exec(
                 context, binPath,
                 listOf("su", "-c", exe.absolutePath + " " + args.joinToString(" ") { quote(it) }),
-                emptyMap(), onLine,
+                emptyMap(), out,
             )
         }
 
@@ -134,35 +141,33 @@ object ToolConsole {
             is UsbFdSession.Result.NoDevice -> {
                 if (tool == "fastboot") {
                     if (session.bus.isEmpty()) {
-                        onLine("[错误] 未发现任何 USB 设备。请连接数据线并确认设备已进入 bootloader")
+                        out("[错误] 未发现任何 USB 设备。请连接数据线并确认设备已进入 bootloader")
                     } else {
-                        onLine("[错误] 未发现 fastboot 设备，当前 USB 总线：")
-                        session.bus.forEach { onLine("        · $it") }
-                        onLine("[提示] 需先进入 bootloader：adb reboot bootloader，或关机后按住音量下+电源键")
+                        out("[错误] 未发现 fastboot 设备，当前 USB 总线：")
+                        session.bus.forEach { out("        · $it") }
+                        out("[提示] 需先进入 bootloader：adb reboot bootloader，或关机后按住音量下+电源键")
                     }
                     -1
                 } else {
-                    onLine("[提示] 未发现 ADB 模式 USB 设备，按本机模式执行")
-                    exec(context, binPath, listOf(exe.absolutePath) + args, emptyMap(), onLine)
+                    out("[提示] 未发现 ADB 模式 USB 设备，按本机模式执行")
+                    exec(context, binPath, listOf(exe.absolutePath) + args, emptyMap(), out)
                 }
             }
             is UsbFdSession.Result.NeedPermission -> {
-                onLine("[提示] 已弹出系统 USB 授权框，请允许后重新执行（授权后页面会自动连接）")
+                out("[提示] 已弹出系统 USB 授权框，请允许后重新执行（授权后页面会自动连接）")
                 -1
             }
             is UsbFdSession.Result.OpenFailed -> {
-                onLine("[错误] openDevice 失败或取不到 fd（UsbDeviceConnection.getFileDescriptor()）")
+                out("[错误] openDevice 失败或取不到 fd（UsbDeviceConnection.getFileDescriptor()）")
                 -1
             }
             is UsbFdSession.Result.Ready -> {
-                onLine(UsbFdTracer.device(session.device, classifyDevice(session.device), granted = true))
-                onLine(UsbFdTracer.interfaces(session.device))
-                onLine(UsbFdTracer.fd(session.fd))
-                onLine(
-                    "[诊断] usbhost fd=${session.fd} ${if (session.reused) "已连接(常驻复用)" else "已连接(新建会话)"}",
-                )
-                onLine("[诊断] 可执行文件 = ${exe.absolutePath}")
-                runNoRoot(context, exe, binPath, tool, args, session.fd, onLine)
+                diag(UsbFdTracer.device(session.device, classifyDevice(session.device), granted = true))
+                diag(UsbFdTracer.interfaces(session.device))
+                diag(UsbFdTracer.fd(session.fd))
+                diag("info：usbhost fd=${session.fd} ${if (session.reused) "已连接(常驻复用)" else "已连接(新建会话)"}")
+                diag(UsbFdTracer.exe(exe.absolutePath))
+                runNoRoot(context, exe, binPath, tool, args, session.fd, out, diag)
             }
         }
     }
@@ -175,6 +180,7 @@ object ToolConsole {
         args: List<String>,
         fd: Int,
         onLine: (String) -> Unit,
+        diag: (String) -> Unit,
     ): Int = synchronized(fdPassLock) {
         val nativeErr = probeFdPass()
         if (nativeErr != null) {
@@ -193,17 +199,17 @@ object ToolConsole {
                         "MOMIUI_USB_SOCK" to "@momiui_adb_fd",
                         "MOMIUI_USB_FD" to fd.toString(),
                     ),
-                    label = "adb start-server", onLine = onLine,
+                    label = "adb start-server", onLine = onLine, diag = diag,
                 )
                 if (code == 0) {
                     adbServerStarted = true
-                    onLine("[诊断] adb server 就绪：$ADB_SERVER_SOCKET")
+                    diag("info：adb server 就绪：$ADB_SERVER_SOCKET")
                 } else {
-                    onLine("[警告] adb start-server 返回 $code，仍以完整 fd 注入方式执行命令")
+                    diag("info：adb start-server 返回 $code，仍以完整 fd 注入方式执行命令")
                 }
             }
-            onLine("[诊断] 执行: adb ${args.joinToString(" ")}")
-            onLine("[诊断] ADB_SERVER_SOCKET=$ADB_SERVER_SOCKET  usbhost fd=$fd")
+            diag("info：执行：adb ${args.joinToString(" ")}")
+            diag("info：ADB_SERVER_SOCKET=$ADB_SERVER_SOCKET  usbhost fd=$fd")
             // 每条命令仍自带完整 fdpass 自愈：即便 server 未常驻成功也能直连设备
             return execWithFdPass(
                 context, binPath, fd, "@momiui_adb_fd",
@@ -213,15 +219,15 @@ object ToolConsole {
                     "MOMIUI_USB_SOCK" to "@momiui_adb_fd",
                     "MOMIUI_USB_FD" to fd.toString(),
                 ),
-                label = "adb ${args.joinToString(" ")}", onLine = onLine,
+                label = "adb ${args.joinToString(" ")}", onLine = onLine, diag = diag,
             )
         }
 
         // —— fastboot：每命令 fdpass，随机 socket 名，注入两个环境变量 ——
         val socketName = "@momiui_fb_${System.nanoTime()}"
-        onLine(UsbFdTracer.socket(socketName))
-        onLine("[诊断] 执行: fastboot ${args.joinToString(" ")}")
-        onLine("[诊断] MOMIUI_USB_SOCK=$socketName  MOMIUI_USB_FD=$fd")
+        diag(UsbFdTracer.socket(socketName))
+        diag("info：执行：fastboot ${args.joinToString(" ")}")
+        diag("info：MOMIUI_USB_SOCK=$socketName  MOMIUI_USB_FD=$fd")
         return execWithFdPass(
             context, binPath, fd, socketName,
             command = listOf(exe.absolutePath) + args,
@@ -229,7 +235,7 @@ object ToolConsole {
                 "MOMIUI_USB_SOCK" to socketName,
                 "MOMIUI_USB_FD" to fd.toString(),
             ),
-            label = "fastboot ${args.joinToString(" ")}", onLine = onLine,
+            label = "fastboot ${args.joinToString(" ")}", onLine = onLine, diag = diag,
         )
     }
 
@@ -246,8 +252,9 @@ object ToolConsole {
         extraEnv: Map<String, String>,
         label: String,
         onLine: (String) -> Unit,
+        diag: (String) -> Unit,
     ): Int {
-        onLine(UsbFdTracer.socket(socketName))
+        diag(UsbFdTracer.socket(socketName))
         val serverError = arrayOfNulls<String>(1)
         val server = Thread {
             try {
@@ -263,13 +270,13 @@ object ToolConsole {
         return try {
             // MOFLASH 用 t.join(300)；这里轮询 /proc/net/unix 确认 bind/listen 就绪
             if (!waitSocketReady(socketName, 1500)) {
-                onLine("[警告] socket 未在 1.5s 内就绪，继续尝试（工具侧会自动重试 2s）")
+                diag("info：socket 未在 1.5s 内就绪，继续尝试（工具侧会自动重试 2s）")
             }
             exec(context, binPath, command, extraEnv, onLine)
         } finally {
             runCatching { FdPass().stopServeLoop() }
             runCatching { server.join(1500) }
-            serverError[0]?.let { onLine("[错误] fd 服务端异常：$it") }
+            serverError[0]?.let { diag("info：fd 服务端异常：$it") }
             // 不关闭 UsbFdSession —— fd 常驻，供后续命令复用
         }
     }

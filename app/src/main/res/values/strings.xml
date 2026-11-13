@@ -89,6 +89,12 @@
     <string name="settings_blur_effect_gradient">Transparent gradient</string>
     <string name="settings_blur_radius">Blur intensity</string>
     <string name="settings_blur_radius_summary">Customize the default (Gaussian) blur radius</string>
+    <string name="settings_title_alignment">Title alignment</string>
+    <string name="settings_title_align_start">Start</string>
+    <string name="settings_title_align_center">Center</string>
+    <string name="settings_dropdown_style">Dialog style</string>
+    <string name="settings_dropdown_style_miuix">Miuix</string>
+    <string name="settings_dropdown_style_coui">ColorOS 17</string>
     <string name="settings_enable_floating_bottom_bar">Floating bottom bar</string>
     <string name="settings_enable_floating_bottom_bar_summary">Replace the dock with a floating pill bar</string>
     <string name="settings_enable_floating_bottom_bar_blur">Blur floating bar</string>

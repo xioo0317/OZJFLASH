@@ -79,6 +79,12 @@
     <string name="settings_blur_effect_gradient">Degradado transparente</string>
     <string name="settings_blur_radius">Intensidad del desenfoque</string>
     <string name="settings_blur_radius_summary">Personaliza el radio del desenfoque predeterminado (gaussiano)</string>
+    <string name="settings_title_alignment">Alineación del título</string>
+    <string name="settings_title_align_start">Izquierda</string>
+    <string name="settings_title_align_center">Centro</string>
+    <string name="settings_dropdown_style">Estilo de diálogo</string>
+    <string name="settings_dropdown_style_miuix">Miuix</string>
+    <string name="settings_dropdown_style_coui">ColorOS 17</string>
     <string name="settings_enable_floating_bottom_bar">Barra inferior flotante</string>
     <string name="settings_enable_floating_bottom_bar_summary">Reemplazar la barra acoplada por una píldora flotante</string>
     <string name="settings_enable_floating_bottom_bar_blur">Desenfoque de la barra flotante</string>

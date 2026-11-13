@@ -53,7 +53,7 @@ import top.yukonga.miuix.kmp.basic.TopAppBar
 import top.yukonga.miuix.kmp.basic.rememberTopAppBarState
 import top.yukonga.miuix.kmp.blur.layerBackdrop
 import top.yukonga.miuix.kmp.preference.ArrowPreference
-import top.yukonga.miuix.kmp.preference.OverlayDropdownPreference
+import com.android.ozjflash.ui.util.CouiDropdownPreference
 import top.yukonga.miuix.kmp.preference.SwitchPreference
 import top.yukonga.miuix.kmp.theme.MiuixTheme.colorScheme
 import top.yukonga.miuix.kmp.utils.overScrollVertical
@@ -124,7 +124,7 @@ fun SettingsMiuix(
                                 stringResource(R.string.settings_ui_mode_miuix),
                                 stringResource(R.string.settings_ui_mode_material),
                             )
-                            OverlayDropdownPreference(
+                            CouiDropdownPreference(
                                 title = stringResource(R.string.settings_ui_mode),
                                 summary = stringResource(R.string.settings_ui_mode_summary),
                                 items = uiModeItems,
@@ -165,7 +165,7 @@ fun SettingsMiuix(
                                 "es" to stringResource(R.string.language_es),
                             )
                             val langIndex = langEntries.indexOfFirst { it.first == uiState.language }.coerceAtLeast(0)
-                            OverlayDropdownPreference(
+                            CouiDropdownPreference(
                                 title = stringResource(R.string.settings_language),
                                 summary = stringResource(R.string.settings_language_summary),
                                 items = langEntries.map { it.second },

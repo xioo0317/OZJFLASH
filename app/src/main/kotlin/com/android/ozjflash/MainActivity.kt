@@ -76,16 +76,20 @@ import com.android.ozjflash.ui.screen.feature.ExtractKind
 import com.android.ozjflash.ui.screen.feature.FeatureExtractScreen
 import com.android.ozjflash.ui.screen.feature.FeaturePager
 import com.android.ozjflash.ui.screen.terminal.TerminalRouteScreen
+import com.android.ozjflash.data.repository.UiSettingsKeys
 import com.android.ozjflash.ui.theme.LocalColorMode
 import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.theme.LocalBlurStyle
 import com.android.ozjflash.ui.theme.LocalBlurRadius
+import com.android.ozjflash.ui.theme.LocalTitleCentered
 import com.android.ozjflash.ui.theme.LocalUsbPillBlur
+import com.android.ozjflash.ui.theme.LocalDropdownStyle
 import com.android.ozjflash.ui.theme.LocalEnableFloatingBottomBar
 import com.android.ozjflash.ui.theme.LocalEnableFloatingBottomBarBlur
 import com.android.ozjflash.ui.theme.LocalEnableNavigationBadge
 import com.android.ozjflash.ui.theme.OzjFlashTheme
 import com.android.ozjflash.ui.util.rememberBlurBackdrop
+import com.itos.coui.menu.ProvideCouiMenuBackdrop
 import com.android.ozjflash.ui.viewmodel.AppViewModel
 import top.yukonga.miuix.kmp.blur.Backdrop
 import top.yukonga.miuix.kmp.blur.LayerBackdrop
@@ -120,8 +124,8 @@ class MainActivity : ComponentActivity() {
     override fun attachBaseContext(newBase: Context) {
         // Activity 必须单独包一层 locale：Application 层的 createConfigurationContext
         // 不会传导到 Activity 的 Resources，导致切换语言后页面仍是系统语言
-        val prefs = newBase.getSharedPreferences("settings", Context.MODE_PRIVATE)
-        val lang = prefs.getString("language", "system") ?: "system"
+        val prefs = newBase.getSharedPreferences(UiSettingsKeys.PREFS_NAME, Context.MODE_PRIVATE)
+        val lang = prefs.getString(UiSettingsKeys.LANGUAGE, "system") ?: "system"
         super.attachBaseContext(newBase.wrapWithLanguage(lang))
     }
 
@@ -172,13 +176,16 @@ class MainActivity : ComponentActivity() {
                 LocalEnableBlur provides uiState.enableBlur,
                 LocalBlurStyle provides uiState.blurStyle,
                 LocalBlurRadius provides uiState.blurRadius,
+                LocalTitleCentered provides uiState.titleCentered,
                 LocalUsbPillBlur provides uiState.usbPillBlur,
+                LocalDropdownStyle provides uiState.dropdownStyle,
                 LocalEnableFloatingBottomBar provides uiState.enableFloatingBottomBar,
                 LocalEnableFloatingBottomBarBlur provides uiState.enableFloatingBottomBarBlur,
                 LocalEnableNavigationBadge provides uiState.enableNavigationBadge,
                 LocalUiMode provides uiMode,
             ) {
                 OzjFlashTheme(appSettings = appSettings, uiMode = uiMode) {
+                    ProvideCouiMenuBackdrop { menuBackdropModifier ->
                     val mainScreen = @Composable {
                         MainScreen(
                             viewModel = viewModel,
@@ -208,10 +215,14 @@ class MainActivity : ComponentActivity() {
                     }
                     when (uiMode) {
                         UiMode.Material -> androidx.compose.material3.Scaffold(
+                            modifier = menuBackdropModifier,
                             containerColor = MaterialTheme.colorScheme.surfaceContainer
                         ) { navDisplay() }
 
-                        UiMode.Miuix -> top.yukonga.miuix.kmp.basic.Scaffold { navDisplay() }
+                        UiMode.Miuix -> top.yukonga.miuix.kmp.basic.Scaffold(
+                            modifier = menuBackdropModifier
+                        ) { navDisplay() }
+                    }
                     }
                 }
             }

@@ -25,6 +25,7 @@ import com.android.ozjflash.R
 import com.android.ozjflash.ui.LocalMainPagerState
 import com.android.ozjflash.ui.component.FloatingBottomBar
 import com.android.ozjflash.ui.component.FloatingBottomBarItem
+import com.android.ozjflash.ui.theme.LocalBlurStyle
 import com.android.ozjflash.ui.theme.LocalEnableFloatingBottomBar
 import com.android.ozjflash.ui.theme.LocalEnableFloatingBottomBarBlur
 import com.android.ozjflash.ui.util.BlurredBar
@@ -49,6 +50,7 @@ fun BottomBarMiuix(
     val mainState = LocalMainPagerState.current
     val enableFloatingBottomBar = LocalEnableFloatingBottomBar.current
     val enableFloatingBottomBarBlur = LocalEnableFloatingBottomBarBlur.current
+    val blurStyle = LocalBlurStyle.current
 
     val items = BottomBarDestination.entries.map { destination ->
         NavigationItem(
@@ -58,10 +60,11 @@ fun BottomBarMiuix(
     }
     // backdrop 为 null 表示当前系统不支持 blur（< Android 13），退回普通底栏
     if (!enableFloatingBottomBar || backdrop == null) {
-        BlurredBar(blurBackdrop) {
+        // 「透明渐变」只作用于顶栏：默认导航栏不走渐变模糊，效果选渐变时保持纯色底。
+        BlurredBar(blurBackdrop, allowGradient = false) {
             NavigationBar(
                 modifier = modifier,
-                color = if (blurBackdrop != null) Color.Transparent else MiuixTheme.colorScheme.surface,
+                color = if (blurBackdrop != null && blurStyle != "gradient") Color.Transparent else MiuixTheme.colorScheme.surface,
                 content = {
                     items.forEachIndexed { index, item ->
                         NavigationBarItem(

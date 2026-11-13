@@ -72,11 +72,13 @@ private fun chipHighlight(dark: Boolean): Highlight = Highlight(
  *
  * - **真折射**（[LocalLiquidBackdrop] 非空）：[drawBackdrop] 采样页面背景，依次施加
  *   `vibrancy()` 提饱和、`blur()` 柔化、`lens()` 圆角 SDF 折射；边缘用
- *   [chipHighlight] 细描边 + [innerShadow] 内阴影表达玻璃厚度；外圈 [dropShadow]
- *   只在静止态绘制（淡化时由 [showShadow] = false 取消，避免半透明合成层露矩形块）。
- *   按压时 [lens] 折射强度随 pressProgress 增强，复刻悬浮底栏长按拖动那种「活的」玻璃。
- * - **降级**（backdrop 为空）：半透明渐变玻璃底 + 0.6dp 极低 alpha 边线 + [dropShadow]，
+ *   [chipHighlight] 细描边表达玻璃轮廓。按压时 [lens] 折射强度随 pressProgress 增强。
+ * - **降级**（backdrop 为空）：半透明渐变玻璃底 + 0.6dp 极低 alpha 边线，
  *   没有任何厚白高光环；M3 / 低版本 / 未开模糊自动走这条。
+ *
+ * **阴影**：外圈 [dropShadow] 与圆钮内圈 [innerShadow] 均已恢复，表达玻璃厚度与悬浮感；
+ * 仅在滑动 / 切换动画期间（外层 graphicsLayer 的 alpha < 1）由调用方传 `showShadow = false`
+ * 取消，避免半透明合成层把模糊阴影按矩形 bounds 铺开露出直角阴影块。静止态默认带阴影。
  *
  * [shape] 决定折射 SDF 与描边轮廓（胶囊用 RoundedCornerShape(50)，圆钮用 CircleShape）。
  */
@@ -111,19 +113,6 @@ fun Modifier.liquidGlassChip(
                 pressed = down
             }
         }
-    }
-
-    val shadowModifier = if (showShadow) {
-        Modifier.dropShadow(
-            shape = shape,
-            shadow = Shadow(
-                radius = 9.dp,
-                color = Color.Black,
-                alpha = if (dark) 0.30f else 0.12f,
-            ),
-        )
-    } else {
-        Modifier
     }
 
     val glassModifier = if (backdrop != null) {
@@ -176,6 +165,19 @@ fun Modifier.liquidGlassChip(
         Modifier
             .background(fill, shape)
             .border(0.6.dp, if (dark) Color.White.copy(0.16f) else Color.White.copy(0.42f), shape)
+    }
+
+    val shadowModifier = if (showShadow) {
+        Modifier.dropShadow(
+            shape = shape,
+            shadow = Shadow(
+                radius = 9.dp,
+                color = Color.Black,
+                alpha = if (dark) 0.30f else 0.12f,
+            ),
+        )
+    } else {
+        Modifier
     }
 
     // 不在此处 clip：dropShadow 的外扩部分不能被裁掉，且各调用方已有自己的形状裁剪

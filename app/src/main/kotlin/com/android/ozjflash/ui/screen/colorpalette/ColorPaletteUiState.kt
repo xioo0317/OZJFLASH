@@ -42,6 +42,8 @@ class ColorPaletteActions internal constructor(
     fun setBlurStyle(style: String) = viewModel.setBlurStyle(style)
     fun setBlurRadius(value: Float) = viewModel.setBlurRadius(value)
     fun setUsbPillBlur(enabled: Boolean) = viewModel.setUsbPillBlur(enabled)
+    fun setTitleCentered(enabled: Boolean) = viewModel.setTitleCentered(enabled)
+    fun setDropdownStyle(style: String) = viewModel.setDropdownStyle(style)
     fun setFloatingBottomBar(enabled: Boolean) = viewModel.setFloatingBottomBar(enabled)
     fun setFloatingBottomBarBlur(enabled: Boolean) = viewModel.setFloatingBottomBarBlur(enabled)
     fun setNavigationBadge(enabled: Boolean) = viewModel.setNavigationBadge(enabled)

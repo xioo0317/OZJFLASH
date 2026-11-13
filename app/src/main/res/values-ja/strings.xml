@@ -79,6 +79,12 @@
     <string name="settings_blur_effect_gradient">透明グラデーション</string>
     <string name="settings_blur_radius">ぼかしの強さ</string>
     <string name="settings_blur_radius_summary">デフォルト（ガウス）ぼかしの半径を調整します</string>
+    <string name="settings_title_alignment">タイトルの配置</string>
+    <string name="settings_title_align_start">左揃え</string>
+    <string name="settings_title_align_center">中央</string>
+    <string name="settings_dropdown_style">ダイアログスタイル</string>
+    <string name="settings_dropdown_style_miuix">Miuix</string>
+    <string name="settings_dropdown_style_coui">ColorOS 17</string>
     <string name="settings_enable_floating_bottom_bar">フローティングボトムバー</string>
     <string name="settings_enable_floating_bottom_bar_summary">貼り付けナビをフローティングピルバーに置き換え</string>
     <string name="settings_enable_floating_bottom_bar_blur">フローティングバーのぼかし</string>

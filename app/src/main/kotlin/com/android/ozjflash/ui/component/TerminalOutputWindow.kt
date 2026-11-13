@@ -2,15 +2,17 @@ package com.android.ozjflash.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -20,6 +22,7 @@ import androidx.compose.material3.Card as M3Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -183,14 +186,22 @@ private fun ColumnScope.TerminalWindowContent(
                 .height(1.dp)
                 .background(palette.divider),
         )
-        // 主体：留白 + 等宽可复制输出
+        // 主体：固定高度 + 超出上下滚动 + 等宽可复制输出
+        val scrollState = rememberScrollState()
+        LaunchedEffect(output) {
+            if (output.isNotEmpty()) scrollState.animateScrollTo(scrollState.maxValue)
+        }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 220.dp)
+                .height(240.dp)
                 .padding(16.dp),
         ) {
-            SelectionContainer {
+            SelectionContainer(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState),
+            ) {
                 val bodyText = output.ifEmpty { emptyText }
                 val bodyColor = if (output.isEmpty()) palette.emptyText else palette.outputText
                 if (isMiuix) {

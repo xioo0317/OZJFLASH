@@ -10,7 +10,8 @@ import com.android.ozjflash.ui.UiMode
  *
  * 由 KernelSU 的 SettingsRepository 裁剪而来：只保留 UI / 外观相关的项，
  * 彻底移除 root 特性开关（su 兼容、kernel umount、selinux hide、sulog…）
- * 以及所有 shell / JNI 读写。底层为 SharedPreferences。
+ * 以及所有 shell / JNI 读写。底层为 SharedPreferences，统一收敛到
+ * [UiSettingsKeys.PREFS_NAME]（即 settings.xml），key 一律引用 [UiSettingsKeys]。
  */
 interface SettingsRepository {
     var uiMode: String
@@ -20,9 +21,9 @@ interface SettingsRepository {
     var colorStyle: String
     var colorSpec: String
     var enableBlur: Boolean
-    /** 模糊风格：gaussian = 默认（可调半径高斯模糊）；gradient = 透明渐变 */
+    /** 模糊风格：gaussian = 默认（可调通透度）；gradient = 透明渐变 */
     var blurStyle: String
-    /** 「默认」高斯模糊半径（px），由设置页进度条自定义，默认 25f */
+    /** 「默认」档背景通透度（由设置页进度条自定义，默认 25f，越大约通透） */
     var blurRadius: Float
     /** USB 状态胶囊「液态胶囊」开关（独立于顶/底栏模糊与模糊风格，默认关闭） */
     var usbPillBlur: Boolean
@@ -39,89 +40,99 @@ interface SettingsRepository {
     var terminalPty: Boolean
     /** 应用显示语言：system = 跟随系统，否则为 BCP-47/限定符（zh-CN, ja, es…） */
     var language: String
+    /** 折叠标题对齐：false = 靠左，true = 居中（默认靠左） */
+    var titleCentered: Boolean
+    /** 选项弹窗风格：coui = ColorOS 17 磨砂透背景卡片；miuix = Miuix 原厂下拉（默认 coui） */
+    var dropdownStyle: String
 }
-
-private const val SETTINGS_PREFS = "settings"
 
 class SettingsRepositoryImpl : SettingsRepository {
 
     private val prefs by lazy {
-        ozjApp.getSharedPreferences(SETTINGS_PREFS, Context.MODE_PRIVATE)
+        ozjApp.getSharedPreferences(UiSettingsKeys.PREFS_NAME, Context.MODE_PRIVATE)
     }
 
     override var uiMode: String
-        get() = prefs.getString("ui_mode", UiMode.DEFAULT_VALUE) ?: UiMode.DEFAULT_VALUE
-        set(value) = prefs.edit { putString("ui_mode", value) }
+        get() = prefs.getString(UiSettingsKeys.UI_MODE, UiMode.DEFAULT_VALUE) ?: UiMode.DEFAULT_VALUE
+        set(value) = prefs.edit { putString(UiSettingsKeys.UI_MODE, value) }
 
     override var themeMode: Int
-        get() = prefs.getInt("color_mode", 0)
-        set(value) = prefs.edit { putInt("color_mode", value) }
+        get() = prefs.getInt(UiSettingsKeys.COLOR_MODE, 0)
+        set(value) = prefs.edit { putInt(UiSettingsKeys.COLOR_MODE, value) }
 
     override var miuixMonet: Boolean
-        get() = prefs.getBoolean("miuix_monet", false)
-        set(value) = prefs.edit { putBoolean("miuix_monet", value) }
+        get() = prefs.getBoolean(UiSettingsKeys.MIUIX_MONET, false)
+        set(value) = prefs.edit { putBoolean(UiSettingsKeys.MIUIX_MONET, value) }
 
     override var keyColor: Int
-        get() = prefs.getInt("key_color", 0)
-        set(value) = prefs.edit { putInt("key_color", value) }
+        get() = prefs.getInt(UiSettingsKeys.KEY_COLOR, 0)
+        set(value) = prefs.edit { putInt(UiSettingsKeys.KEY_COLOR, value) }
 
     override var colorStyle: String
-        get() = prefs.getString("color_style", "TonalSpot") ?: "TonalSpot"
-        set(value) = prefs.edit { putString("color_style", value) }
+        get() = prefs.getString(UiSettingsKeys.COLOR_STYLE, "TonalSpot") ?: "TonalSpot"
+        set(value) = prefs.edit { putString(UiSettingsKeys.COLOR_STYLE, value) }
 
     override var colorSpec: String
-        get() = prefs.getString("color_spec", "SPEC_2025") ?: "SPEC_2025"
-        set(value) = prefs.edit { putString("color_spec", value) }
+        get() = prefs.getString(UiSettingsKeys.COLOR_SPEC, "SPEC_2025") ?: "SPEC_2025"
+        set(value) = prefs.edit { putString(UiSettingsKeys.COLOR_SPEC, value) }
 
     override var enableBlur: Boolean
-        get() = prefs.getBoolean("enable_blur", false)
-        set(value) = prefs.edit { putBoolean("enable_blur", value) }
+        get() = prefs.getBoolean(UiSettingsKeys.ENABLE_BLUR, false)
+        set(value) = prefs.edit { putBoolean(UiSettingsKeys.ENABLE_BLUR, value) }
 
     override var blurStyle: String
-        get() = prefs.getString("blur_style", "gaussian") ?: "gaussian"
-        set(value) = prefs.edit { putString("blur_style", value) }
+        get() = prefs.getString(UiSettingsKeys.BLUR_STYLE, "gaussian") ?: "gaussian"
+        set(value) = prefs.edit { putString(UiSettingsKeys.BLUR_STYLE, value) }
 
     override var blurRadius: Float
-        get() = prefs.getFloat("blur_radius", 25f)
-        set(value) = prefs.edit { putFloat("blur_radius", value) }
+        get() = prefs.getFloat(UiSettingsKeys.BLUR_RADIUS, 25f)
+        set(value) = prefs.edit { putFloat(UiSettingsKeys.BLUR_RADIUS, value) }
 
     override var usbPillBlur: Boolean
-        get() = prefs.getBoolean("usb_pill_blur", false)
-        set(value) = prefs.edit { putBoolean("usb_pill_blur", value) }
+        get() = prefs.getBoolean(UiSettingsKeys.USB_PILL_BLUR, false)
+        set(value) = prefs.edit { putBoolean(UiSettingsKeys.USB_PILL_BLUR, value) }
 
     override var enableFloatingBottomBar: Boolean
-        get() = prefs.getBoolean("enable_floating_bottom_bar", true)
-        set(value) = prefs.edit { putBoolean("enable_floating_bottom_bar", value) }
+        get() = prefs.getBoolean(UiSettingsKeys.ENABLE_FLOATING_BOTTOM_BAR, true)
+        set(value) = prefs.edit { putBoolean(UiSettingsKeys.ENABLE_FLOATING_BOTTOM_BAR, value) }
 
     override var enableFloatingBottomBarBlur: Boolean
-        get() = prefs.getBoolean("enable_floating_bottom_bar_blur", false)
-        set(value) = prefs.edit { putBoolean("enable_floating_bottom_bar_blur", value) }
+        get() = prefs.getBoolean(UiSettingsKeys.ENABLE_FLOATING_BOTTOM_BAR_BLUR, false)
+        set(value) = prefs.edit { putBoolean(UiSettingsKeys.ENABLE_FLOATING_BOTTOM_BAR_BLUR, value) }
 
     override var enableNavigationBadge: Boolean
-        get() = prefs.getBoolean("enable_navigation_badge", true)
-        set(value) = prefs.edit { putBoolean("enable_navigation_badge", value) }
+        get() = prefs.getBoolean(UiSettingsKeys.ENABLE_NAVIGATION_BADGE, true)
+        set(value) = prefs.edit { putBoolean(UiSettingsKeys.ENABLE_NAVIGATION_BADGE, value) }
 
     override var navigationRailExpanded: Boolean
-        get() = prefs.getBoolean("nav_rail_expanded", false)
-        set(value) = prefs.edit { putBoolean("nav_rail_expanded", value) }
+        get() = prefs.getBoolean(UiSettingsKeys.NAV_RAIL_EXPANDED, false)
+        set(value) = prefs.edit { putBoolean(UiSettingsKeys.NAV_RAIL_EXPANDED, value) }
 
     override var enablePagerSwipe: Boolean
-        get() = prefs.getBoolean("enable_pager_swipe", false)
-        set(value) = prefs.edit { putBoolean("enable_pager_swipe", value) }
+        get() = prefs.getBoolean(UiSettingsKeys.ENABLE_PAGER_SWIPE, false)
+        set(value) = prefs.edit { putBoolean(UiSettingsKeys.ENABLE_PAGER_SWIPE, value) }
 
     override var enablePredictiveBack: Boolean
-        get() = prefs.getBoolean("enable_predictive_back", true)
-        set(value) = prefs.edit { putBoolean("enable_predictive_back", value) }
+        get() = prefs.getBoolean(UiSettingsKeys.ENABLE_PREDICTIVE_BACK, true)
+        set(value) = prefs.edit { putBoolean(UiSettingsKeys.ENABLE_PREDICTIVE_BACK, value) }
 
     override var pageScale: Float
-        get() = prefs.getFloat("page_scale", 1.0f)
-        set(value) = prefs.edit { putFloat("page_scale", value) }
+        get() = prefs.getFloat(UiSettingsKeys.PAGE_SCALE, 1.0f)
+        set(value) = prefs.edit { putFloat(UiSettingsKeys.PAGE_SCALE, value) }
 
     override var terminalPty: Boolean
-        get() = prefs.getBoolean("terminal_pty", false)
-        set(value) = prefs.edit { putBoolean("terminal_pty", value) }
+        get() = prefs.getBoolean(UiSettingsKeys.TERMINAL_PTY, false)
+        set(value) = prefs.edit { putBoolean(UiSettingsKeys.TERMINAL_PTY, value) }
 
     override var language: String
-        get() = prefs.getString("language", "system") ?: "system"
-        set(value) = prefs.edit { putString("language", value) }
+        get() = prefs.getString(UiSettingsKeys.LANGUAGE, "system") ?: "system"
+        set(value) = prefs.edit { putString(UiSettingsKeys.LANGUAGE, value) }
+
+    override var titleCentered: Boolean
+        get() = prefs.getBoolean(UiSettingsKeys.TITLE_CENTERED, false)
+        set(value) = prefs.edit { putBoolean(UiSettingsKeys.TITLE_CENTERED, value) }
+
+    override var dropdownStyle: String
+        get() = prefs.getString(UiSettingsKeys.DROPDOWN_STYLE, "coui") ?: "coui"
+        set(value) = prefs.edit { putString(UiSettingsKeys.DROPDOWN_STYLE, value) }
 }

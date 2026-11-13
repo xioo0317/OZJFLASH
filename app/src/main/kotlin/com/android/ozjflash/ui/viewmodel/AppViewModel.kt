@@ -30,6 +30,10 @@ data class AppUiState(
     val blurRadius: Float = 25f,
     /** USB 状态胶囊「液态胶囊」开关（独立于顶/底栏模糊与模糊风格） */
     val usbPillBlur: Boolean = false,
+    /** 折叠标题对齐：false = 靠左，true = 居中（默认靠左） */
+    val titleCentered: Boolean = false,
+    /** 选项弹窗风格：coui = ColorOS 17 卡片；miuix = Miuix 下拉 */
+    val dropdownStyle: String = "coui",
     val enableFloatingBottomBar: Boolean = false,
     val enableFloatingBottomBarBlur: Boolean = false,
     val enableNavigationBadge: Boolean = true,
@@ -57,6 +61,8 @@ class AppViewModel(
             blurStyle = repo.blurStyle,
             blurRadius = repo.blurRadius,
             usbPillBlur = repo.usbPillBlur,
+            titleCentered = repo.titleCentered,
+            dropdownStyle = repo.dropdownStyle,
             enableFloatingBottomBar = repo.enableFloatingBottomBar,
             enableFloatingBottomBarBlur = repo.enableFloatingBottomBarBlur,
             enableNavigationBadge = repo.enableNavigationBadge,
@@ -127,6 +133,16 @@ class AppViewModel(
     fun setUsbPillBlur(enabled: Boolean) {
         repo.usbPillBlur = enabled
         _uiState.value = _uiState.value.copy(usbPillBlur = enabled)
+    }
+
+    fun setTitleCentered(enabled: Boolean) {
+        repo.titleCentered = enabled
+        _uiState.value = _uiState.value.copy(titleCentered = enabled)
+    }
+
+    fun setDropdownStyle(style: String) {
+        repo.dropdownStyle = style
+        _uiState.value = _uiState.value.copy(dropdownStyle = style)
     }
 
     fun setFloatingBottomBar(enabled: Boolean) {

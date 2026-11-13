@@ -42,6 +42,8 @@ import androidx.compose.material.icons.rounded.BlurOn
 import androidx.compose.material.icons.rounded.CallToAction
 import androidx.compose.material.icons.rounded.Colorize
 import androidx.compose.material.icons.rounded.DesignServices
+import androidx.compose.material.icons.rounded.FormatAlignCenter
+import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Style
 import androidx.compose.material.icons.rounded.SwapHoriz
 import androidx.compose.material.icons.rounded.Wallpaper
@@ -91,7 +93,7 @@ import top.yukonga.miuix.kmp.blur.layerBackdrop
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.extended.Back
 import top.yukonga.miuix.kmp.preference.ArrowPreference
-import top.yukonga.miuix.kmp.preference.OverlayDropdownPreference
+import com.android.ozjflash.ui.util.CouiDropdownPreference
 import top.yukonga.miuix.kmp.preference.SwitchPreference
 import top.yukonga.miuix.kmp.theme.MiuixTheme.colorScheme
 import top.yukonga.miuix.kmp.utils.overScrollVertical
@@ -204,7 +206,7 @@ fun ColorPaletteScreenMiuix(
                             Column {
                                 val colorItems = paletteColorEntries.map { stringResource(it.second) }
                                 val colorValues = paletteColorEntries.map { it.first }
-                                OverlayDropdownPreference(
+                                CouiDropdownPreference(
                                     title = stringResource(id = R.string.settings_key_color),
                                     items = colorItems,
                                     startAction = {
@@ -225,7 +227,7 @@ fun ColorPaletteScreenMiuix(
                                 AnimatedVisibility(visible = uiState.appSettings.keyColor != 0) {
                                     Column {
                                         val styles = PaletteStyle.entries
-                                        OverlayDropdownPreference(
+                                        CouiDropdownPreference(
                                             title = stringResource(R.string.settings_color_style),
                                             startAction = {
                                                 Icon(
@@ -244,7 +246,7 @@ fun ColorPaletteScreenMiuix(
                                         )
 
                                         val specs = ColorSpec.SpecVersion.entries
-                                        OverlayDropdownPreference(
+                                        CouiDropdownPreference(
                                             title = stringResource(R.string.settings_color_spec),
                                             startAction = {
                                                 Icon(
@@ -265,6 +267,62 @@ fun ColorPaletteScreenMiuix(
                                 }
                             }
                         }
+                    }
+
+                    // 标题对齐：单独一张卡片，靠左 / 居中二选一。
+                    Card(
+                        modifier = Modifier
+                            .padding(top = 12.dp)
+                            .fillMaxWidth(),
+                    ) {
+                        val alignItems = listOf(
+                            stringResource(id = R.string.settings_title_align_start),
+                            stringResource(id = R.string.settings_title_align_center),
+                        )
+                        CouiDropdownPreference(
+                            title = stringResource(id = R.string.settings_title_alignment),
+                            items = alignItems,
+                            startAction = {
+                                Icon(
+                                    Icons.Rounded.FormatAlignCenter,
+                                    modifier = Modifier.padding(end = 6.dp),
+                                    contentDescription = stringResource(id = R.string.settings_title_alignment),
+                                    tint = colorScheme.onBackground,
+                                )
+                            },
+                            selectedIndex = if (uiState.titleCentered) 1 else 0,
+                            onSelectedIndexChange = { index ->
+                                actions.setTitleCentered(index == 1)
+                            },
+                        )
+                    }
+
+                    // 弹窗风格：Miuix 原厂下拉 / ColorOS 17 磨砂透背景卡片 二选一。
+                    Card(
+                        modifier = Modifier
+                            .padding(top = 12.dp)
+                            .fillMaxWidth(),
+                    ) {
+                        val dialogStyles = listOf(
+                            stringResource(id = R.string.settings_dropdown_style_miuix),
+                            stringResource(id = R.string.settings_dropdown_style_coui),
+                        )
+                        CouiDropdownPreference(
+                            title = stringResource(id = R.string.settings_dropdown_style),
+                            items = dialogStyles,
+                            startAction = {
+                                Icon(
+                                    Icons.Rounded.MoreVert,
+                                    modifier = Modifier.padding(end = 6.dp),
+                                    contentDescription = stringResource(id = R.string.settings_dropdown_style),
+                                    tint = colorScheme.onBackground,
+                                )
+                            },
+                            selectedIndex = if (uiState.dropdownStyle == "coui") 1 else 0,
+                            onSelectedIndexChange = { index ->
+                                actions.setDropdownStyle(if (index == 1) "coui" else "miuix")
+                            },
+                        )
                     }
 
                     // 模糊：单独一张卡片。开启后可在「效果」里选「默认 / 透明渐变」；
@@ -296,7 +354,7 @@ fun ColorPaletteScreenMiuix(
                                         stringResource(id = R.string.settings_blur_effect_gaussian),
                                         stringResource(id = R.string.settings_blur_effect_gradient),
                                     )
-                                    OverlayDropdownPreference(
+                                    CouiDropdownPreference(
                                         title = stringResource(id = R.string.settings_blur_effect),
                                         items = effectItems,
                                         startAction = {
@@ -312,7 +370,7 @@ fun ColorPaletteScreenMiuix(
                                             actions.setBlurStyle(if (index == 1) "gradient" else "gaussian")
                                         },
                                     )
-                                    // 「默认」（高斯）档：展开式进度条，实时自定义高斯模糊半径。
+                                    // 「默认」档：展开式进度条，实时自定义高斯模糊半径。
                                     // 复用页面缩放那条 ArrowPreference + bottomAction Slider 的展开交互。
                                     AnimatedVisibility(visible = uiState.blurStyle == "gaussian") {
                                         var radiusExpanded by rememberSaveable { mutableStateOf(false) }
@@ -354,9 +412,8 @@ fun ColorPaletteScreenMiuix(
                                     }
                                 }
                             }
-                            // 「液态胶囊」独立于效果选择（不再依赖 blurStyle == gradient），
-                            // 只要模糊开启即可开关；自绘图标 = 一个 USB 胶囊 + 左侧一个点。
-                            AnimatedVisibility(visible = uiState.enableBlur) {
+                            // 「液态胶囊」仅在「效果 = 透明渐变」下显示；自绘图标 = USB 胶囊 + 左侧一点。
+                            AnimatedVisibility(visible = uiState.enableBlur && uiState.blurStyle == "gradient") {
                                 SwitchPreference(
                                     title = stringResource(id = R.string.settings_usb_pill_blur),
                                     summary = stringResource(id = R.string.settings_usb_pill_blur_summary),

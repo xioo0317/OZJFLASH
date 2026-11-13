@@ -88,7 +88,6 @@ object NativeLibs {
         if (nativeDir != null) {
             for ((src, dst) in EXEC_FROM_LIBS) link(report, dst, nativeDir, binDir, src)
         }
-        extractScript(context, binDir)
 
         val probe = probeExec(binDir.absolutePath)
         report.appendLine()
@@ -137,17 +136,6 @@ object NativeLibs {
             chmodExec(link.absolutePath)
             false
         } catch (_: Throwable) { false }
-    }
-
-    /** 释放内置脚本（脚本由 sh 解释执行，不依赖 exec 位） */
-    private fun extractScript(context: Context, binDir: File) {
-        for (name in listOf("check_env.sh")) {
-            runCatching {
-                context.assets.open("scripts/$name").use { input ->
-                    File(binDir, name).outputStream().use { input.copyTo(it) }
-                }
-            }
-        }
     }
 
     private fun chmodExec(path: String) {

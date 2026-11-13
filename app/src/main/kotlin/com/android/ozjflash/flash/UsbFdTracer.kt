@@ -13,18 +13,21 @@ import android.system.Os
  *      再用 recvmsg + SCM_RIGHTS 收取已授权的 USB fd，最后走 `/proc/self/fd/<n>`。
  *
  * 注意：**只设 MOMIUI_USB_FD 是不够的**，魔改版优先读 MOMIUI_USB_SOCK。
+ *
+ * 所有输出统一 `info：…` 格式，只写入命令日志（[CommandLogger]），不回显到用户终端。
  */
 object UsbFdTracer {
 
     fun device(d: UsbDevice, mode: UsbMode, granted: Boolean): String {
         val name = d.productName?.takeIf { it.isNotBlank() } ?: d.deviceName
-        return "[诊断] 设备 $name (%04X:%04X) 模式=%s 授权=%s"
-            .format(d.vendorId, d.productId, mode.label, if (granted) "是" else "否")
+        val sn = runCatching { d.serialNumber }.getOrNull()?.takeIf { it.isNotBlank() } ?: "?"
+        return "info：device $name _SN:$sn (%04X:%04X) [mode]=${mode.label}[authorize]=${if (granted) "ok" else "no"}"
+            .format(d.vendorId, d.productId)
     }
 
     /** fastboot 接口应为 FF/42/03，ADB 为 FF/42/01 */
     fun interfaces(d: UsbDevice): String {
-        if (d.interfaceCount == 0) return "[诊断] 接口 <无>"
+        if (d.interfaceCount == 0) return "info：interface <无>"
         val items = (0 until d.interfaceCount).joinToString("  ") { i ->
             val itf = d.getInterface(i)
             "#$i %02X/%02X/%02X".format(
@@ -33,19 +36,22 @@ object UsbFdTracer {
                 itf.interfaceProtocol,
             )
         }
-        return "[诊断] 接口 $items"
+        return "info：interface $items"
     }
 
     /** /proc/self/fd/N 若指向 /dev/bus/usb/... 才说明 openDevice 真的拿到了 usbfs 句柄 */
     fun fd(fd: Int): String {
         val target = runCatching { Os.readlink("/proc/self/fd/$fd") }.getOrNull()
-            ?: return "[诊断] fd=$fd （无效或已被关闭）"
+            ?: return "info：usbhost fd=$fd （无效或已被关闭）"
         val ok = target.startsWith("/dev/bus/usb")
-        return "[诊断] fd=$fd → $target ${if (ok) "✔ usbfs" else "✘ 非 usbfs（传给工具也无法通信）"}"
+        return "info：usbhost fd=$fd → $target ${if (ok) "✔ usbfs" else "✘ 非 usbfs（传给工具也无法通信）"}"
     }
+
+    /** 实际 exec 的可执行文件路径 */
+    fun exe(path: String): String = "info：>_ $path"
 
     fun socket(name: String): String {
         val ok = name.startsWith("@")
-        return "[诊断] socket=$name ${if (ok) "✔ 抽象命名空间" else "✘ 缺少 @ 前缀"}"
+        return "info：socket=$name ${if (ok) "✔ 抽象命名空间" else "✘ 缺少 @ 前缀"}"
     }
 }

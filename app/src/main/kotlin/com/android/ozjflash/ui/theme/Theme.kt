@@ -143,6 +143,12 @@ val LocalBlurRadius = staticCompositionLocalOf { 25f }
 /** USB 状态胶囊「液态胶囊」开关（独立于顶/底栏模糊与模糊风格） */
 val LocalUsbPillBlur = staticCompositionLocalOf { false }
 
+/** 折叠标题对齐：false = 靠左，true = 居中（默认靠左） */
+val LocalTitleCentered = staticCompositionLocalOf { false }
+
+/** 选项弹窗风格：coui = ColorOS 17 磨砂透背景卡片；miuix = Miuix 原厂下拉 */
+val LocalDropdownStyle = staticCompositionLocalOf { "coui" }
+
 val LocalEnableFloatingBottomBar = staticCompositionLocalOf { false }
 
 val LocalEnableFloatingBottomBarBlur = staticCompositionLocalOf { false }

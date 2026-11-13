@@ -35,8 +35,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -45,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import com.android.ozjflash.R
 import com.android.ozjflash.ui.component.usb.UsbPillCollapseActions
 import com.android.ozjflash.ui.theme.LocalEnableBlur
+import com.android.ozjflash.ui.theme.LocalTitleCentered
 import com.android.ozjflash.ui.theme.isInDarkTheme
 import com.android.ozjflash.ui.util.BlurredBar
 import com.android.ozjflash.ui.util.rememberBlurBackdrop
@@ -136,17 +139,60 @@ private fun TopBar(
     barColor: Color,
     couiBackdrop: CouiBackdrop?,
 ) {
+    val density = LocalDensity.current
+    val titleCentered = LocalTitleCentered.current
+    val state = scrollBehavior.state
+    // 大标题上移幅度（px）：折叠时大标题随内容上移，贴近 Miuix 大标题位移观感。
+    val risePx = with(density) { 24.dp.toPx() }
+
     BlurredBar(backdrop, couiBackdrop = couiBackdrop) {
-        TopAppBar(
-            color = barColor,
-            title = stringResource(R.string.app_name),
-            actions = {
-                // 与功能页 / ADB 二级页共用同一套折叠联动：按 Miuix 大小标题切换机制，
-                // 两个胶囊在各自固定位置交叉接管，展开随大标题渐出、折叠渐入归位。
-                UsbPillCollapseActions(scrollBehavior)
-            },
-            scrollBehavior = scrollBehavior,
-        )
+        Box {
+            TopAppBar(
+                color = barColor,
+                // 标题改为自绘：支持小标题靠左（COUI-Kit 风格）+ COUI 式淡入淡出交叉过渡。
+                title = "",
+                actions = {
+                    // USB 胶囊与标题共用同一套折叠联动：展开随大标题渐出、折叠随小标题
+                    // 渐入归位，淡入淡出节奏与下方自绘标题完全一致（见 UsbPillCollapseActions）。
+                    UsbPillCollapseActions(scrollBehavior)
+                },
+                scrollBehavior = scrollBehavior,
+            )
+            // 自绘标题：大 / 小标题按 collapsedFraction 做 COUI 式淡入淡出（淡出 + 淡入）交叉过渡。
+            // 小标题默认靠左（COUI-Kit 风格）；titleCentered 时整体居中（大、小标题同步）。
+            val titleAlign = if (titleCentered) Alignment.Center else Alignment.CenterStart
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(start = if (titleCentered) 0.dp else 16.dp, end = 16.dp),
+                contentAlignment = titleAlign,
+            ) {
+                val name = stringResource(R.string.app_name)
+                // 大标题：随 frac 淡出（COUI 淡出），并轻微上移贴近 Miuix 大标题位移。
+                Text(
+                    text = name,
+                    color = colorScheme.onSurface,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.graphicsLayer {
+                        val f = state.collapsedFraction.coerceIn(0f, 1f)
+                        alpha = (1f - f * 3f).coerceIn(0f, 1f)
+                        translationY = f * risePx
+                    },
+                )
+                // 小标题：随 frac 淡入（COUI 淡入），默认靠左。
+                Text(
+                    text = name,
+                    color = colorScheme.onSurface,
+                    fontSize = 17.sp,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.graphicsLayer {
+                        val f = state.collapsedFraction.coerceIn(0f, 1f)
+                        alpha = (f * 3f - 1f).coerceIn(0f, 1f)
+                    },
+                )
+            }
+        }
     }
 }
 

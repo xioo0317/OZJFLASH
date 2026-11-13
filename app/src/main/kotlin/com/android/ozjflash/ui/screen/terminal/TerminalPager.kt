@@ -48,7 +48,6 @@ class TerminalConsole internal constructor(
 
     fun sendCtrlC() = engine.sendCtrlC()
     fun clear() { output = "" }
-    fun runCheckScript() = submit("sh $binDir/check_env.sh")
 
     internal fun append(chunk: String) {
         val next = output + chunk
