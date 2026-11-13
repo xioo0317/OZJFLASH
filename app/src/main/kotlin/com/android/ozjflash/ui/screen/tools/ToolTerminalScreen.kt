@@ -34,7 +34,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LargeFlexibleTopAppBar
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -292,7 +292,7 @@ private fun ToolPageMaterial(navigator: Navigator, tool: ToolKind) {
 
     ExpressiveScaffold(
         topBar = {
-            LargeFlexibleTopAppBar(
+            LargeTopAppBar(
                 title = { Text(title) },
                 navigationIcon = {
                     GlassBackButton(
@@ -301,7 +301,7 @@ private fun ToolPageMaterial(navigator: Navigator, tool: ToolKind) {
                     )
                 },
                 actions = { ToolPageActions(tool) },
-                colors = expressiveTopAppBarColors(),
+                colors = TopAppBarDefaults.largeTopAppBarColors(),
                 windowInsets = WindowInsets.systemBars
                     .add(WindowInsets.displayCutout)
                     .only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),

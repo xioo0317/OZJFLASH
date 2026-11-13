@@ -58,7 +58,7 @@ import androidx.compose.material.icons.rounded.SwapHoriz
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LargeFlexibleTopAppBar
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
@@ -115,10 +115,10 @@ fun ColorPaletteScreenMaterial(
 
     ExpressiveScaffold(
         topBar = {
-            LargeFlexibleTopAppBar(
+            LargeTopAppBar(
                 navigationIcon = { TopBarBackButton(onClick = actions::back) },
                 title = { Text(stringResource(R.string.settings_theme)) },
-                colors = expressiveTopAppBarColors(),
+                colors = TopAppBarDefaults.largeTopAppBarColors(),
                 windowInsets = WindowInsets.safeDrawing.only(
                     WindowInsetsSides.Top + WindowInsetsSides.Horizontal
                 ),

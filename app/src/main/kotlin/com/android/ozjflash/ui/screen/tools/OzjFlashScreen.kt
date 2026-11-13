@@ -22,7 +22,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LargeFlexibleTopAppBar
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -133,7 +133,7 @@ private fun OzjFlashMaterial(navigator: Navigator) {
 
     ExpressiveScaffold(
         topBar = {
-            LargeFlexibleTopAppBar(
+            LargeTopAppBar(
                 title = { Text(stringResource(R.string.tools_ozjflash)) },
                 navigationIcon = {
                     GlassBackButton(
@@ -141,7 +141,7 @@ private fun OzjFlashMaterial(navigator: Navigator) {
                         onClick = { navigator.pop() },
                     )
                 },
-                colors = expressiveTopAppBarColors(),
+                colors = TopAppBarDefaults.largeTopAppBarColors(),
                 windowInsets = topInsets,
                 scrollBehavior = scrollBehavior,
             )

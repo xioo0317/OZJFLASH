@@ -28,7 +28,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LargeFlexibleTopAppBar
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -319,7 +319,7 @@ private fun ExtractMaterial(navigator: Navigator, kind: ExtractKind) {
 
     ExpressiveScaffold(
         topBar = {
-            LargeFlexibleTopAppBar(
+            LargeTopAppBar(
                 title = { Text(stringResource(kind.titleRes)) },
                 navigationIcon = {
                     GlassBackButton(
@@ -327,7 +327,7 @@ private fun ExtractMaterial(navigator: Navigator, kind: ExtractKind) {
                         onClick = { navigator.pop() },
                     )
                 },
-                colors = expressiveTopAppBarColors(),
+                colors = TopAppBarDefaults.largeTopAppBarColors(),
                 windowInsets = topInsets,
                 scrollBehavior = scrollBehavior,
             )
