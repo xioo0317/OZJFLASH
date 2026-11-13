@@ -60,6 +60,8 @@ import com.android.ozjflash.ui.navigation3.Navigator
 import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.util.BlurredBar
 import com.android.ozjflash.ui.util.rememberBlurBackdrop
+import com.android.ozjflash.ui.util.rememberCouiBlurBackdrop
+import com.android.ozjflash.ui.util.couiBlurSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -268,11 +270,12 @@ private fun ExtractMiuix(navigator: Navigator, kind: ExtractKind) {
         exponentialDecay<Float>(),
     )
     val backdrop = rememberBlurBackdrop(LocalEnableBlur.current)
+    val couiBackdrop = rememberCouiBlurBackdrop()
     val barColor = if (backdrop != null) Color.Transparent else MiuixTheme.colorScheme.surface
 
     MiuixScaffold(
         topBar = {
-            BlurredBar(backdrop) {
+            BlurredBar(backdrop, couiBackdrop = couiBackdrop) {
                 MiuixTopAppBar(
                     color = barColor,
                     title = stringResource(kind.titleRes),
@@ -294,6 +297,7 @@ private fun ExtractMiuix(navigator: Navigator, kind: ExtractKind) {
     ) { innerPadding ->
         Column(
             modifier = Modifier
+                .couiBlurSource(couiBackdrop)
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
                 .verticalScroll(rememberScrollState())

@@ -20,9 +20,11 @@ interface SettingsRepository {
     var colorStyle: String
     var colorSpec: String
     var enableBlur: Boolean
-    /** 模糊风格：gaussian = 高斯模糊（默认）；gradient = 渐变模糊 */
+    /** 模糊风格：gaussian = 默认（可调半径高斯模糊）；gradient = 透明渐变 */
     var blurStyle: String
-    /** USB 状态胶囊是否使用液态玻璃效果（独立于顶/底栏模糊，默认关闭） */
+    /** 「默认」高斯模糊半径（px），由设置页进度条自定义，默认 25f */
+    var blurRadius: Float
+    /** USB 状态胶囊「液态胶囊」开关（独立于顶/底栏模糊与模糊风格，默认关闭） */
     var usbPillBlur: Boolean
     var enableFloatingBottomBar: Boolean
     var enableFloatingBottomBarBlur: Boolean
@@ -78,6 +80,10 @@ class SettingsRepositoryImpl : SettingsRepository {
     override var blurStyle: String
         get() = prefs.getString("blur_style", "gaussian") ?: "gaussian"
         set(value) = prefs.edit { putString("blur_style", value) }
+
+    override var blurRadius: Float
+        get() = prefs.getFloat("blur_radius", 25f)
+        set(value) = prefs.edit { putFloat("blur_radius", value) }
 
     override var usbPillBlur: Boolean
         get() = prefs.getBoolean("usb_pill_blur", false)

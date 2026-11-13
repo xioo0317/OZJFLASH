@@ -82,11 +82,13 @@
     <string name="settings_others">Other</string>
     <string name="settings_enable_blur">Blur</string>
     <string name="settings_enable_blur_summary">Blur the top and bottom bars</string>
-    <string name="settings_usb_pill_blur">Pill glass</string>
+    <string name="settings_usb_pill_blur">Liquid pill</string>
     <string name="settings_usb_pill_blur_summary">Give the USB pill a liquid glass effect</string>
     <string name="settings_blur_effect">Effect</string>
-    <string name="settings_blur_effect_gaussian">Gaussian blur</string>
-    <string name="settings_blur_effect_gradient">Gradient blur</string>
+    <string name="settings_blur_effect_gaussian">Default</string>
+    <string name="settings_blur_effect_gradient">Transparent gradient</string>
+    <string name="settings_blur_radius">Blur intensity</string>
+    <string name="settings_blur_radius_summary">Customize the default (Gaussian) blur radius</string>
     <string name="settings_enable_floating_bottom_bar">Floating bottom bar</string>
     <string name="settings_enable_floating_bottom_bar_summary">Replace the dock with a floating pill bar</string>
     <string name="settings_enable_floating_bottom_bar_blur">Blur floating bar</string>

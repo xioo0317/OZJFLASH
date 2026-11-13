@@ -7,6 +7,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -57,8 +58,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -69,6 +72,8 @@ import com.android.ozjflash.ui.component.miuix.ScaleDialog
 import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.util.BlurredBar
 import com.android.ozjflash.ui.util.rememberBlurBackdrop
+import com.android.ozjflash.ui.util.rememberCouiBlurBackdrop
+import com.android.ozjflash.ui.util.couiBlurSource
 import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamiccolor.ColorSpec
 import com.materialkolor.rememberDynamicColorScheme
@@ -107,6 +112,7 @@ fun ColorPaletteScreenMiuix(
     )
     val enableBlurState = LocalEnableBlur.current
     val backdrop = rememberBlurBackdrop(enableBlurState)
+    val couiBackdrop = rememberCouiBlurBackdrop()
     val blurActive = backdrop != null
     val barColor = if (blurActive) Color.Transparent else colorScheme.surface
     val uiState = state.uiState
@@ -115,7 +121,7 @@ fun ColorPaletteScreenMiuix(
 
     Scaffold(
         topBar = {
-            BlurredBar(backdrop) {
+            BlurredBar(backdrop, couiBackdrop = couiBackdrop) {
                 TopAppBar(
                     color = barColor,
                     title = stringResource(R.string.settings_theme),
@@ -137,7 +143,8 @@ fun ColorPaletteScreenMiuix(
     ) { innerPadding ->
         val showScaleDialog = rememberSaveable { mutableStateOf(false) }
 
-        Box(modifier = if (backdrop != null) Modifier.layerBackdrop(backdrop) else Modifier) {
+        Box(modifier = Modifier.couiBlurSource(couiBackdrop)
+            .then(if (backdrop != null) Modifier.layerBackdrop(backdrop) else Modifier)) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -260,7 +267,9 @@ fun ColorPaletteScreenMiuix(
                         }
                     }
 
-                    // 模糊：单独一张卡片；开启后可在「效果」里选择高斯 / 渐变
+                    // 模糊：单独一张卡片。开启后可在「效果」里选「默认 / 透明渐变」；
+                    // 「默认」档额外展开一条进度条自定义高斯模糊半径；「液态胶囊」从
+                    // 渐变条件中独立出来，只要模糊开启即可开关，不受效果选择影响。
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         Card(
                             modifier = Modifier
@@ -282,40 +291,83 @@ fun ColorPaletteScreenMiuix(
                                 onCheckedChange = actions::setBlur,
                             )
                             AnimatedVisibility(visible = uiState.enableBlur) {
-                                val effectItems = listOf(
-                                    stringResource(id = R.string.settings_blur_effect_gaussian),
-                                    stringResource(id = R.string.settings_blur_effect_gradient),
-                                )
-                                OverlayDropdownPreference(
-                                    title = stringResource(id = R.string.settings_blur_effect),
-                                    items = effectItems,
-                                    startAction = {
-                                        Icon(
-                                            Icons.Rounded.Style,
-                                            modifier = Modifier.padding(end = 6.dp),
-                                            contentDescription = stringResource(id = R.string.settings_blur_effect),
-                                            tint = colorScheme.onBackground,
+                                Column {
+                                    val effectItems = listOf(
+                                        stringResource(id = R.string.settings_blur_effect_gaussian),
+                                        stringResource(id = R.string.settings_blur_effect_gradient),
+                                    )
+                                    OverlayDropdownPreference(
+                                        title = stringResource(id = R.string.settings_blur_effect),
+                                        items = effectItems,
+                                        startAction = {
+                                            Icon(
+                                                Icons.Rounded.Style,
+                                                modifier = Modifier.padding(end = 6.dp),
+                                                contentDescription = stringResource(id = R.string.settings_blur_effect),
+                                                tint = colorScheme.onBackground,
+                                            )
+                                        },
+                                        selectedIndex = if (uiState.blurStyle == "gradient") 1 else 0,
+                                        onSelectedIndexChange = { index ->
+                                            actions.setBlurStyle(if (index == 1) "gradient" else "gaussian")
+                                        },
+                                    )
+                                    // 「默认」（高斯）档：展开式进度条，实时自定义高斯模糊半径。
+                                    // 复用页面缩放那条 ArrowPreference + bottomAction Slider 的展开交互。
+                                    AnimatedVisibility(visible = uiState.blurStyle == "gaussian") {
+                                        var radiusExpanded by rememberSaveable { mutableStateOf(false) }
+                                        var radiusValue by remember(uiState.blurRadius) {
+                                            mutableFloatStateOf(uiState.blurRadius)
+                                        }
+                                        ArrowPreference(
+                                            title = stringResource(id = R.string.settings_blur_radius),
+                                            summary = stringResource(id = R.string.settings_blur_radius_summary),
+                                            startAction = {
+                                                Icon(
+                                                    Icons.Rounded.BlurOn,
+                                                    modifier = Modifier.padding(end = 6.dp),
+                                                    contentDescription = stringResource(id = R.string.settings_blur_radius),
+                                                    tint = colorScheme.onBackground,
+                                                )
+                                            },
+                                            endActions = {
+                                                Text(
+                                                    text = "${radiusValue.toInt()}",
+                                                    color = colorScheme.onSurfaceVariantActions,
+                                                )
+                                            },
+                                            onClick = { radiusExpanded = !radiusExpanded },
+                                            holdDownState = radiusExpanded,
+                                            bottomAction = {
+                                                Slider(
+                                                    value = radiusValue,
+                                                    onValueChange = { radiusValue = it },
+                                                    onValueChangeFinished = { actions.setBlurRadius(radiusValue) },
+                                                    valueRange = 5f..80f,
+                                                    showKeyPoints = true,
+                                                    keyPoints = listOf(5f, 25f, 45f, 80f),
+                                                    magnetThreshold = 1f,
+                                                    hapticEffect = SliderDefaults.SliderHapticEffect.Step,
+                                                )
+                                            },
                                         )
-                                    },
-                                    selectedIndex = if (uiState.blurStyle == "gradient") 1 else 0,
-                                    onSelectedIndexChange = { index ->
-                                        actions.setBlurStyle(if (index == 1) "gradient" else "gaussian")
-                                    },
-                                )
+                                    }
+                                }
                             }
-                            // 只有「模糊开启 + 效果 = 渐变模糊」时才弹出 USB 胶囊模糊子选项
-                            AnimatedVisibility(
-                                visible = uiState.enableBlur && uiState.blurStyle == "gradient",
-                            ) {
+                            // 「液态胶囊」独立于效果选择（不再依赖 blurStyle == gradient），
+                            // 只要模糊开启即可开关；自绘图标 = 一个 USB 胶囊 + 左侧一个点。
+                            AnimatedVisibility(visible = uiState.enableBlur) {
                                 SwitchPreference(
                                     title = stringResource(id = R.string.settings_usb_pill_blur),
                                     summary = stringResource(id = R.string.settings_usb_pill_blur_summary),
                                     startAction = {
-                                        Icon(
-                                            Icons.Rounded.BlurOn,
-                                            modifier = Modifier.padding(end = 6.dp),
+                                        Image(
+                                            painter = painterResource(id = R.drawable.ic_liquid_pill),
                                             contentDescription = stringResource(id = R.string.settings_usb_pill_blur),
-                                            tint = colorScheme.onBackground,
+                                            colorFilter = ColorFilter.tint(colorScheme.onBackground),
+                                            modifier = Modifier
+                                                .padding(end = 6.dp)
+                                                .size(24.dp),
                                         )
                                     },
                                     checked = uiState.usbPillBlur,

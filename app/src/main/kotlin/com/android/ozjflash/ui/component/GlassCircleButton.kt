@@ -24,6 +24,10 @@ import androidx.compose.ui.unit.sp
 import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.component.liquid.liquidGlassChip
+import com.itos.coui.motion.couiPressMotion
+import com.itos.coui.motion.couiTouchMotion
+import com.itos.coui.motion.rememberCouiPressMotion
+import com.itos.coui.motion.rememberCouiTouchMotion
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /**
@@ -33,6 +37,14 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  *
  * backdrop 为空（M3 页 / 低版本 / 关闭模糊）时芯片自动回退为克制玻璃底；
  * 取色随当前页面 surface 明暗：深色 / 纯黑 = 近白符号，浅色 = 近黑符号。
+ *
+ * **拖拽 / 按住缩放 = COUI-Kit 原厂手势**（[rememberCouiTouchMotion] +
+ * [rememberCouiPressMotion]），对齐 ColorOS 17 顶栏按钮观感：
+ * - `CouiTouchMotion` 4 条独立 spring 轴（scaleX/scaleY/translationX/translationY）
+ *   + rubber 橡皮筋阻尼 + 按拖动方向形变 + 抬手速度回弹；
+ * - `CouiPressMotion` 按面积/长宽比自适应按压缩放，与拖拽缩放增量叠加；
+ * - 二者均在 PointerEventPass.Initial 只观察不消费，故与末尾 [clickable] 并存。
+ * 变换层放在玻璃绘制之前，让玻璃、描边、图标作为整体一起形变，不割裂。
  *
  * [showShadow] 与 USB 胶囊同一份逻辑：折叠顶栏滑动淡化（外层 graphicsLayer 的
  * alpha < 1）时由调用方传 false 取消外阴影，避免半透明合成层露出矩形阴影块。
@@ -44,6 +56,7 @@ fun GlassCircleButton(
     dark: Boolean = false,
     size: Dp = 40.dp,
     showShadow: Boolean = true,
+    dragEnabled: Boolean = true,
     content: @Composable BoxScope.(tint: Color) -> Unit,
 ) {
     val surface = when (LocalUiMode.current) {
@@ -53,8 +66,24 @@ fun GlassCircleButton(
     val darkGlass = dark || (surface.red + surface.green + surface.blue < 1.5f)
     val tint = if (darkGlass) Color(0xFFF2F2F2) else Color(0xFF1B1B1B)
 
+    // COUI 原厂拖拽（4 轴 spring + rubber 阻尼 + 速度释放）与按住缩放。
+    // 公开手势 API 无 @RequiresApi，基于 androidx.dynamicanimation，minSdk 31 可用；
+    // 不依赖官方 TopAppBarButton 的 API34 与内部 LocalCouiToolbarBackdrop。
+    val motion = rememberCouiTouchMotion(dragEnabled)
+    val press = rememberCouiPressMotion()
+
     Box(
         modifier = modifier
+            // 变换层必须在玻璃绘制之前：整个圆钮（玻璃 + 描边 + 图标）一起形变。
+            // 缩放增量 = 拖拽形变 + 按压形变 - 1，位移取 rubber 阻尼后的窗口像素。
+            .graphicsLayer {
+                translationX = motion.translationX.value
+                translationY = motion.translationY.value
+                scaleX = motion.scaleX.value + press.scale.value - 1f
+                scaleY = motion.scaleY.value + press.scale.value - 1f
+            }
+            .couiTouchMotion(motion, dragEnabled)
+            .couiPressMotion(press, dragEnabled)
             .size(size)
             .liquidGlassChip(
                 shape = CircleShape,

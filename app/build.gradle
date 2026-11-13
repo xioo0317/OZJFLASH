@@ -14,7 +14,8 @@ android {
 
     defaultConfig {
         applicationId 'com.android.ozjflash'
-        minSdk 26
+        // COUI-Kit core AAR 声明 minSdk 31（原厂要求不绕过），对齐到 31
+        minSdk 31
         targetSdk 34
         versionCode 37
         versionName '1.13.23'
@@ -30,6 +31,14 @@ android {
     // 若留在 APK 内（页对齐、不解压）就没有可执行的路径了
     packagingOptions {
         jniLibs {
+            useLegacyPackaging = true
+        }
+        dex {
+            // minSdk 抬到 31（COUI core AAR 要求）后，AGP 默认把 classes*.dex 以
+            // 未压缩（Stored）方式打包供 ART 直接 mmap，会让 70MB+ 的 dex 原样进 APK，
+            // 下载体积从约 74MB 暴涨到约 129MB。显式开启 legacy 压缩，把 dex 压回
+            // 约 20MB，APK 回到约 76MB；压缩 dex 在 Android 12+ 仍可正常加载。
+            // 这是打包策略，与 COUI 引入的类数量无关（COUI 实际只增加约 2MB dex）。
             useLegacyPackaging = true
         }
     }
@@ -81,6 +90,10 @@ dependencies {
     implementation libs.miuix.nav
     implementation libs.miuix.preference
     implementation libs.miuix.blur
+
+    // COUI-Kit（仅 core 单模块）：顶栏透明渐变模糊 + 圆钮原厂拖拽/按压缩放手势
+    // 只需 drawCouiGradientBackdrop / couiTouchMotion / couiPressMotion，故不引 material3/icons
+    implementation libs.coui.core
 
     // 预测性返回手势：反射调用 Android 14 隐藏 API ApplicationInfo.setEnableOnBackInvokedCallback
     implementation("org.lsposed.hiddenapibypass:hiddenapibypass:4.0")

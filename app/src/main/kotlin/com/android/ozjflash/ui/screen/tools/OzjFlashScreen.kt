@@ -48,6 +48,8 @@ import com.android.ozjflash.ui.navigation3.Navigator
 import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.util.BlurredBar
 import com.android.ozjflash.ui.util.rememberBlurBackdrop
+import com.android.ozjflash.ui.util.rememberCouiBlurBackdrop
+import com.android.ozjflash.ui.util.couiBlurSource
 import top.yukonga.miuix.kmp.basic.Card as MiuixCard
 import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
 import top.yukonga.miuix.kmp.basic.Scaffold as MiuixScaffold
@@ -82,11 +84,12 @@ private fun OzjFlashMiuix(navigator: Navigator) {
         androidx.compose.animation.core.exponentialDecay<Float>(),
     )
     val backdrop = rememberBlurBackdrop(LocalEnableBlur.current)
+    val couiBackdrop = rememberCouiBlurBackdrop()
     val barColor = if (backdrop != null) Color.Transparent else MiuixTheme.colorScheme.surface
 
     MiuixScaffold(
         topBar = {
-            BlurredBar(backdrop) {
+            BlurredBar(backdrop, couiBackdrop = couiBackdrop) {
                 MiuixTopAppBar(
                     color = barColor,
                     title = stringResource(R.string.tools_ozjflash),
@@ -108,6 +111,7 @@ private fun OzjFlashMiuix(navigator: Navigator) {
     ) { innerPadding ->
         Column(
             modifier = Modifier
+                .couiBlurSource(couiBackdrop)
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
                 .verticalScroll(rememberScrollState())

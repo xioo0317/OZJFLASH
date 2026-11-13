@@ -40,6 +40,7 @@ class ColorPaletteActions internal constructor(
     fun setColorSpec(name: String) = viewModel.setColorSpec(name)
     fun setBlur(enabled: Boolean) = viewModel.setBlur(enabled)
     fun setBlurStyle(style: String) = viewModel.setBlurStyle(style)
+    fun setBlurRadius(value: Float) = viewModel.setBlurRadius(value)
     fun setUsbPillBlur(enabled: Boolean) = viewModel.setUsbPillBlur(enabled)
     fun setFloatingBottomBar(enabled: Boolean) = viewModel.setFloatingBottomBar(enabled)
     fun setFloatingBottomBarBlur(enabled: Boolean) = viewModel.setFloatingBottomBarBlur(enabled)

@@ -81,6 +81,8 @@ import com.android.ozjflash.ui.navigation3.Navigator
 import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.util.BlurredBar
 import com.android.ozjflash.ui.util.rememberBlurBackdrop
+import com.android.ozjflash.ui.util.rememberCouiBlurBackdrop
+import com.android.ozjflash.ui.util.couiBlurSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -226,12 +228,13 @@ private fun ToolPageMiuix(navigator: Navigator, tool: ToolKind) {
     )
     val enableBlur = LocalEnableBlur.current
     val backdrop = rememberBlurBackdrop(enableBlur)
+    val couiBackdrop = rememberCouiBlurBackdrop()
     val blurActive = backdrop != null
     val barColor = if (blurActive) Color.Transparent else colorScheme.surface
 
     MiuixScaffold(
         topBar = {
-            BlurredBar(backdrop) {
+            BlurredBar(backdrop, couiBackdrop = couiBackdrop) {
                 MiuixTopAppBar(
                     color = barColor,
                     title = title,
@@ -254,7 +257,8 @@ private fun ToolPageMiuix(navigator: Navigator, tool: ToolKind) {
             .add(WindowInsets.displayCutout)
             .only(WindowInsetsSides.Horizontal),
     ) { innerPadding ->
-        Box(modifier = if (backdrop != null) Modifier.layerBackdrop(backdrop) else Modifier) {
+        Box(modifier = Modifier.couiBlurSource(couiBackdrop)
+            .then(if (backdrop != null) Modifier.layerBackdrop(backdrop) else Modifier)) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxHeight()

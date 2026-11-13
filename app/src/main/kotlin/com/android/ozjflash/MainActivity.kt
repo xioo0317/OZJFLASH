@@ -79,6 +79,7 @@ import com.android.ozjflash.ui.screen.terminal.TerminalRouteScreen
 import com.android.ozjflash.ui.theme.LocalColorMode
 import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.theme.LocalBlurStyle
+import com.android.ozjflash.ui.theme.LocalBlurRadius
 import com.android.ozjflash.ui.theme.LocalUsbPillBlur
 import com.android.ozjflash.ui.theme.LocalEnableFloatingBottomBar
 import com.android.ozjflash.ui.theme.LocalEnableFloatingBottomBarBlur
@@ -170,6 +171,7 @@ class MainActivity : ComponentActivity() {
                 LocalColorMode provides appSettings.colorMode.value,
                 LocalEnableBlur provides uiState.enableBlur,
                 LocalBlurStyle provides uiState.blurStyle,
+                LocalBlurRadius provides uiState.blurRadius,
                 LocalUsbPillBlur provides uiState.usbPillBlur,
                 LocalEnableFloatingBottomBar provides uiState.enableFloatingBottomBar,
                 LocalEnableFloatingBottomBarBlur provides uiState.enableFloatingBottomBarBlur,

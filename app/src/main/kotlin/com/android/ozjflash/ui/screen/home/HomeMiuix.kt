@@ -48,6 +48,9 @@ import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.theme.isInDarkTheme
 import com.android.ozjflash.ui.util.BlurredBar
 import com.android.ozjflash.ui.util.rememberBlurBackdrop
+import com.android.ozjflash.ui.util.rememberCouiBlurBackdrop
+import com.android.ozjflash.ui.util.couiBlurSource
+import com.itos.coui.backdrop.CouiBackdrop
 import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
@@ -77,6 +80,7 @@ fun HomePagerMiuix(
     )
     val enableBlur = LocalEnableBlur.current
     val backdrop = rememberBlurBackdrop(enableBlur)
+    val couiBackdrop = rememberCouiBlurBackdrop()
     val blurActive = backdrop != null
     val barColor = if (blurActive) Color.Transparent else colorScheme.surface
     Scaffold(
@@ -85,6 +89,7 @@ fun HomePagerMiuix(
                 scrollBehavior = scrollBehavior,
                 backdrop = backdrop,
                 barColor = barColor,
+                couiBackdrop = couiBackdrop,
             )
         },
         popupHost = { },
@@ -92,7 +97,8 @@ fun HomePagerMiuix(
             .add(WindowInsets.displayCutout)
             .only(WindowInsetsSides.Horizontal),
     ) { innerPadding ->
-        Box(modifier = if (backdrop != null) Modifier.layerBackdrop(backdrop) else Modifier) {
+        Box(modifier = Modifier.couiBlurSource(couiBackdrop)
+            .then(if (backdrop != null) Modifier.layerBackdrop(backdrop) else Modifier)) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -128,8 +134,9 @@ private fun TopBar(
     scrollBehavior: ScrollBehavior,
     backdrop: top.yukonga.miuix.kmp.blur.LayerBackdrop?,
     barColor: Color,
+    couiBackdrop: CouiBackdrop?,
 ) {
-    BlurredBar(backdrop) {
+    BlurredBar(backdrop, couiBackdrop = couiBackdrop) {
         TopAppBar(
             color = barColor,
             title = stringResource(R.string.app_name),

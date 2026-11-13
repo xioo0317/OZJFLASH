@@ -10,6 +10,8 @@ navigationEvent = "1.1.2"
 materialKolor = "5.0.1"
 miuix = "0.9.4"
 kotlinxSerialization = "1.11.0"
+# COUI-Kit：只引 core 单模块（顶栏透明渐变模糊 + 原厂拖拽手势），不引 material3/icons，控制包体
+couiVersion = "0.0.1-alpha10"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -42,3 +44,6 @@ miuix-icons = { module = "top.yukonga.miuix.kmp:miuix-icons-android", version.re
 miuix-nav = { module = "top.yukonga.miuix.kmp:miuix-nav-android", version.ref = "miuix" }
 miuix-preference = { module = "top.yukonga.miuix.kmp:miuix-preference-android", version.ref = "miuix" }
 miuix-blur = { module = "top.yukonga.miuix.kmp:miuix-blur-android", version.ref = "miuix" }
+
+# COUI-Kit core：drawCouiGradientBackdrop（顶栏透明渐变）+ couiTouchMotion/couiPressMotion（原厂拖拽）
+coui-core = { module = "io.github.itoseo:coui", version.ref = "couiVersion" }

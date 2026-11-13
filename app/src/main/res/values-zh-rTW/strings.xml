@@ -72,11 +72,13 @@
     <string name="settings_others">其它</string>
     <string name="settings_enable_blur">模糊</string>
     <string name="settings_enable_blur_summary">啟用頂欄與底欄的模糊效果</string>
-    <string name="settings_usb_pill_blur">膠囊模糊</string>
+    <string name="settings_usb_pill_blur">液態膠囊</string>
     <string name="settings_usb_pill_blur_summary">開啟後 USB 膠囊呈現液態玻璃效果</string>
     <string name="settings_blur_effect">效果</string>
-    <string name="settings_blur_effect_gaussian">高斯模糊</string>
-    <string name="settings_blur_effect_gradient">漸變模糊</string>
+    <string name="settings_blur_effect_gaussian">預設</string>
+    <string name="settings_blur_effect_gradient">透明漸變</string>
+    <string name="settings_blur_radius">模糊強度</string>
+    <string name="settings_blur_radius_summary">自訂預設（高斯）模糊的半徑</string>
     <string name="settings_enable_floating_bottom_bar">懸浮底欄</string>
     <string name="settings_enable_floating_bottom_bar_summary">用懸浮膠囊條替代貼底導覽列</string>
     <string name="settings_enable_floating_bottom_bar_blur">懸浮底欄模糊</string>

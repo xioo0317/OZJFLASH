@@ -42,6 +42,8 @@ import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.util.BlurredBar
 import com.android.ozjflash.ui.util.rememberBlurBackdrop
+import com.android.ozjflash.ui.util.rememberCouiBlurBackdrop
+import com.android.ozjflash.ui.util.couiBlurSource
 import com.android.ozjflash.ui.viewmodel.AppUiState
 import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.Icon
@@ -78,6 +80,7 @@ fun SettingsMiuix(
     )
     val enableBlur = LocalEnableBlur.current
     val backdrop = rememberBlurBackdrop(enableBlur)
+    val couiBackdrop = rememberCouiBlurBackdrop()
     val blurActive = backdrop != null
     val barColor = if (blurActive) Color.Transparent else colorScheme.surface
     val context = LocalContext.current
@@ -85,7 +88,7 @@ fun SettingsMiuix(
 
     Scaffold(
         topBar = {
-            BlurredBar(backdrop) {
+            BlurredBar(backdrop, couiBackdrop = couiBackdrop) {
                 TopAppBar(
                     color = barColor,
                     title = stringResource(R.string.settings),
@@ -98,7 +101,8 @@ fun SettingsMiuix(
             .add(WindowInsets.displayCutout)
             .only(WindowInsetsSides.Horizontal),
     ) { innerPadding ->
-        Box(modifier = if (backdrop != null) Modifier.layerBackdrop(backdrop) else Modifier) {
+        Box(modifier = Modifier.couiBlurSource(couiBackdrop)
+            .then(if (backdrop != null) Modifier.layerBackdrop(backdrop) else Modifier)) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxHeight()

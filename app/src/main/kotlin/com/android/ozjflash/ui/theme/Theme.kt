@@ -134,10 +134,13 @@ val LocalColorMode = staticCompositionLocalOf { 0 }
 
 val LocalEnableBlur = staticCompositionLocalOf { false }
 
-/** 模糊风格：gaussian = 默认高斯模糊；gradient = 渐变（渐进）模糊。供顶/底栏 BlurredBar 读取 */
+/** 模糊风格：gaussian = 默认（可调半径高斯模糊）；gradient = 透明渐变（COUI 原厂渐进透明）。供顶/底栏 BlurredBar 读取 */
 val LocalBlurStyle = staticCompositionLocalOf { "gaussian" }
 
-/** USB 状态胶囊是否使用液态玻璃效果（独立于顶/底栏模糊） */
+/** 「默认」高斯模糊半径（px），由设置页进度条自定义；供顶/底栏 BlurredBar 的 textureBlur 读取 */
+val LocalBlurRadius = staticCompositionLocalOf { 25f }
+
+/** USB 状态胶囊「液态胶囊」开关（独立于顶/底栏模糊与模糊风格） */
 val LocalUsbPillBlur = staticCompositionLocalOf { false }
 
 val LocalEnableFloatingBottomBar = staticCompositionLocalOf { false }

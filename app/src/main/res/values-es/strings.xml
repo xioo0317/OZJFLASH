@@ -72,11 +72,13 @@
     <string name="settings_others">Otros</string>
     <string name="settings_enable_blur">Desenfoque</string>
     <string name="settings_enable_blur_summary">Desenfoca las barras superior e inferior</string>
-    <string name="settings_usb_pill_blur">Cristal de la píldora</string>
+    <string name="settings_usb_pill_blur">Cápsula líquida</string>
     <string name="settings_usb_pill_blur_summary">Aplica un efecto de cristal a la píldora USB</string>
     <string name="settings_blur_effect">Efecto</string>
-    <string name="settings_blur_effect_gaussian">Desenfoque gaussiano</string>
-    <string name="settings_blur_effect_gradient">Desenfoque degradado</string>
+    <string name="settings_blur_effect_gaussian">Predeterminado</string>
+    <string name="settings_blur_effect_gradient">Degradado transparente</string>
+    <string name="settings_blur_radius">Intensidad del desenfoque</string>
+    <string name="settings_blur_radius_summary">Personaliza el radio del desenfoque predeterminado (gaussiano)</string>
     <string name="settings_enable_floating_bottom_bar">Barra inferior flotante</string>
     <string name="settings_enable_floating_bottom_bar_summary">Reemplazar la barra acoplada por una píldora flotante</string>
     <string name="settings_enable_floating_bottom_bar_blur">Desenfoque de la barra flotante</string>

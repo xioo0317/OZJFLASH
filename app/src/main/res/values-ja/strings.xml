@@ -72,11 +72,13 @@
     <string name="settings_others">その他</string>
     <string name="settings_enable_blur">ぼかし</string>
     <string name="settings_enable_blur_summary">上部・下部バーの背後をぼかします</string>
-    <string name="settings_usb_pill_blur">カプセルぼかし</string>
+    <string name="settings_usb_pill_blur">リキッドカプセル</string>
     <string name="settings_usb_pill_blur_summary">USB カプセルにガラス効果を適用します</string>
     <string name="settings_blur_effect">エフェクト</string>
-    <string name="settings_blur_effect_gaussian">ガウスぼかし</string>
-    <string name="settings_blur_effect_gradient">グラデーションぼかし</string>
+    <string name="settings_blur_effect_gaussian">デフォルト</string>
+    <string name="settings_blur_effect_gradient">透明グラデーション</string>
+    <string name="settings_blur_radius">ぼかしの強さ</string>
+    <string name="settings_blur_radius_summary">デフォルト（ガウス）ぼかしの半径を調整します</string>
     <string name="settings_enable_floating_bottom_bar">フローティングボトムバー</string>
     <string name="settings_enable_floating_bottom_bar_summary">貼り付けナビをフローティングピルバーに置き換え</string>
     <string name="settings_enable_floating_bottom_bar_blur">フローティングバーのぼかし</string>

@@ -45,8 +45,6 @@ import com.android.ozjflash.flash.UsbMode
 import com.android.ozjflash.ui.LocalUiMode
 import com.android.ozjflash.ui.UiMode
 import com.android.ozjflash.ui.component.liquid.liquidGlassChip
-import com.android.ozjflash.ui.theme.LocalBlurStyle
-import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.theme.LocalUsbPillBlur
 import top.yukonga.miuix.kmp.basic.DropdownDefaults
 import top.yukonga.miuix.kmp.basic.DropdownEntry
@@ -68,8 +66,9 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  *   Fast boot设备等），无设备显示「未连接设备」；下拉里的设备条目沿用旧版
  *   「短类型 + VID:PID」（如 ADB 22d9:2769），点条目查看设备详情。
  *   胶囊右端不再画展开小三角，尺寸更省。
- * - **液态玻璃（仅 Miuix）**：主题设置「胶囊模糊」开启后，用「半透明渐变玻璃底 +
- *   白色高光环 + 柔和投影」手绘。M3 主体按需求取消液态玻璃实现，回退为普通纯色胶囊。
+ * - **液态玻璃（仅 Miuix）**：主题设置「液态胶囊」开启后（独立于顶/底栏模糊效果），
+ *   用「半透明渐变玻璃底 + 白色高光环 + 柔和投影」手绘。M3 主体按需求取消液态玻璃
+ *   实现，回退为普通纯色胶囊。
  *
  * [dark] 为终端页纯黑背景的专属配色开关（避免黑底上出现一块亮色胶囊）。
  */
@@ -127,10 +126,11 @@ fun UsbStatusPill(
     val darkGlass = dark || isDarkSurface
 
     val pillShape = RoundedCornerShape(50)
-    // 与主题设置页里「USB 胶囊模糊」选项的显隐条件严格一致：模糊开启 + 效果=渐变。
+    // 「液态胶囊」已从顶/底栏模糊的效果选择中独立：只由设置页该开关控制，
+    // 不再捆绑 blurStyle == gradient，也不再依赖是否开启模糊。只要开关打开，
+    // Miuix 主体即用手绘玻璃（LocalLiquidBackdrop 为空时芯片自动降级为克制玻璃底）。
     // M3 主体按需求取消液态玻璃实现，只保留 Miuix 主体的手绘玻璃。
-    val blurActive = LocalEnableBlur.current && LocalBlurStyle.current == "gradient"
-    val glassEnabled = pillBlurEnabled && blurActive && uiMode == UiMode.Miuix
+    val glassEnabled = pillBlurEnabled && uiMode == UiMode.Miuix
 
     val openInfo: (UsbDeviceInfo) -> Unit = {
         expanded = false

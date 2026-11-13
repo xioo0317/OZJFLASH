@@ -64,6 +64,8 @@ import com.android.ozjflash.ui.navigation3.Route
 import com.android.ozjflash.ui.theme.LocalEnableBlur
 import com.android.ozjflash.ui.util.BlurredBar
 import com.android.ozjflash.ui.util.rememberBlurBackdrop
+import com.android.ozjflash.ui.util.rememberCouiBlurBackdrop
+import com.android.ozjflash.ui.util.couiBlurSource
 import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.Icon as MiuixIcon
 import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
@@ -99,12 +101,13 @@ private fun FeatureMiuix(bottomInnerPadding: Dp) {
     )
     val enableBlur = LocalEnableBlur.current
     val backdrop = rememberBlurBackdrop(enableBlur)
+    val couiBackdrop = rememberCouiBlurBackdrop()
     val barColor = if (backdrop != null) Color.Transparent else MiuixTheme.colorScheme.surface
     val navigator = LocalNavigator.current
 
     Scaffold(
         topBar = {
-            BlurredBar(backdrop) {
+            BlurredBar(backdrop, couiBackdrop = couiBackdrop) {
                 TopAppBar(
                     color = barColor,
                     title = stringResource(R.string.feature),
@@ -118,7 +121,8 @@ private fun FeatureMiuix(bottomInnerPadding: Dp) {
             .add(WindowInsets.displayCutout)
             .only(WindowInsetsSides.Horizontal),
     ) { innerPadding ->
-        Box(modifier = if (backdrop != null) Modifier.layerBackdrop(backdrop) else Modifier) {
+        Box(modifier = Modifier.couiBlurSource(couiBackdrop)
+            .then(if (backdrop != null) Modifier.layerBackdrop(backdrop) else Modifier)) {
             Column(
                 modifier = Modifier
                     .fillMaxHeight()

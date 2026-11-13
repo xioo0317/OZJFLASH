@@ -26,7 +26,9 @@ data class AppUiState(
     val miuixMonet: Boolean = false,
     val enableBlur: Boolean = false,
     val blurStyle: String = "gaussian",
-    /** USB 状态胶囊的液态玻璃效果开关 */
+    /** 「默认」高斯模糊半径（px），设置页进度条自定义 */
+    val blurRadius: Float = 25f,
+    /** USB 状态胶囊「液态胶囊」开关（独立于顶/底栏模糊与模糊风格） */
     val usbPillBlur: Boolean = false,
     val enableFloatingBottomBar: Boolean = false,
     val enableFloatingBottomBarBlur: Boolean = false,
@@ -53,6 +55,7 @@ class AppViewModel(
             miuixMonet = repo.miuixMonet,
             enableBlur = repo.enableBlur,
             blurStyle = repo.blurStyle,
+            blurRadius = repo.blurRadius,
             usbPillBlur = repo.usbPillBlur,
             enableFloatingBottomBar = repo.enableFloatingBottomBar,
             enableFloatingBottomBarBlur = repo.enableFloatingBottomBarBlur,
@@ -114,6 +117,11 @@ class AppViewModel(
     fun setBlurStyle(style: String) {
         repo.blurStyle = style
         _uiState.value = _uiState.value.copy(blurStyle = style)
+    }
+
+    fun setBlurRadius(value: Float) {
+        repo.blurRadius = value
+        _uiState.value = _uiState.value.copy(blurRadius = value)
     }
 
     fun setUsbPillBlur(enabled: Boolean) {
